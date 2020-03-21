@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://moyada.github.io/post/demo/</loc>
+    <lastmod>2020-03-21T19:26:03+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/post/</loc>
+    <lastmod>2020-03-21T19:26:03+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/</loc>
+    <lastmod>2020-03-21T19:26:03+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/categories/</loc>
+    <lastmod>2020-03-21T16:44:57+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/tags/java/</loc>
+    <lastmod>2020-03-21T16:44:57+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/categories/java/</loc>
+    <lastmod>2020-03-21T16:44:57+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/tags/</loc>
+    <lastmod>2020-03-21T16:44:57+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/post/test/</loc>
+    <lastmod>2020-03-21T16:44:57+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/post/today/</loc>
+    <lastmod>2020-03-21T16:44:57+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/authors/admin/</loc>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/authors/</loc>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/publication_types/</loc>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/publication/</loc>
+  </url>
+  
+  <url>
+    <loc>https://moyada.github.io/talk/</loc>
+  </url>
+  
+</urlset>

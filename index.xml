@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>疯狂的厨子</title>
+    <link>https://moyada.github.io/</link>
+      <atom:link href="https://moyada.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <description>疯狂的厨子</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 21 Mar 2020 19:26:03 +0800</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
+      <title>疯狂的厨子</title>
+      <link>https://moyada.github.io/</link>
+    </image>
+    
+    <item>
+      <title>Demo</title>
+      <link>https://moyada.github.io/post/demo/</link>
+      <pubDate>Sat, 21 Mar 2020 19:26:03 +0800</pubDate>
+      <guid>https://moyada.github.io/post/demo/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Test</title>
+      <link>https://moyada.github.io/post/test/</link>
+      <pubDate>Sat, 21 Mar 2020 16:44:57 +0800</pubDate>
+      <guid>https://moyada.github.io/post/test/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>today</title>
+      <link>https://moyada.github.io/post/today/</link>
+      <pubDate>Sat, 21 Mar 2020 16:44:57 +0800</pubDate>
+      <guid>https://moyada.github.io/post/today/</guid>
+      <description>&lt;h1 id=&#34;234&#34;&gt;234&lt;/h1&gt;
+&lt;h2 id=&#34;a&#34;&gt;A&lt;/h2&gt;
+&lt;p&gt;dsa&lt;/p&gt;
+&lt;p&gt;dsa
+d
+ad&lt;/p&gt;
+&lt;h2 id=&#34;b&#34;&gt;B&lt;/h2&gt;
+&lt;p&gt;sad
+sa
+d
+abcde&lt;/p&gt;
+&lt;p&gt;dsadsad&lt;/p&gt;
+&lt;p&gt;d&lt;/p&gt;
+&lt;p&gt;dsadsa&lt;/p&gt;
+&lt;h2 id=&#34;c&#34;&gt;C&lt;/h2&gt;
+&lt;p&gt;dsadas&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
