@@ -498,7 +498,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">Git 历史记录清洗</a></li>
       </ul>
@@ -513,13 +513,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -603,10 +602,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>当在公网环境下使用 git 仓库不小心把敏感信息提交上去时，则可以使用 <code>filter-branch</code> 对代码仓库进行清洗。</p>
+		    <div class="article-style">
+		      <p>当在公网环境下使用 git 仓库不小心把敏感信息提交上去时，则可以使用 <code>filter-branch</code> 对代码仓库进行清洗。</p>
 <h2 id="1-先对本地历史进行清洗">1. 先对本地历史进行清洗</h2>
 <pre><code>git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch &lt;file_path&gt;' --prune-empty --tag-name-filter cat -- --all
 </code></pre>
@@ -649,9 +648,9 @@ git push --tags --force
 <a href="https://git-scm.com/book/zh/v1/Git-%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86-Git-References">https://git-scm.com/book/zh/v1/Git-%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86-Git-References</a></p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -753,25 +752,28 @@ git push --tags --force
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/git-ignore/" rel="prev">Git 文件忽略</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/jmh/" rel="next">Java 基准测试框架(JMH)</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/jmh/" rel="next">Java 基准测试框架(JMH)</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

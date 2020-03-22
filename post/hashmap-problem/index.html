@@ -500,7 +500,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">HashMap 在并发环境下的死循环问题</a></li>
       </ul>
@@ -509,13 +509,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -595,10 +594,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 ConcurrentHashMap。</p>
+		    <div class="article-style">
+		      <p>因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 ConcurrentHashMap。</p>
 <blockquote>
 <p>虽然在 jdk8 修复了该问题，但仍然还存在其他并发问题。</p>
 </blockquote>
@@ -645,9 +644,9 @@ void transfer(Entry[] newTable, boolean rehash) {
 <p>参考: <a href="https://tech.meituan.com/java_hashmap.html">https://tech.meituan.com/java_hashmap.html</a></p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -749,25 +748,28 @@ void transfer(Entry[] newTable, boolean rehash) {
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/default-method/" rel="prev">java8 default method 的使用见解</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/git-ignore/" rel="next">Git 文件忽略</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/git-ignore/" rel="next">Git 文件忽略</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

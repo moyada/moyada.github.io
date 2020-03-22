@@ -465,7 +465,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">上下文切换</a></li>
       </ul>
@@ -474,13 +474,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -555,10 +554,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>发生上下文切换的原因有很多，比如 <code>时间片耗尽</code> <code>任务抢占</code> <code>主动挂起</code> <code>硬件中断</code> <code>IO阻塞</code> <code>锁机制</code></p>
+		    <div class="article-style">
+		      <p>发生上下文切换的原因有很多，比如 <code>时间片耗尽</code> <code>任务抢占</code> <code>主动挂起</code> <code>硬件中断</code> <code>IO阻塞</code> <code>锁机制</code></p>
 <p>在CPU对进程、线程进行上下文切换时，系统需要将当前寄存器内数据保存，也就是所谓的保存现场，当再次获取时间片运行时进行置换。</p>
 <p>这种开销需要操作系统进行资源管理和线程协调，当大频率发生上下文切换时，会造成很大的性能损耗。</p>
 <p>并且，并发环境下的程序处理是十分复杂，当处于共享资源时，需要考虑线程的执行顺序和数据的一致性。</p>
@@ -567,9 +566,9 @@
 <p>如果是高并发程序和执行时间长的计算密集程序，应尽量使得并发数和cpu核心数一致。</p>
 <p>如果是IO密集型程序，cpu执行时间短，则可以加大并发数设置。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -667,25 +666,28 @@
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/bak/cap-base/" rel="prev">CAP定理和BASE理论</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/bak/performance/" rel="next">性能分析</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/bak/performance/" rel="next">性能分析</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

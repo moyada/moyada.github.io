@@ -506,7 +506,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">synchronized 原理总结</a></li>
       </ul>
@@ -537,13 +537,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -627,10 +626,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="介绍">介绍</h2>
+		    <div class="article-style">
+		      <h2 id="介绍">介绍</h2>
 <p>在 Java 中 <code>synchronized</code> 是用于并发环境下使用临界区的原语。</p>
 <p>它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。</p>
 <ul>
@@ -736,9 +735,9 @@
 <h3 id="exit">exit</h3>
 <p>当有线程离开临界区，将会调用 objectMonitor 的 <code>exit</code> 方法，根据 QMode 的不同的选择从 阻塞队列 或 等待队列 中获取 <code>ObjectWaiter</code>，也可能将等待队列的部分或全部加入阻塞队列后从阻塞队列中获取。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -840,25 +839,28 @@
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/maven-central/" rel="prev">发布 jar 包至 maven 官方中央仓库</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/java-annotation-processor/" rel="next">Java 注解处理器</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/java-annotation-processor/" rel="next">Java 注解处理器</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

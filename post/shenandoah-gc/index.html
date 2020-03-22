@@ -500,7 +500,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">Shenandoah GC 介绍</a></li>
       </ul>
@@ -522,13 +522,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -612,10 +611,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="介绍">介绍</h2>
+		    <div class="article-style">
+		      <h2 id="介绍">介绍</h2>
 <p>Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 <code>标记整理</code> 的垃圾回收器，它的目标时为了使大容量内存应用在垃圾回收时只进行短暂的应用暂停，使用 -XX:+UseShenandoahGC 开启。</p>
 <p>它能够在垃圾回收周期中进行 <code>并发整理</code> 和 <code>并发更新</code>，不暂停应用线程，并将垃圾回收分解为多个阶段，来达到极短的暂停时间，同时不会随着堆内存大小而影响。</p>
 <blockquote>
@@ -649,12 +648,12 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 <p>由于通常情况下并不需要使用读屏障来获取地址，Shenandoah GC 又引入了 <code>slow path</code> 的设计。</p>
 <p>它的作用是，只有当垃圾回收进行中，并且对象处于 <code>collection set</code> 中，那么程序才会使用 读屏障 来获取对象地址。</p>
 <p>同时 Shenandoah GC 还会对字节码进行优化，以确保程序正确的情况下减少用读屏障获取地址的使用。</p>
-<p><img src="/imgs/shenandoah-gc/concurrent-copy.png" alt="concurrent-copy" title="并发修改"></p>
+<p><img src="/img/shenandoah-gc/concurrent-copy.png" alt="concurrent-copy" title="并发修改"></p>
 <p>由于需要使用额外的空间来存储 <code>brooks pointers</code>，则必须使用 64 位地址，同时堆空间也会增加 3% ~ 15% 的开销，而 CAS 和 读屏障 则产生 2% ~ 20% 的吞吐量下降。</p>
 <h3 id="空间划为">空间划为</h3>
 <p>Shenandoah 与 G1 类似也是以 Region 来划分堆内存，但是不进行分代标记。</p>
 <p>每个 Region 对应一个数组用来表示有哪些 Region 存在对象指向自身 Region 中的对象，这就避免了 G1 在年轻代之间的引用关系需要扫描整个年轻代甚至是堆的情况。</p>
-<p><img src="/imgs/shenandoah-gc/region-incoming.png" alt="region-incoming"></p>
+<p><img src="/img/shenandoah-gc/region-incoming.png" alt="region-incoming"></p>
 <h3 id="numa">NUMA</h3>
 <p>与 ZGC 相同，利用 NUMA 架构的 CPU 亲和的内存分配策略，在分配对象时使用线程所处的 CPU 缓存，并且使 应用线程 与 GC线程 处于同一核心线程下，共享同一个 Region 的数据。</p>
 <h2 id="触发策略">触发策略</h2>
@@ -680,7 +679,7 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 </code></pre>
 <h2 id="回收过程">回收过程</h2>
 <p>Shenandoah 的回收过程与 G1 类似，都是基于 Region 的收集策略，一般情况下将垃圾回收声明周期分解成数个阶段执行。</p>
-<p><img src="/imgs/shenandoah-gc/shenandoah-gc-cycle.png" alt="shenandoah-gc-cycle"></p>
+<p><img src="/img/shenandoah-gc/shenandoah-gc-cycle.png" alt="shenandoah-gc-cycle"></p>
 <ol>
 <li>初始标记</li>
 </ol>
@@ -719,9 +718,9 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 </ol>
 <p>回收无任何对象引用的 Region。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -829,25 +828,28 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/zgc/" rel="prev">ZGC 介绍</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/middleware-competition-5/" rel="next">第五届中间件性能挑战赛</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/middleware-competition-5/" rel="next">第五届中间件性能挑战赛</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

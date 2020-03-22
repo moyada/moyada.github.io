@@ -500,7 +500,7 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">跨代引用</a></li>
       </ul>
@@ -509,13 +509,12 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -599,10 +598,10 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况，在 <code>Major GC</code> 时，为了标记这些引用的新生代对象，需要通过扫描老年代来间接标记。</p>
+		    <div class="article-style">
+		      <p>在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况，在 <code>Major GC</code> 时，为了标记这些引用的新生代对象，需要通过扫描老年代来间接标记。</p>
 <p>然而，正常扫描全部老年代来获取的做法效率太低下了，由此便产生了称为 <code>CardTable</code> (卡表) 的数据。</p>
 <p><code>Card Table</code> 保存了所在由老年代所引用的新生代对象的集合，同时利用写屏障，在引用对象变化时，对引用记录标记为 &ldquo;脏&rdquo; ，那么当下次 GC 到来时，只用扫描脏页 (<code>Dirty Page</code>) 便可以标记出由老年代引用的新生代存活对象。并且在 GC 后，由于复制算法导致了数据的迁移，根据迁移的位置决定是否对引用记录再次进行标记。</p>
 <p>在 G1 中，除了 <code>Card Table</code> 还存在 <code>Remembered Set</code>，更好的解决了跨代引用的问题。</p>
@@ -613,9 +612,9 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
 <p><a href="http://blog.ragozin.info/2011/06/understanding-gc-pauses-in-jvm-hotspots.html">http://blog.ragozin.info/2011/06/understanding-gc-pauses-in-jvm-hotspots.html</a></p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -717,25 +716,28 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/java-security/" rel="prev">Java安全机制</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/java-management/" rel="next">JMX 简介</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/java-management/" rel="next">JMX 简介</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

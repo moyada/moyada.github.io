@@ -502,7 +502,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">序列化框架对比</a></li>
       </ul>
@@ -532,13 +532,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -622,10 +621,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="背景">背景</h2>
+		    <div class="article-style">
+		      <h2 id="背景">背景</h2>
 <p>最近接到一个需求，涉及到大流量的数据传输，那么就不可避免序列化，正巧我也有想法对最近主流的序列化框架做一次对比。</p>
 <p>参数对比的序列化的框架如下，将对 <code>序列化数据字节大小</code>、<code>序列化\反序列化平均耗时</code>、<code>序列化\反序列化吞吐量</code> 这三个维度进行对比。</p>
 <blockquote>
@@ -997,9 +996,9 @@
 <p><code>Protostuff</code> 在各方面都优于其他框架，但是需要预先定义类，不过比起 <code>Protobuf</code>、<code>Thrift</code> 等预先定义数据格式已经方便很多了。</p>
 <p>如果传输量不是很大，但是对数据的可视化有要求的，那么 <code>Fastjson</code> 和 <code>Jackson</code> 是不错的选择，而且 <code>json</code> 格式在跨语言上也天然有优势。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -1101,25 +1100,28 @@
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/prometheus-grafana/" rel="prev">使用 Prometheus &#43; Grafana 搭建监控系统</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/diff-instanceof-isassignablefrom/" rel="next">instanceOf、isInstance、isAssignableFrom 的区别</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/diff-instanceof-isassignablefrom/" rel="next">instanceOf、isInstance、isAssignableFrom 的区别</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

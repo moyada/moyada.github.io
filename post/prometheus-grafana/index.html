@@ -500,7 +500,7 @@ Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">使用 Prometheus &#43; Grafana 搭建监控系统</a></li>
       </ul>
@@ -516,13 +516,12 @@ Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -606,10 +605,10 @@ Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="前言">前言</h2>
+		    <div class="article-style">
+		      <h2 id="前言">前言</h2>
 <p>系统监控是中大型企业中必不可少的组件，在线上服务器遇到负载问题时通过监控便能够查看系统状态快照，还能够通过监控系统开发其他效能组件，进一步提高系统的可用性。</p>
 <h2 id="监控应用程序">监控应用程序</h2>
 <p>通常情况下，要想获得应用的负载情况就需要改造原有工程，提供 pull 或 push 的方式将应用状况进行上报。</p>
@@ -669,9 +668,9 @@ scrape_configs:
 <p>也可通过 <code>Add panel</code> 增加监控面板，再选择 <code>Add Query</code> 设置监控主体，监控语句可通过 http://127.0.0.1:9090/graph 获取。</p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -773,25 +772,28 @@ scrape_configs:
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/spring-configure/" rel="prev">Spring 自定义配置加载</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/java-serializer/" rel="next">序列化框架对比</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/java-serializer/" rel="next">序列化框架对比</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

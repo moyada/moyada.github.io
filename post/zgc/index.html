@@ -498,7 +498,7 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">ZGC 介绍</a></li>
       </ul>
@@ -521,13 +521,12 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -611,10 +610,10 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="什么是-zgc">什么是 ZGC</h2>
+		    <div class="article-style">
+		      <h2 id="什么是-zgc">什么是 ZGC</h2>
 <p>由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:+UseZGC 开启，目前仅支持 Linux x86 64位的系统。</p>
 <p>ZGC 全称 Z Garbage Collector，是一款 <code>低停顿</code> 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 <code>10毫秒</code> 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。</p>
 <blockquote>
@@ -725,9 +724,9 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
 在 GC 的周期内，标记开始和迁移开始操作会比较花费时间，但所有停顿时间总共也是小于 10 毫秒。</p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -835,25 +834,28 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/feign-eureka-without-springboot/" rel="prev">在非 SpringBoot 工程中使用 Feign 整合 Eureka</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/shenandoah-gc/" rel="next">Shenandoah GC 介绍</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/shenandoah-gc/" rel="next">Shenandoah GC 介绍</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

@@ -498,7 +498,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">JMX 简介</a></li>
       </ul>
@@ -527,13 +527,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -617,10 +616,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>JMX 的全称为 Java Management Extensions，是一种监控、管理正在运行的 Java 应用程序的机制，并且支持开发人员自定义 MBean 监视器。</p>
+		    <div class="article-style">
+		      <p>JMX 的全称为 Java Management Extensions，是一种监控、管理正在运行的 Java 应用程序的机制，并且支持开发人员自定义 MBean 监视器。</p>
 <h2 id="常用-mxbean">常用 MXBean</h2>
 <p>通过查询 <code>java.lang.management.PlatformManagedObject</code> 的继承接口能够得知当前 JDK 版本提供的所有 MXBean。</p>
 <table>
@@ -881,9 +880,9 @@ JMXConnector jmxc = JMXConnectorFactory.connect(url, env);
 </code></pre>
 <p>如果需要自定义监听广播可以继承 <code>NotificationBroadcasterSupport</code> 或 <code>NotificationEmitterSupport</code>，其内部已经实现了 addNotificationListener、removeNotificationListener 方法。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -985,25 +984,28 @@ JMXConnector jmxc = JMXConnectorFactory.connect(url, env);
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/card-table/" rel="prev">跨代引用</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/maven-central/" rel="next">发布 jar 包至 maven 官方中央仓库</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/maven-central/" rel="next">发布 jar 包至 maven 官方中央仓库</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

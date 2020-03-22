@@ -498,7 +498,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">在非 SpringBoot 工程中使用 Feign 整合 Eureka</a></li>
       </ul>
@@ -519,13 +519,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -609,10 +608,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="背景">背景</h2>
+		    <div class="article-style">
+		      <h2 id="背景">背景</h2>
 <p>最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 <code>@EnableDiscoveryClient</code> 和 <code>@EnableFeignClients</code> 即可获取服务接口实例。可是由于我使用了 BeanPostProcessor 对注解进行了切片代理，并且目标项目也存在非 SpringCloud 项目，那么便只能通过底层 API 构建服务方实例了。</p>
 <h2 id="方案">方案</h2>
 <p>EurekaClient 提供了服务发现注册功能，但是在 Feign 所接收的属性中并没有用于负载均衡的，其中最有可能的就是 Client 属性了，这是用于负责服务请求的模块，那么就需要调研下是否能够通过 EurekaClient 构建出一个带有负载均衡功能的客户端。</p>
@@ -711,9 +710,9 @@ public EurekaClient initEurekaClient(EurekaInstanceConfig instanceConfig, Eureka
 }
 </code></pre>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -815,25 +814,28 @@ public EurekaClient initEurekaClient(EurekaInstanceConfig instanceConfig, Eureka
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/diff-instanceof-isassignablefrom/" rel="prev">instanceOf、isInstance、isAssignableFrom 的区别</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/zgc/" rel="next">ZGC 介绍</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/zgc/" rel="next">ZGC 介绍</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

@@ -502,7 +502,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">Java 注解处理器</a></li>
       </ul>
@@ -517,13 +517,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -607,10 +606,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="工作流程">工作流程</h2>
+		    <div class="article-style">
+		      <h2 id="工作流程">工作流程</h2>
 <p>注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。</p>
 <blockquote>
 <p>编译器具体处理过程可查看 OpenJDK 官方文档: <a href="https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html">https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html</a></p>
@@ -673,9 +672,9 @@
 <p>这是我开发的一款通过修改语法树增加方法校验功能的工具: <a href="https://moyada.github.io/medivh/">https://moyada.github.io/medivh/</a></p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -777,25 +776,28 @@
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/java-synchronized/" rel="prev">synchronized 原理总结</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/spring-configure/" rel="next">Spring 自定义配置加载</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/spring-configure/" rel="next">Spring 自定义配置加载</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

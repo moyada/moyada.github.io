@@ -508,7 +508,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">Java 虚拟机总结</a></li>
       </ul>
@@ -561,13 +561,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -651,10 +650,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="jvmjava虚拟机">JVM(Java虚拟机)</h2>
+		    <div class="article-style">
+		      <h2 id="jvmjava虚拟机">JVM(Java虚拟机)</h2>
 <p>JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。
 另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。</p>
 <blockquote>
@@ -849,9 +848,9 @@ Eden Space 中存在线程私有的空间 TLAB，是每个线程的缓冲区，�
 <p>全名 promotion-local allocation buffers，用于 Young GC 时的空间分配及复制。</p>
 <p>其他还有 CLAB，全名 core-local allocation buffers，用于全局的空间分配。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -953,25 +952,28 @@ Eden Space 中存在线程私有的空间 TLAB，是每个线程的缓冲区，�
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/jvm-param/" rel="prev">JVM 参数</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/mat/" rel="next">使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/mat/" rel="next">使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

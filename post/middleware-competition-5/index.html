@@ -502,7 +502,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">第五届中间件性能挑战赛</a></li>
       </ul>
@@ -529,13 +529,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -615,17 +614,17 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>今年参与了阿里巴巴举办的
+		    <div class="article-style">
+		      <p>今年参与了阿里巴巴举办的
 <a href="https://tianchi.aliyun.com/competition/entrance/231714/introduction" target="_blank" rel="noopener">中间件性能挑战赛</a>，并且有幸进入到了复赛，虽然后期由于其他原因没法专心参与，不过通过这次比赛也让我在技术上收获了不少，这边小小的做下本次比赛的总结。</p>
 <h2 id="初赛自适应负载均衡的设计实现">初赛：《自适应负载均衡的设计实现》</h2>
 <h3 id="赛题分析">赛题分析</h3>
 <p>初赛的题目是在 
 <a href="http://dubbo.apache.org/" target="_blank" rel="noopener">Dubbo</a> 之上进行的插件开发，对参与者对于 Dubbo 的调用过程有一定的要求。官方在 gateway 端提供了 CallbackListenerImpl、TestClientFilter、UserLoadBalance 供开发。在 provider 端提供了 CallbackServiceImpl、TestRequestLimiter、TestServerFilter 供开发。</p>
 <p>将这些组件结合起来就形成了基本的调用链路。</p>
-<p><img src="/imgs/middleware-competition-5/adaptive-loadbalance.png" alt="adaptive-loadbalance"></p>
+<p><img src="/img/middleware-competition-5/adaptive-loadbalance.png" alt="adaptive-loadbalance"></p>
 <h3 id="目标">目标</h3>
 <ol>
 <li>
@@ -705,14 +704,14 @@ public static String getAddress(URL url) {
 <p>根据评测代码可知，消费服务在程序内部使用了 <code>Semaphore</code> 对请求进行了拦截，实际可容纳的请求小于线程数，并且并发数随着时间也在发生变化。</p>
 <p>如果单位时间内接收的请求数大于实际并发数时，则多余的请求将会被置为等待状态。当请求数持续大于并发数时，会导致请求堆积造成大量超时。因此在 Dubbo 中有个超时检测机制 <code>org.apache.dubbo.remoting.exchange.support.DefaultFuture##TIME_OUT_TIMER</code>，这是一个用于中止任务的时间轮，当一个请求进入执行阶段时，它将会被放入时间轮，在一定时间后结束请求返回错误信息。</p>
 <p>因此需使得请求在时间轮触发之前执行，这样才能保证不会造成异常响应。在这里我还是使用到了前面获取的线程池，由于线程在线程池中空闲的状态为 <code>WAITING</code> 或 <code>TIMED_WAITING</code>，在执行过程中工作线程的状态可能为 <code>RUNNABLE</code>、<code>BLOCKED</code>、<code>WAITING</code>、<code>TIMED_WAITING</code>，空闲线程与工作线程存在状态重叠，因而无法将 <code>getActiveCount</code> 用作并发数。</p>
-<p><img src="/imgs/middleware-competition-5/thread_state.png" alt="thread_state"></p>
+<p><img src="/img/middleware-competition-5/thread_state.png" alt="thread_state"></p>
 <p>因此在执行阶段 Filter 前后对当前线程进行标记，并放入一个 placeHolder 中保存，在退出 Filter 时移除标记。由此一来 placeHolder 中就只存在工作中的线程，在除去 <code>BLOCKED</code> 和 <code>WAITING</code> 状态的线程即为并发数。</p>
 <blockquote>
 <p>为了避免并发冲突影响效率，采用无锁编程，预先创建好数组，利用线程id作为下标指定标记元素位置。</p>
 </blockquote>
 <p>在得到实际并发数后，再通过与 cpu核心数、cpu频率 进行计算得出权重值，定时的发送给 gateway 用于选择最优 provider。</p>
 <p>gateway 将收到并发数作为负载均衡还远远不够，如果一个服务由于机器资源不足、网络故障等原因也将会导致请求异常，因此请求耗时也是一个考量负载的指标。由于网络消耗的存在，则在 gateway 端做请求耗时的收集，将并发数与耗时进行结合完成负载均衡策略。</p>
-<p><img src="/imgs/middleware-competition-5/adaptive-loadbalance-architecture.png" alt="adaptive-loadbalance-architecture" title="最终架构图"></p>
+<p><img src="/img/middleware-competition-5/adaptive-loadbalance-architecture.png" alt="adaptive-loadbalance-architecture" title="最终架构图"></p>
 <h2 id="复赛实现一个进程内基于队列的消息持久化存储引擎">复赛：《实现一个进程内基于队列的消息持久化存储引擎》</h2>
 <h3 id="赛题分析-1">赛题分析</h3>
 <p>赛题要求实现一个进程内消息持久化的存储引擎，提供了 4g 的堆内存，2g 的堆外内存，300g 的SSD磁盘。过程分别为发送、查询聚合消息、查询聚合结果，串行执行三个步骤，每个步骤需要在 30 分钟内完成，以每个阶段的 发送数\时间 总和为成绩。</p>
@@ -731,11 +730,11 @@ public static String getAddress(URL url) {
 <p>在查询阶段为了更好的利用资源，使用 lru缓存 保存查询数据。</p>
 </li>
 </ol>
-<p><img src="/imgs/middleware-competition-5/data_write.png" alt="data_write" title="存储组件"></p>
+<p><img src="/img/middleware-competition-5/data_write.png" alt="data_write" title="存储组件"></p>
 <p>发送阶段完成后磁盘文件组织如下，以时间戳定位文件，再以数值选择文件内的数据块（图中以 8192 为时间戳分片大小，4096 为数值为片大小，均为 2 的幂次方，以位运算即可完成路由）。</p>
-<p><img src="/imgs/middleware-competition-5/file_store.png" alt="file_store" title="文件编排"></p>
+<p><img src="/img/middleware-competition-5/file_store.png" alt="file_store" title="文件编排"></p>
 <p>如查询条件为 <code>{ t: [8000, 22000], a: [5000, 20000] }</code>，则选择文件 hash-0、hash-1、hash-2 为目标文件，分别对文件内的 index-1、index-2、index-3、index-4 数据块进行检索，其中 <code>hash-1 index-2</code>、<code>hash-1 index-3</code> 为中间数据，无需对数据进行条件过滤。</p>
-<p><img src="/imgs/middleware-competition-5/data_read.png" alt="data_read"></p>
+<p><img src="/img/middleware-competition-5/data_read.png" alt="data_read"></p>
 <h3 id="实现">实现</h3>
 <p>其实复赛的设计思路并不难，主要的难点是分片大小的选择，如何更好的利用内存不发生 OOM，以及利用多线程提升效率。</p>
 <p>在写入阶段，使用内存进行数据的缓存，利用时间戳的有序性检测是否进入下个文件数据集，由于需要对全量数据都进行哈希，采用了位移操作提升效率。</p>
@@ -799,9 +798,9 @@ public static String getAddress(URL url) {
 <h2 id="总结">总结</h2>
 <p>在这次比赛中，主要收获了在系统设计上的锻炼，分析问题也更加全面了，以及在 <code>无锁编程</code>、<code>NIO处理</code>、<code>编写高性能代码</code> 方面的进步。如通过 <code>async-profiler</code> 发现乐观锁在大量请求下的性能问题，并转变思路使用无锁编程。了解到 <code>MappedByteBuffer</code> 在大量写入的情况下会频繁发生 pageCache 的 <code>flush</code>，可以先准备好 <code>ByteBuffer</code> 保存数据，之后再将整个 <code>ByteBuffer</code> 写入到 <code>MappedByteBuffer</code> 中。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -903,18 +902,28 @@ public static String getAddress(URL url) {
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/shenandoah-gc/" rel="prev">Shenandoah GC 介绍</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/scrapy/" rel="next">爬虫与反爬虫</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

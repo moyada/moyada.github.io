@@ -455,7 +455,7 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">初识 Docker</a></li>
       </ul>
@@ -464,13 +464,12 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -545,10 +544,10 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴起，很好的解决了 <code>应用程序</code> 与 <code>运行环境</code> 的不一致问题。</p>
+		    <div class="article-style">
+		      <p>随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴起，很好的解决了 <code>应用程序</code> 与 <code>运行环境</code> 的不一致问题。</p>
 <p>在 Docker 的管理里，应用程序时以容器的方式运行的，一个容器其实就是一个进程，通过 Namespaces 限制进程所能查看到的信息，并且使用 CGroups 限制进程所能使用的资源，挂载 rootfs 配置容器的可操作的数据，使用指定网络模型进行容器间通信。</p>
 <p>Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行步骤等一系列正常发布流程，通过 <code>docker build path</code> 命令将操作打包成一个 Image 镜像 (可在 <code>Dockerfile</code> 同目录下增加 <code>.dockerignore</code> 设置排除规则，加快打包速度)，并执行 Dockerfile 的构建命令。</p>
 <p>镜像构建完毕，便可以使用 <code>docker run</code> 命令将镜像以 Container 容器的形式构建并启用，执行 DockerFile 配置的运行命令。</p>
@@ -557,9 +556,9 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
 <p><a href="https://draveness.me/docker">https://draveness.me/docker</a></p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -657,18 +656,21 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/bak/performance/" rel="prev">性能分析</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+    </div>
   </div>
 </div>
 

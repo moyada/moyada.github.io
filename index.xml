@@ -5,12 +5,20 @@
     <link>https://moyada.github.io/</link>
       <atom:link href="https://moyada.github.io/index.xml" rel="self" type="application/rss+xml" />
     <description>疯狂的厨子</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 21 Mar 2020 19:26:03 +0800</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Mon, 23 Mar 2020 00:28:42 +0800</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title>疯狂的厨子</title>
       <link>https://moyada.github.io/</link>
     </image>
+    
+    <item>
+      <title>爬虫与反爬虫</title>
+      <link>https://moyada.github.io/post/scrapy/</link>
+      <pubDate>Mon, 23 Mar 2020 00:28:42 +0800</pubDate>
+      <guid>https://moyada.github.io/post/scrapy/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Demo</title>
@@ -42,7 +50,7 @@
 &lt;p&gt;初赛的题目是在 
 &lt;a href=&#34;http://dubbo.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Dubbo&lt;/a&gt; 之上进行的插件开发，对参与者对于 Dubbo 的调用过程有一定的要求。官方在 gateway 端提供了 CallbackListenerImpl、TestClientFilter、UserLoadBalance 供开发。在 provider 端提供了 CallbackServiceImpl、TestRequestLimiter、TestServerFilter 供开发。&lt;/p&gt;
 &lt;p&gt;将这些组件结合起来就形成了基本的调用链路。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/middleware-competition-5/adaptive-loadbalance.png&#34; alt=&#34;adaptive-loadbalance&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/middleware-competition-5/adaptive-loadbalance.png&#34; alt=&#34;adaptive-loadbalance&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;目标&#34;&gt;目标&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -122,14 +130,14 @@ public static String getAddress(URL url) {
 &lt;p&gt;根据评测代码可知，消费服务在程序内部使用了 &lt;code&gt;Semaphore&lt;/code&gt; 对请求进行了拦截，实际可容纳的请求小于线程数，并且并发数随着时间也在发生变化。&lt;/p&gt;
 &lt;p&gt;如果单位时间内接收的请求数大于实际并发数时，则多余的请求将会被置为等待状态。当请求数持续大于并发数时，会导致请求堆积造成大量超时。因此在 Dubbo 中有个超时检测机制 &lt;code&gt;org.apache.dubbo.remoting.exchange.support.DefaultFuture##TIME_OUT_TIMER&lt;/code&gt;，这是一个用于中止任务的时间轮，当一个请求进入执行阶段时，它将会被放入时间轮，在一定时间后结束请求返回错误信息。&lt;/p&gt;
 &lt;p&gt;因此需使得请求在时间轮触发之前执行，这样才能保证不会造成异常响应。在这里我还是使用到了前面获取的线程池，由于线程在线程池中空闲的状态为 &lt;code&gt;WAITING&lt;/code&gt; 或 &lt;code&gt;TIMED_WAITING&lt;/code&gt;，在执行过程中工作线程的状态可能为 &lt;code&gt;RUNNABLE&lt;/code&gt;、&lt;code&gt;BLOCKED&lt;/code&gt;、&lt;code&gt;WAITING&lt;/code&gt;、&lt;code&gt;TIMED_WAITING&lt;/code&gt;，空闲线程与工作线程存在状态重叠，因而无法将 &lt;code&gt;getActiveCount&lt;/code&gt; 用作并发数。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/middleware-competition-5/thread_state.png&#34; alt=&#34;thread_state&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/middleware-competition-5/thread_state.png&#34; alt=&#34;thread_state&#34;&gt;&lt;/p&gt;
 &lt;p&gt;因此在执行阶段 Filter 前后对当前线程进行标记，并放入一个 placeHolder 中保存，在退出 Filter 时移除标记。由此一来 placeHolder 中就只存在工作中的线程，在除去 &lt;code&gt;BLOCKED&lt;/code&gt; 和 &lt;code&gt;WAITING&lt;/code&gt; 状态的线程即为并发数。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;为了避免并发冲突影响效率，采用无锁编程，预先创建好数组，利用线程id作为下标指定标记元素位置。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;在得到实际并发数后，再通过与 cpu核心数、cpu频率 进行计算得出权重值，定时的发送给 gateway 用于选择最优 provider。&lt;/p&gt;
 &lt;p&gt;gateway 将收到并发数作为负载均衡还远远不够，如果一个服务由于机器资源不足、网络故障等原因也将会导致请求异常，因此请求耗时也是一个考量负载的指标。由于网络消耗的存在，则在 gateway 端做请求耗时的收集，将并发数与耗时进行结合完成负载均衡策略。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/middleware-competition-5/adaptive-loadbalance-architecture.png&#34; alt=&#34;adaptive-loadbalance-architecture&#34; title=&#34;最终架构图&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/middleware-competition-5/adaptive-loadbalance-architecture.png&#34; alt=&#34;adaptive-loadbalance-architecture&#34; title=&#34;最终架构图&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;复赛实现一个进程内基于队列的消息持久化存储引擎&#34;&gt;复赛：《实现一个进程内基于队列的消息持久化存储引擎》&lt;/h2&gt;
 &lt;h3 id=&#34;赛题分析-1&#34;&gt;赛题分析&lt;/h3&gt;
 &lt;p&gt;赛题要求实现一个进程内消息持久化的存储引擎，提供了 4g 的堆内存，2g 的堆外内存，300g 的SSD磁盘。过程分别为发送、查询聚合消息、查询聚合结果，串行执行三个步骤，每个步骤需要在 30 分钟内完成，以每个阶段的 发送数\时间 总和为成绩。&lt;/p&gt;
@@ -148,11 +156,11 @@ public static String getAddress(URL url) {
 &lt;p&gt;在查询阶段为了更好的利用资源，使用 lru缓存 保存查询数据。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/middleware-competition-5/data_write.png&#34; alt=&#34;data_write&#34; title=&#34;存储组件&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/middleware-competition-5/data_write.png&#34; alt=&#34;data_write&#34; title=&#34;存储组件&#34;&gt;&lt;/p&gt;
 &lt;p&gt;发送阶段完成后磁盘文件组织如下，以时间戳定位文件，再以数值选择文件内的数据块（图中以 8192 为时间戳分片大小，4096 为数值为片大小，均为 2 的幂次方，以位运算即可完成路由）。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/middleware-competition-5/file_store.png&#34; alt=&#34;file_store&#34; title=&#34;文件编排&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/middleware-competition-5/file_store.png&#34; alt=&#34;file_store&#34; title=&#34;文件编排&#34;&gt;&lt;/p&gt;
 &lt;p&gt;如查询条件为 &lt;code&gt;{ t: [8000, 22000], a: [5000, 20000] }&lt;/code&gt;，则选择文件 hash-0、hash-1、hash-2 为目标文件，分别对文件内的 index-1、index-2、index-3、index-4 数据块进行检索，其中 &lt;code&gt;hash-1 index-2&lt;/code&gt;、&lt;code&gt;hash-1 index-3&lt;/code&gt; 为中间数据，无需对数据进行条件过滤。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/middleware-competition-5/data_read.png&#34; alt=&#34;data_read&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/middleware-competition-5/data_read.png&#34; alt=&#34;data_read&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;实现&#34;&gt;实现&lt;/h3&gt;
 &lt;p&gt;其实复赛的设计思路并不难，主要的难点是分片大小的选择，如何更好的利用内存不发生 OOM，以及利用多线程提升效率。&lt;/p&gt;
 &lt;p&gt;在写入阶段，使用内存进行数据的缓存，利用时间戳的有序性检测是否进入下个文件数据集，由于需要对全量数据都进行哈希，采用了位移操作提升效率。&lt;/p&gt;
@@ -257,12 +265,12 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 &lt;p&gt;由于通常情况下并不需要使用读屏障来获取地址，Shenandoah GC 又引入了 &lt;code&gt;slow path&lt;/code&gt; 的设计。&lt;/p&gt;
 &lt;p&gt;它的作用是，只有当垃圾回收进行中，并且对象处于 &lt;code&gt;collection set&lt;/code&gt; 中，那么程序才会使用 读屏障 来获取对象地址。&lt;/p&gt;
 &lt;p&gt;同时 Shenandoah GC 还会对字节码进行优化，以确保程序正确的情况下减少用读屏障获取地址的使用。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/concurrent-copy.png&#34; alt=&#34;concurrent-copy&#34; title=&#34;并发修改&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/shenandoah-gc/concurrent-copy.png&#34; alt=&#34;concurrent-copy&#34; title=&#34;并发修改&#34;&gt;&lt;/p&gt;
 &lt;p&gt;由于需要使用额外的空间来存储 &lt;code&gt;brooks pointers&lt;/code&gt;，则必须使用 64 位地址，同时堆空间也会增加 3% ~ 15% 的开销，而 CAS 和 读屏障 则产生 2% ~ 20% 的吞吐量下降。&lt;/p&gt;
 &lt;h3 id=&#34;空间划为&#34;&gt;空间划为&lt;/h3&gt;
 &lt;p&gt;Shenandoah 与 G1 类似也是以 Region 来划分堆内存，但是不进行分代标记。&lt;/p&gt;
 &lt;p&gt;每个 Region 对应一个数组用来表示有哪些 Region 存在对象指向自身 Region 中的对象，这就避免了 G1 在年轻代之间的引用关系需要扫描整个年轻代甚至是堆的情况。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/region-incoming.png&#34; alt=&#34;region-incoming&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/shenandoah-gc/region-incoming.png&#34; alt=&#34;region-incoming&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;numa&#34;&gt;NUMA&lt;/h3&gt;
 &lt;p&gt;与 ZGC 相同，利用 NUMA 架构的 CPU 亲和的内存分配策略，在分配对象时使用线程所处的 CPU 缓存，并且使 应用线程 与 GC线程 处于同一核心线程下，共享同一个 Region 的数据。&lt;/p&gt;
 &lt;h2 id=&#34;触发策略&#34;&gt;触发策略&lt;/h2&gt;
@@ -288,7 +296,7 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&#34;回收过程&#34;&gt;回收过程&lt;/h2&gt;
 &lt;p&gt;Shenandoah 的回收过程与 G1 类似，都是基于 Region 的收集策略，一般情况下将垃圾回收声明周期分解成数个阶段执行。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/shenandoah-gc-cycle.png&#34; alt=&#34;shenandoah-gc-cycle&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/shenandoah-gc/shenandoah-gc-cycle.png&#34; alt=&#34;shenandoah-gc-cycle&#34;&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;初始标记&lt;/li&gt;
 &lt;/ol&gt;

@@ -453,7 +453,7 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">性能分析</a></li>
       </ul>
@@ -509,13 +509,12 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -590,10 +589,10 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h1 id="cpu相关">cpu相关</h1>
+		    <div class="article-style">
+		      <h1 id="cpu相关">cpu相关</h1>
 <h2 id="uptime">uptime</h2>
 <p>查看系统平均负载状态，以 cpu 个数为标准，通过 <code>cat /proc/cpuinfo | grep 'physical id' | sort | uniq | wc -l</code> 可获取 cpu 个数，如果负载过高则可根据 cpu 使用率判断是由于存在大量 cpu 调用还是 I/O 中断。</p>
 <h2 id="top">top</h2>
@@ -660,9 +659,9 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
 <p>检测端口是否开放工具
 <code>nc -vv 192.168.42.128 1521</code></p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -760,25 +759,28 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/bak/multi-thread/" rel="prev">上下文切换</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/bak/docker/" rel="next">初识 Docker</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/bak/docker/" rel="next">初识 Docker</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

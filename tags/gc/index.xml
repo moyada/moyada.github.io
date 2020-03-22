@@ -51,12 +51,12 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 &lt;p&gt;由于通常情况下并不需要使用读屏障来获取地址，Shenandoah GC 又引入了 &lt;code&gt;slow path&lt;/code&gt; 的设计。&lt;/p&gt;
 &lt;p&gt;它的作用是，只有当垃圾回收进行中，并且对象处于 &lt;code&gt;collection set&lt;/code&gt; 中，那么程序才会使用 读屏障 来获取对象地址。&lt;/p&gt;
 &lt;p&gt;同时 Shenandoah GC 还会对字节码进行优化，以确保程序正确的情况下减少用读屏障获取地址的使用。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/concurrent-copy.png&#34; alt=&#34;concurrent-copy&#34; title=&#34;并发修改&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/shenandoah-gc/concurrent-copy.png&#34; alt=&#34;concurrent-copy&#34; title=&#34;并发修改&#34;&gt;&lt;/p&gt;
 &lt;p&gt;由于需要使用额外的空间来存储 &lt;code&gt;brooks pointers&lt;/code&gt;，则必须使用 64 位地址，同时堆空间也会增加 3% ~ 15% 的开销，而 CAS 和 读屏障 则产生 2% ~ 20% 的吞吐量下降。&lt;/p&gt;
 &lt;h3 id=&#34;空间划为&#34;&gt;空间划为&lt;/h3&gt;
 &lt;p&gt;Shenandoah 与 G1 类似也是以 Region 来划分堆内存，但是不进行分代标记。&lt;/p&gt;
 &lt;p&gt;每个 Region 对应一个数组用来表示有哪些 Region 存在对象指向自身 Region 中的对象，这就避免了 G1 在年轻代之间的引用关系需要扫描整个年轻代甚至是堆的情况。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/region-incoming.png&#34; alt=&#34;region-incoming&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/shenandoah-gc/region-incoming.png&#34; alt=&#34;region-incoming&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;numa&#34;&gt;NUMA&lt;/h3&gt;
 &lt;p&gt;与 ZGC 相同，利用 NUMA 架构的 CPU 亲和的内存分配策略，在分配对象时使用线程所处的 CPU 缓存，并且使 应用线程 与 GC线程 处于同一核心线程下，共享同一个 Region 的数据。&lt;/p&gt;
 &lt;h2 id=&#34;触发策略&#34;&gt;触发策略&lt;/h2&gt;
@@ -82,7 +82,7 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&#34;回收过程&#34;&gt;回收过程&lt;/h2&gt;
 &lt;p&gt;Shenandoah 的回收过程与 G1 类似，都是基于 Region 的收集策略，一般情况下将垃圾回收声明周期分解成数个阶段执行。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/shenandoah-gc-cycle.png&#34; alt=&#34;shenandoah-gc-cycle&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/shenandoah-gc/shenandoah-gc-cycle.png&#34; alt=&#34;shenandoah-gc-cycle&#34;&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;初始标记&lt;/li&gt;
 &lt;/ol&gt;

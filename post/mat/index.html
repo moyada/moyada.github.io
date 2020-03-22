@@ -504,7 +504,7 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</a></li>
       </ul>
@@ -538,13 +538,12 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -628,10 +627,10 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。</p>
+		    <div class="article-style">
+		      <p>使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。</p>
 <p>通过jmap -dump:format=b,file=[file_name]] [pid] 生成<code>hprof</code>文件</p>
 <p>在Eclipse Marketplace安装 Memory Analyzer，打开dump文件</p>
 <ul>
@@ -675,9 +674,9 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
 <a href="https://zhuanlan.zhihu.com/p/21741364" target="_blank" rel="noopener">追踪 Netty 异常占用堆外内存的经验分享</a></p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -779,25 +778,28 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/jvm/" rel="prev">Java 虚拟机总结</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/concurrenthashmap/" rel="next">ConcurrentHashMap 原理分析</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/concurrenthashmap/" rel="next">ConcurrentHashMap 原理分析</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

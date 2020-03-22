@@ -500,7 +500,7 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">Java 基准测试框架(JMH)</a></li>
       </ul>
@@ -519,13 +519,12 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -609,10 +608,10 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致结果的偏差。
+		    <div class="article-style">
+		      <p>在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致结果的偏差。
 所以，为了在大程度上避免这种偏差问题，则会用到OpenJDK的性能基准测试项目
 <a href="http://openjdk.java.net/projects/code-tools/jmh/" target="_blank" rel="noopener">JMH</a>。</p>
 <h2 id="项目构建">项目构建</h2>
@@ -723,9 +722,9 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
 <p><a href="https://blog.csdn.net/lxbjkben/article/details/79410740">https://blog.csdn.net/lxbjkben/article/details/79410740</a></p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -827,25 +826,28 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/git-filter/" rel="prev">Git 历史记录清洗</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/domain-driven-design/" rel="next">领域驱动设计学习</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/domain-driven-design/" rel="next">领域驱动设计学习</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

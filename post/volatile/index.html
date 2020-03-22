@@ -518,7 +518,7 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">volatile 浅析</a></li>
       </ul>
@@ -534,13 +534,12 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -624,10 +623,10 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h2 id="概念">概念</h2>
+		    <div class="article-style">
+		      <h2 id="概念">概念</h2>
 <p>volatile原语保障了多线程下变量的原子性、可见性、有序性。</p>
 <h2 id="原子性">原子性</h2>
 <p>在32位虚拟机下对<code>long</code>、<code>double</code>类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证不存在中间值，但是由于读取的一刻其他线程也有可能改变值，所以复合操作无法达到原子性。</p>
@@ -655,9 +654,9 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
 <p>最经典的场景有double check单例，由于重排序，可能出现对象尚未创建成功，但是对象引用缺被赋值使用，造成空指针异常。</p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -759,25 +758,28 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/java-lock/" rel="prev">Java 锁机制</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/jvm-gc/" rel="next">Java GC过程</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/jvm-gc/" rel="next">Java GC过程</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

@@ -459,7 +459,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">数据库设计</a></li>
       </ul>
@@ -468,13 +468,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -549,10 +548,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <h1 id="分表方法">分表方法</h1>
+		    <div class="article-style">
+		      <h1 id="分表方法">分表方法</h1>
 <p>在数据库表使用过程中，为了减小数据库服务器的负担、缩短查询时间，常常会考虑做分表设计。分表分两种，一种是纵向分表（将本来可以在同一个表的内容，人为划分存储在为多个不同结构的表）和横向分表（把大的表结构，横向切割为同样结构的不同表）。</p>
 <p>其中，纵向分表常见的方式有根据活跃度分表、根据重要性分表等。其主要解决问题如下：</p>
 <p>表与表之间资源争用问题；
@@ -615,9 +614,9 @@ order by / group by 字段包括在索引当中减少排序，效率会更高。
 mysql profile
 mysql explain</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -715,25 +714,28 @@ mysql explain</p>
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/bak/scala/" rel="prev">scala学习笔记</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/bak/lua/" rel="next">Lua学习笔记</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/bak/lua/" rel="next">Lua学习笔记</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

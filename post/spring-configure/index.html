@@ -500,7 +500,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">Spring 自定义配置加载</a></li>
       </ul>
@@ -520,13 +520,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -610,10 +609,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spring 中的。</p>
+		    <div class="article-style">
+		      <p>Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spring 中的。</p>
 <h2 id="1-xml-配置">1. xml 配置</h2>
 <p>这是早期 Spring 提供的配置方式，需要与 <code>xsd</code> 文件配合使用。</p>
 <p>文件的解析是需要通过实现 <code>org.springframework.beans.factory.xml.NamespaceHandlerSupport</code> 提供解析器，在 <code>init</code> 方法中调用 <code>registerBeanDefinitionParser</code> 将 xsd元素名称 与 元素解析器 进行绑定。</p>
@@ -637,9 +636,9 @@
 <p>结合了 <code>Enable 注解</code> 和 <code>自动装配</code> 的方式，能够更加灵活的配置 Configuration。实现方式为提供 Enable注解，并且在注解内配置 @Import <code>ImportSelector</code>，通过 ImportSelector 返回 Configuration 列表提供给 Spring 注册，可以根据条件控制返回的 Configuration，又或是提供类似 自动装配 的功能。</p>
 <p>例如 <code>@EnableAutoConfiguration</code>, <code>@EnableAsync</code>, <code>@EnableCaching</code>。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -741,25 +740,28 @@
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/java-annotation-processor/" rel="prev">Java 注解处理器</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/prometheus-grafana/" rel="next">使用 Prometheus &#43; Grafana 搭建监控系统</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/prometheus-grafana/" rel="next">使用 Prometheus &#43; Grafana 搭建监控系统</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

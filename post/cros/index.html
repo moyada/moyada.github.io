@@ -502,7 +502,7 @@
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">通过 CROS 协议解决跨域问题</a></li>
       </ul>
@@ -511,13 +511,12 @@
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -601,10 +600,10 @@
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请求的话可以利用 Json 来解决。</p>
+		    <div class="article-style">
+		      <p>在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请求的话可以利用 Json 来解决。</p>
 <p>对于非 GET 请求的话就可以采用 <code>CORS</code> 协议来解决了。CORS 是一个W3C标准，全称是&quot;跨域资源共享&rdquo;（Cross-origin resource sharing）。
 它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而解决了只能同源使用的限制，具体详解参考
 <a href="http://www.ruanyifeng.com/blog/2016/04/cors.html" target="_blank" rel="noopener">跨域资源共享 CORS 详解</a>。</p>
@@ -690,9 +689,9 @@ public class CorsConfigurerAdapter extends WebMvcConfigurerAdapter {
 <a href="http://spring.io/guides/gs/rest-service-cors" target="_blank" rel="noopener">Spring官方文档</a></p>
 </blockquote>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -800,25 +799,28 @@ public class CorsConfigurerAdapter extends WebMvcConfigurerAdapter {
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/maven/" rel="prev">Maven 基本操作</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/jvm-param/" rel="next">JVM 参数</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/jvm-param/" rel="next">JVM 参数</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 

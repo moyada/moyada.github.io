@@ -502,7 +502,7 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
 
 
   <div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">Java GC过程</a></li>
       </ul>
@@ -530,13 +530,12 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
       
     </div>
 
-    <div class="d-none d-xl-block col-md-1 col-xl-1">
-    </div>
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
 
-    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
-	<article class="article">
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
 
-	  
+		  
 
 
 
@@ -620,10 +619,10 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
 
 
 
-	  <div class="article-container">
+		  
 
-	    <div class="article-style">
-	      <p>由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。</p>
+		    <div class="article-style">
+		      <p>由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。</p>
 <h2 id="stop-the-world">Stop-the-World</h2>
 <p>在 HotSpot 虚拟机中，Stop-the-World 也被称之为 safepoint，在此阶段内，所有运行 Java 代码与 JVM 交互的应用线程将会被挂起。</p>
 <p>以便在执行 GC 复制算法、栈上替换代码、JIT 去优化、清除 code cache、重定义 Class、偏向锁的去除、debug 操作等任务时保证数据的一致性。</p>
@@ -708,9 +707,9 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
 <p>除手动触发因素外，<code>Full GC</code> 的产生通常是由老年代空间不足、方法区空间不足所引起。</p>
 <p>所有的垃圾回收算法都会在 Full GC 时暂停应用线程，因此在对延迟要求高的程序中，Full GC 是应该尽力避免的。</p>
 
-	    </div>
-	  </div>
-	</article>
+		    </div>
+		  
+		</article>
 	</main>
 </div>
 
@@ -818,25 +817,28 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
 
 <div class="article-widget">
   
-<div class="post-nav">
-
-  <div style="display:inline">
+<div class="post-nav row">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
       <a style="color: rgb(80,150,255)" href="/post/volatile/" rel="prev">volatile 浅析</a>
     </span>
-    <span style="padding-right: 60%"></span>
   
-  
-  
-  
-    <span class="post-nav-item">
-      <span class="meta-nav">下一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/default-method/" rel="next">java8 default method 的使用见解</a>
-    </span>
-  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+      
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/default-method/" rel="next">java8 default method 的使用见解</a>
+        </span>
+      
+    </div>
   </div>
 </div>
 
