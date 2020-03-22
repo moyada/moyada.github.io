@@ -31,7 +31,7 @@
   <meta name="description" content="moyada">
 
   
-  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/tags/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/tags/jvm/">
 
   
 
@@ -210,14 +210,14 @@
 
 
   
-  <link rel="alternate" href="/tags/index.xml" type="application/rss+xml" title="疯狂的厨子">
+  <link rel="alternate" href="/tags/jvm/index.xml" type="application/rss+xml" title="疯狂的厨子">
   
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="https://moyada.github.io/tags/">
+  <link rel="canonical" href="https://moyada.github.io/tags/jvm/">
 
   
   
@@ -231,8 +231,8 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="疯狂的厨子">
-  <meta property="og:url" content="https://moyada.github.io/tags/">
-  <meta property="og:title" content="Tags | 疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/tags/jvm/">
+  <meta property="og:title" content="jvm | 疯狂的厨子">
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
@@ -253,7 +253,7 @@
 
 
 
-  <title>Tags | 疯狂的厨子</title>
+  <title>jvm | 疯狂的厨子</title>
 
 </head>
 
@@ -468,7 +468,7 @@
     
   
 <div class="universal-wrapper pt-3">
-  <h1>Tags</h1>
+  <h1>jvm</h1>
 
   
 
@@ -486,18 +486,14 @@
     
     
     <div>
-      <h2><a href="/tags/gc/" >gc</a></h2>
+      <h2><a href="/post/jvm-gc/" >Java GC过程</a></h2>
       <div class="article-style">
         
-      </div>
-    </div>
-  
-    
-    
-    
-    <div>
-      <h2><a href="/tags/jvm/" >jvm</a></h2>
-      <div class="article-style">
+          由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。
+Stop-the-World 在 HotSpot 虚拟机中，Stop-the-World 也被称之为 safepoint，在此阶段内，所有运行 Java 代码与 JVM 交互的应用线程将会被挂起。
+以便在执行 GC 复制算法、栈上替换代码、JIT 去优化、清除 code cache、重定义 Class、偏向锁的去除、debug 操作等任务时保证数据的一致性。
+YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过程中最频繁的GC。
+原因及过程 YoungGC 的产生原因主要是eden区内存不足以分配新对象或者剩余空间达到GC触发条件。 在发生 GC 时，虚拟机会将 eden 区和 survival from 区中存活的对象拷贝进 survival to 区，清理其余对象。
         
       </div>
     </div>

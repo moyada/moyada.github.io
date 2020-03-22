@@ -5,7 +5,7 @@
     <link>https://moyada.github.io/post/</link>
       <atom:link href="https://moyada.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Posts</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 21 Mar 2020 19:26:03 +0800</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sun, 15 Jul 2018 12:06:05 +0000</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title>Posts</title>
@@ -13,42 +13,94 @@
     </image>
     
     <item>
-      <title>Demo</title>
-      <link>https://moyada.github.io/post/demo/</link>
-      <pubDate>Sat, 21 Mar 2020 19:26:03 +0800</pubDate>
-      <guid>https://moyada.github.io/post/demo/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Test</title>
-      <link>https://moyada.github.io/post/test/</link>
-      <pubDate>Sat, 21 Mar 2020 16:44:57 +0800</pubDate>
-      <guid>https://moyada.github.io/post/test/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>today</title>
-      <link>https://moyada.github.io/post/today/</link>
-      <pubDate>Sat, 21 Mar 2020 16:44:57 +0800</pubDate>
-      <guid>https://moyada.github.io/post/today/</guid>
-      <description>&lt;h1 id=&#34;234&#34;&gt;234&lt;/h1&gt;
-&lt;h2 id=&#34;a&#34;&gt;A&lt;/h2&gt;
-&lt;p&gt;dsa&lt;/p&gt;
-&lt;p&gt;dsa
-d
-ad&lt;/p&gt;
-&lt;h2 id=&#34;b&#34;&gt;B&lt;/h2&gt;
-&lt;p&gt;sad
-sa
-d
-abcde&lt;/p&gt;
-&lt;p&gt;dsadsad&lt;/p&gt;
-&lt;p&gt;d&lt;/p&gt;
-&lt;p&gt;dsadsa&lt;/p&gt;
-&lt;h2 id=&#34;c&#34;&gt;C&lt;/h2&gt;
-&lt;p&gt;dsadas&lt;/p&gt;
+      <title>Java GC过程</title>
+      <link>https://moyada.github.io/post/jvm-gc/</link>
+      <pubDate>Sun, 15 Jul 2018 12:06:05 +0000</pubDate>
+      <guid>https://moyada.github.io/post/jvm-gc/</guid>
+      <description>&lt;p&gt;由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。&lt;/p&gt;
+&lt;h2 id=&#34;stop-the-world&#34;&gt;Stop-the-World&lt;/h2&gt;
+&lt;p&gt;在 HotSpot 虚拟机中，Stop-the-World 也被称之为 safepoint，在此阶段内，所有运行 Java 代码与 JVM 交互的应用线程将会被挂起。&lt;/p&gt;
+&lt;p&gt;以便在执行 GC 复制算法、栈上替换代码、JIT 去优化、清除 code cache、重定义 Class、偏向锁的去除、debug 操作等任务时保证数据的一致性。&lt;/p&gt;
+&lt;h2 id=&#34;younggc&#34;&gt;YoungGC&lt;/h2&gt;
+&lt;p&gt;发生在新生代的GC称为 &lt;code&gt;Young GC&lt;/code&gt;，也叫 YGC，是 JVM 运行过程中最频繁的GC。&lt;/p&gt;
+&lt;h3 id=&#34;原因及过程&#34;&gt;原因及过程&lt;/h3&gt;
+&lt;p&gt;YoungGC 的产生原因主要是eden区内存不足以分配新对象或者剩余空间达到GC触发条件。
+在发生 GC 时，虚拟机会将 &lt;code&gt;eden&lt;/code&gt; 区和 &lt;code&gt;survival from&lt;/code&gt; 区中存活的对象拷贝进 &lt;code&gt;survival to&lt;/code&gt; 区，清理其余对象。&lt;/p&gt;
+&lt;h3 id=&#34;parnew&#34;&gt;ParNew&lt;/h3&gt;
+&lt;p&gt;需要STW暂停，找出活跃对象，标记为 &lt;code&gt;reachable&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;从 &lt;code&gt;GC ROOTs&lt;/code&gt; 找出活跃的对象，还要根据 &lt;code&gt;CardTable&lt;/code&gt; 的 &lt;code&gt;Dirty&lt;/code&gt; 标记 (晋升至老年代，并且引用新生代对象) 找出老年代引用的新生代对象。&lt;/p&gt;
+&lt;p&gt;首先检查老年代的连续可用空间是否可容纳存活对象，如果小于或者不允许担保失败，则需要进行 Full GC。&lt;/p&gt;
+&lt;p&gt;检查空间足够则将存活对象进行复制，初始化 MarkWork，将根据年龄选择拷贝对象的目标空间。&lt;/p&gt;
+&lt;h3 id=&#34;g1&#34;&gt;G1&lt;/h3&gt;
+&lt;p&gt;大体步骤与ParNew类似，也需要 SWT 暂停。
+不同的是，G1的 survivor 只有一个区域，并且使用 &lt;code&gt;RegionSet&lt;/code&gt; 来维护块之间的引用。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;G1存在一种 &lt;code&gt;Mixed GC&lt;/code&gt;，除了回收新生代之外，还会回收压缩部分老年代。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;old-gc&#34;&gt;Old GC&lt;/h2&gt;
+&lt;p&gt;属于老年代GC的统称，也叫 &lt;code&gt;Old GC&lt;/code&gt;，一般都是伴随着 &lt;code&gt;Young GC&lt;/code&gt; ，主要目的是释放老年代空间，并将相邻对象进行压缩，防止过多的内存碎片。&lt;/p&gt;
+&lt;h3 id=&#34;原因及过程-1&#34;&gt;原因及过程&lt;/h3&gt;
+&lt;p&gt;OldGC的产生原因为YoungGC所需的堆内存空间不足、方法区空间不足、堆内空间达到回收阀值，也有可能人为触发。
+发生GC时，标记所有存活对象，可将存活对象进行压缩，对不再使用的类及其子类进行卸载，清理CodeCache，清理弱引用，常量池的清理。&lt;/p&gt;
+&lt;h3 id=&#34;cms&#34;&gt;CMS&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;初始标记
+暂停所有应用线程，从 &lt;code&gt;GC ROOTs&lt;/code&gt; 标记出老年代边缘的存活对象。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;并发标记
+根据标记对象进行扫描，查找所有可到达对象。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重新标记
+并发地对上一阶段中引用关系变化的对象进行再标记，然后再暂停应用线程，最后检查是否有发生引用变化。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;并发清理
+对未标记的对象进行收集，释放空间至空闲列表，此阶段可能将卸载此类。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;并发重置
+重新计算堆空间，清理数据，为下一次 GC 周期做准备。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/cms.html#CJAGIIEJ&#34;&gt;https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/cms.html#CJAGIIEJ&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;g1-1&#34;&gt;G1&lt;/h3&gt;
+&lt;p&gt;G1 的收集虽然也分为新生代和老年代，但在步骤上其实是有交叉的地方&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;初始标记
+需要暂停应用线程，标记出 &lt;code&gt;Roots&lt;/code&gt;，暂停时间较短，可能会根据 Region 优先级选择执行，从 &lt;code&gt;GC ROOTs&lt;/code&gt; 标记出边缘的存活对象。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;根区域扫描
+从标记的存活区域中查找出老年代的引用并进行标记，为了保证数据的正确，在下一次新生代 GC 可能发生之前此阶段必须完成.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;并发标记
+根据标记对象进行扫描，查找出所有可到达对象，有可能被 &lt;code&gt;Young GC&lt;/code&gt; 打断。过程中还会涉及 &lt;code&gt;SATB&lt;/code&gt;，记录引用关系变化。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;再次标记
+需要 STW，将上一阶段中引用关系发生变化的对象进行再标记。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;清理
+整理对象、更新 &lt;code&gt;RSets&lt;/code&gt; 和将部分老年代加入下次回收周期，需要暂停应用线程，对于清空 Region 加入空闲列表的操作可以并发进行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.oracle.com/technetwork/articles/java/g1gc-1984535.html&#34;&gt;https://www.oracle.com/technetwork/articles/java/g1gc-1984535.html&lt;/a&gt;
+&lt;a href=&#34;https://docs.oracle.com/javase/9/gctuning/garbage-first-garbage-collector.htm#JSGCT-GUID-F1BE86FA-3EDC-4D4F-BDB4-4B044AD83180&#34;&gt;https://docs.oracle.com/javase/9/gctuning/garbage-first-garbage-collector.htm#JSGCT-GUID-F1BE86FA-3EDC-4D4F-BDB4-4B044AD83180&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;full-gc&#34;&gt;Full GC&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;Full GC&lt;/code&gt; 是对整个堆进行清理的回收算法，包括新生代和老年代。&lt;/p&gt;
+&lt;p&gt;在 CMS 中可指定使用并发的 &lt;code&gt;Full GC&lt;/code&gt;，在 JDK10 中 G1 对 &lt;code&gt;Full GC&lt;/code&gt; 也改进为了并发模式。&lt;/p&gt;
+&lt;p&gt;除手动触发因素外，&lt;code&gt;Full GC&lt;/code&gt; 的产生通常是由老年代空间不足、方法区空间不足所引起。&lt;/p&gt;
+&lt;p&gt;所有的垃圾回收算法都会在 Full GC 时暂停应用线程，因此在对延迟要求高的程序中，Full GC 是应该尽力避免的。&lt;/p&gt;
 </description>
     </item>
     

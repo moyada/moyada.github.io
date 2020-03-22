@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Baks | 疯狂的厨子</title>
+    <link>https://moyada.github.io/bak/</link>
+      <atom:link href="https://moyada.github.io/bak/index.xml" rel="self" type="application/rss+xml" />
+    <description>Baks</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 07 Jul 2018 13:44:21 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
+      <title>Baks</title>
+      <link>https://moyada.github.io/bak/</link>
+    </image>
+    
+    <item>
+      <title>CAP定理和BASE理论</title>
+      <link>https://moyada.github.io/bak/cap-base/</link>
+      <pubDate>Sat, 07 Jul 2018 13:44:21 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/cap-base/</guid>
+      <description>&lt;p&gt;单机环境下有著名的 &lt;code&gt;ACID理论&lt;/code&gt;，但是对于现代互联网下的分布式环境 ACID 就无能为力了。
+所以，随着分布式系统的发展，一套针对分布式环境下 &lt;code&gt;CAP定理&lt;/code&gt; 也随之产生。&lt;/p&gt;
+&lt;h1 id=&#34;cap-定理&#34;&gt;CAP 定理&lt;/h1&gt;
+&lt;p&gt;CAP 定理是分布式计算领域公认的理论，所关心的是在互相连通和共享数据的多节点环境下的数据读写操作，主要可分为 C、A、P 三点。&lt;/p&gt;
+&lt;p&gt;一般分布式环境下是无法保证 C、A、P 三个要素都满足，需依据业务进行取舍。&lt;/p&gt;
+&lt;h2 id=&#34;一致性-consistence&#34;&gt;一致性 (Consistence)&lt;/h2&gt;
+&lt;p&gt;要求各节点之间读取的数据一致，必须保证 client 能够查看到所写的数据变化，即 &lt;code&gt;读己之所写&lt;/code&gt;。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由于节点之间数据同步存在时差，并不强要求同一时刻数据的 &lt;code&gt;强一致性&lt;/code&gt;，但需保证 &lt;code&gt;最终一致性&lt;/code&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;可用性-availability&#34;&gt;可用性 (Availability)&lt;/h2&gt;
+&lt;p&gt;即为非故障节点能够返回合理的数据，不能是错误或者超时。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由于无法保障强一致性，故不要求数据的正确性，即在合理范围内则可。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;分区容错性-partition-tolerance&#34;&gt;分区容错性 (Partition Tolerance)&lt;/h2&gt;
+&lt;p&gt;要求由于拥塞、丢包、中断、超时等故障造成 &lt;code&gt;网络分区&lt;/code&gt;时，系统各节点能够正常服务。&lt;/p&gt;
+&lt;h2 id=&#34;思考&#34;&gt;思考&lt;/h2&gt;
+&lt;p&gt;在实际中，节点之间网络状况无法做到 100% 可靠，即 CAP 三者中的P是必须考虑的。&lt;/p&gt;
+&lt;p&gt;而 CA 在理论上是无法同时满足的，即当出现网络分区时，为了保证数据 &lt;code&gt;一致性&lt;/code&gt;，系统应不允许写入，则无法保证 &lt;code&gt;可用性&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;因此，在考虑设计分布式架构时，一般选择 CP 或 AP 架构，具体设计时需要考虑业务特性。&lt;/p&gt;
+&lt;h1 id=&#34;base理论&#34;&gt;BASE理论&lt;/h1&gt;
+&lt;p&gt;BASE 理论是对 CAP 定理的延伸和补充，在 AP 方案的基础上进行平衡，保证一定时间内最终达到 C 的要素。&lt;/p&gt;
+&lt;h2 id=&#34;基本可用-basically-available&#34;&gt;基本可用 (Basically Available)&lt;/h2&gt;
+&lt;p&gt;在系统故障时，能保证核心功能可用。&lt;/p&gt;
+&lt;h2 id=&#34;软状态-soft-status&#34;&gt;软状态 (Soft Status)&lt;/h2&gt;
+&lt;p&gt;允许数据不一致情况，但要求该中间数据不会影响整理系统的可用性。&lt;/p&gt;
+&lt;h2 id=&#34;最终一致性-eventual-consistency&#34;&gt;最终一致性 (Eventual Consistency)&lt;/h2&gt;
+&lt;p&gt;即要求在一定时间后达到各节点的数据一致，属于特殊的 &lt;code&gt;弱一致性&lt;/code&gt;。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.cnblogs.com/nucdy/p/7483108.html&#34;&gt;https://www.cnblogs.com/nucdy/p/7483108.html&lt;/a&gt;
+&lt;a href=&#34;http://xinklabi.iteye.com/blog/2341034&#34;&gt;http://xinklabi.iteye.com/blog/2341034&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
