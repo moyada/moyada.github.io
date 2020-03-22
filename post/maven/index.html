@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="pom配置文件 命令  mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile: 编译测试程序 mvn test: 执行测试 mvn package: 打包项目输出到target目录下 mvn install: 安装项目到本地仓库 安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar mvn deploy: 将打包好的包上传到远程仓库,[-N]跳过子模块 mvn site: 生成站点 mvn dependency: 操作依赖 获取远端依赖: mvn dependency:resolve 获取单个远端依赖: mvn dependency:get -Dartifact=&lt;groupId&gt;:&lt;artifactId&gt;:&lt;version&gt;  跳过测试用例 -Dmaven.">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/maven/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/post/maven/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/post/maven/">
+  <meta property="og:title" content="Maven 基本操作 | 疯狂的厨子">
+  <meta property="og:description" content="pom配置文件 命令  mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile: 编译测试程序 mvn test: 执行测试 mvn package: 打包项目输出到target目录下 mvn install: 安装项目到本地仓库 安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar mvn deploy: 将打包好的包上传到远程仓库,[-N]跳过子模块 mvn site: 生成站点 mvn dependency: 操作依赖 获取远端依赖: mvn dependency:resolve 获取单个远端依赖: mvn dependency:get -Dartifact=&lt;groupId&gt;:&lt;artifactId&gt;:&lt;version&gt;  跳过测试用例 -Dmaven."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2017-03-31T01:42:17&#43;00:00">
+    
+    <meta property="article:modified_time" content="2017-03-31T01:42:17&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://moyada.github.io/post/maven/"
+  },
+  "headline": "Maven 基本操作",
+  
+  "datePublished": "2017-03-31T01:42:17Z",
+  "dateModified": "2017-03-31T01:42:17Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "薛毅康"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "疯狂的厨子",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "pom配置文件 命令  mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile: 编译测试程序 mvn test: 执行测试 mvn package: 打包项目输出到target目录下 mvn install: 安装项目到本地仓库 安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar mvn deploy: 将打包好的包上传到远程仓库,[-N]跳过子模块 mvn site: 生成站点 mvn dependency: 操作依赖 获取远端依赖: mvn dependency:resolve 获取单个远端依赖: mvn dependency:get -Dartifact=\u0026lt;groupId\u0026gt;:\u0026lt;artifactId\u0026gt;:\u0026lt;version\u0026gt;  跳过测试用例 -Dmaven."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Maven 基本操作 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">Maven 基本操作</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#pom配置文件">pom配置文件</a>
+      <ul>
+        <li><a href="#命令">命令</a></li>
+        <li><a href="#依赖">依赖</a></li>
+        <li><a href="#继承">继承</a></li>
+        <li><a href="#聚合">聚合</a></li>
+        <li><a href="#构建">构建</a></li>
+      </ul>
+    </li>
+    <li><a href="#仓库">仓库</a>
+      <ul>
+        <li><a href="#本地仓库">本地仓库</a></li>
+        <li><a href="#远程仓库">远程仓库</a></li>
+      </ul>
+    </li>
+    <li><a href="#settingxml配置文件">setting.xml配置文件</a>
+      <ul>
+        <li><a href="#配置maven的本地仓库目录">配置maven的本地仓库目录</a></li>
+        <li><a href="#设置默认jdk版本">设置默认jdk版本</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Maven 基本操作</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2017-03-31
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    3 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/maven/">Maven</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <h2 id="pom配置文件">pom配置文件</h2>
+<h3 id="命令">命令</h3>
+<ul>
+<li>mvn clean: 清除target目录</li>
+<li>mvn compile: 编译主程序</li>
+<li>mvn test-compile: 编译测试程序</li>
+<li>mvn test: 执行测试</li>
+<li>mvn package: 打包项目输出到target目录下</li>
+<li>mvn install: 安装项目到本地仓库
+安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar</li>
+<li>mvn deploy: 将打包好的包上传到远程仓库,<code>[-N]</code>跳过子模块</li>
+<li>mvn site: 生成站点</li>
+<li>mvn dependency: 操作依赖
+获取远端依赖: mvn dependency:resolve
+获取单个远端依赖: mvn dependency:get -Dartifact=<code>&lt;groupId&gt;:&lt;artifactId&gt;:&lt;version&gt;</code></li>
+</ul>
+<p>跳过测试用例 -Dmaven.test.skip=true</p>
+<h3 id="依赖">依赖</h3>
+<h4 id="坐标">坐标</h4>
+<ol>
+<li><code>&lt;groupid&gt;</code> 项目坐标: 一般为公司域名倒写+项目名</li>
+<li><code>&lt;artifactId&gt;</code> 模块坐标: 项目子模块名</li>
+<li><code>&lt;version&gt;</code> 版本: 带SNAPSHOT表示为一个不稳定的版本，REALEASE表示为一个正式的版本</li>
+</ol>
+<h4 id="依赖的范围">依赖的范围</h4>
+<p>依赖的范围可以通过<code>&lt;scope&gt;</code>标签来指定</p>
+<ol>
+<li>compile: 主程序范围的依赖，对主程序有效，对测试程序有效，参与打包</li>
+<li>test: 测试范围的依赖，只对测试程序有效，不参与打包，比如junit</li>
+<li>provided: 不参与打包，只在开发阶段有效，比如servlet-api.jar</li>
+</ol>
+<h4 id="依赖的排除">依赖的排除</h4>
+<p>对于不需要的传递性依赖，可以通过<code>&lt;exclusions&gt;</code>标签来排除依赖引用</p>
+<pre><code>&lt;dependency&gt;
+	...
+	&lt;exclusions&gt;
+		&lt;exclusion&gt;
+			&lt;groupid&gt;com.xxx&lt;/groupid&gt;
+			&lt;artifactid&gt;xxxx&lt;/artifactid&gt;
+		&lt;/exclusion&gt;
+	&lt;/exclusions&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h4 id="版本号管理">版本号管理</h4>
+<p>对于多个同版本号的依赖可以通过<code>&lt;properties&gt;</code>配置来统一管理，在<code>&lt;version&gt;</code>以${标签名}引用</p>
+<pre><code>&lt;properties&gt;
+	&lt;com.spring.version&gt;4.3.0-REALEASE&lt;/com.spring.version&gt;
+&lt;/properties&gt;
+...
+&lt;version&gt;${com.spring.version}&lt;/version&gt;
+</code></pre>
+<p>另外，还可以通过<code>&lt;properties&gt;</code>配置项目默认配置</p>
+<pre><code>&lt;!-- 配置项目字符集配置 --&gt;
+&lt;properties&gt;
+	&lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+&lt;/properties&gt;
+</code></pre>
+<h3 id="继承">继承</h3>
+<p>继承功能可以统一管理各个模块工程中对依赖的版本，配置继承后要先安装父工程</p>
+<pre><code>&lt;!-- 子工程中声明父工程 --&gt;
+&lt;parent&gt;
+   &lt;groupid&gt;com.xxx&lt;/groupid&gt;
+   &lt;artifactId&gt;xxxx&lt;/artifactId&gt;
+   &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+   &lt;!-- 以当前工程的pom.xml为基准的父工程pom.xml路径 --&gt;
+   &lt;relativePath&gt;../xxxx/pom.xml&lt;/relativePath&gt;
+&lt;/parent&gt;
+</code></pre>
+<pre><code>&lt;!-- 父工程依赖管理 --&gt;
+&lt;dependencyManagement&gt;
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      ...
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+</code></pre>
+<h3 id="聚合">聚合</h3>
+<p>聚合用于统一安装子工程模块，在父工程的pom.xml文件中配置</p>
+<pre><code>&lt;modules&gt;
+  &lt;!-- 指定子工程的相对路径 --&gt;
+  &lt;module&gt;../xxx&lt;/module&gt;
+&lt;/modules&gt;
+</code></pre>
+<h3 id="构建">构建</h3>
+<p>maven通过命令mvn package 可以将项目打包，对于多模块的项目，
+可以使用mvn package -pl 子项目名 -am 或 mvn package &ndash;projects 子项目名 &ndash;also-make
+将父项目和子项目一起进行打包同时构建所需依赖</p>
+<p>maven 还可以使用org.codehaus.cargo这个插件直接将项目打包部署到远程服务器上</p>
+<pre><code>&lt;!-- 配置构建过程 --&gt;
+&lt;build&gt;
+  &lt;finalName&gt;工程名&lt;/finalName&gt;
+  &lt;!-- 插件 --&gt;
+  &lt;plugins&gt;
+    &lt;plugin&gt;
+      &lt;!-- cargo是启动/停止/配置servlet容器插件 --&gt;
+      &lt;groupid&gt;org.codehaus.cargo&lt;/groupid&gt;
+      &lt;artifactId&gt;cargo-maven2-plugin&lt;/artifactId&gt;
+      &lt;version&gt;1.2.3&lt;/version&gt;
+      &lt;configuration&gt;  
+        &lt;container&gt;  
+            &lt;containerId&gt;tomcat7x&lt;/containerId&gt;  
+            &lt;home&gt;/usr/local/devtools/apache-tomcat-7.0.55&lt;/home&gt;  
+        &lt;/container&gt;  
+        &lt;configuration&gt;  
+            &lt;type&gt;existing&lt;/type&gt;  
+            &lt;home&gt;/usr/local/devtools/apache-tomcat-7.0.55&lt;/home&gt;  
+            &lt;properties&gt;  
+                &lt;!-- 更改监听端口 --&gt;  
+                &lt;cargo.servlet.port&gt;8088&lt;/cargo.servlet.port&gt;  
+            &lt;/properties&gt;  
+        &lt;/configuration&gt; 
+      &lt;/configuration&gt;
+      &lt;!-- 配置声明周期阶段 --&gt;
+      &lt;executions&gt;  
+        &lt;execution&gt;  
+            &lt;id&gt;cargo-run&lt;/id&gt;  
+            &lt;!-- 声明周期的阶段 --&gt;
+            &lt;phase&gt;install&lt;/phase&gt;
+            &lt;!-- 插件的目标 --&gt;
+            &lt;goals&gt;  
+                &lt;goal&gt;run&lt;/goal&gt;  
+            &lt;/goals&gt;
+        &lt;/execution&gt;  
+        &lt;execution&gt;  
+            &lt;id&gt;clean-deployer&lt;/id&gt;  
+            &lt;!-- 声明周期的阶段 --&gt;
+            &lt;phase&gt;deploy&lt;/phase&gt;
+            &lt;!-- 插件的目标 --&gt;
+            &lt;goals&gt;  
+                &lt;goal&gt;deployer-undeploy&lt;/goal&gt;  
+            &lt;/goals&gt;  
+        &lt;/execution&gt;    
+      &lt;/executions&gt;  
+    &lt;/plugin&gt;
+  &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Goals</th>
+<th align="center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cargo:start</td>
+<td align="center">Start a container.</td>
+</tr>
+<tr>
+<td>cargo:run</td>
+<td align="center">Start a container and wait for the user to press CTRL + C to stop.</td>
+</tr>
+<tr>
+<td>cargo:stop</td>
+<td align="center">Stop a container.</td>
+</tr>
+<tr>
+<td>cargo:restart</td>
+<td align="center">Stop and start again a container. If the container was not running before calling cargo:restart, it will simply be started.</td>
+</tr>
+<tr>
+<td>cargo:configure</td>
+<td align="center">Create the configuration for a local container, without starting it. Note that the cargo:start and cargo:run goals will also install the container automatically (but will not call cargo:install).</td>
+</tr>
+<tr>
+<td>cargo:package</td>
+<td align="center">Package the local container.</td>
+</tr>
+<tr>
+<td>cargo:daemon-start</td>
+<td align="center">Start a container via the daemon.</td>
+</tr>
+<tr>
+<td>cargo:daemon-stop</td>
+<td align="center">Stop a container via the daemon.</td>
+</tr>
+<tr>
+<td>cargo:deployer-deploy (aliased to cargo:deploy)</td>
+<td align="center">Deploy a deployable to a running container.</td>
+</tr>
+<tr>
+<td>cargo:deployer-undeploy(aliased to cargo:undeploy)</td>
+<td align="center">Undeploy a deployable from a running container.</td>
+</tr>
+<tr>
+<td>cargo:deployer-start</td>
+<td align="center">Start a deployable already installed in a running container.</td>
+</tr>
+<tr>
+<td>cargo:deployer-stop</td>
+<td align="center">Stop a deployed deployable without undeploying it.</td>
+</tr>
+<tr>
+<td>cargo:deployer-redeploy(aliased to cargo:redeploy)</td>
+<td align="center">Undeploy and deploy again a deployable. If the deployable was not deployed before calling cargo:deployer-redeploy (or its alias cargo:redeploy) it will simply be deployed.</td>
+</tr>
+<tr>
+<td>cargo:uberwar</td>
+<td align="center">Stop a deployed deployable without undeploying it.</td>
+</tr>
+<tr>
+<td>cargo:deployer-stop</td>
+<td align="center">Merge several WAR files into one.</td>
+</tr>
+<tr>
+<td>cargo:install</td>
+<td align="center">Installs a container distribution on the file system. Note that the cargo:start goal will also install the container automatically (but will not call cargo:install).</td>
+</tr>
+<tr>
+<td>cargo:help</td>
+<td align="center">Get help (list of available goals, available options, etc.).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="仓库">仓库</h2>
+<h3 id="本地仓库">本地仓库</h3>
+<h3 id="远程仓库">远程仓库</h3>
+<ol>
+<li>私服: 搭建在局域网环境中，为局域网范围内的所有Maven工程服务</li>
+<li>中央仓库: 架设在Internet上，为全世界所有Maven工程服务</li>
+<li>中央仓库镜像: 架设在各大洲，为中央仓库分担流量。减轻中央仓库的压力，同时更快的响应用户请求</li>
+</ol>
+<h2 id="settingxml配置文件">setting.xml配置文件</h2>
+<h3 id="配置maven的本地仓库目录">配置maven的本地仓库目录</h3>
+<p>localRepository标签</p>
+<h3 id="设置默认jdk版本">设置默认jdk版本</h3>
+<pre><code>&lt;profiles&gt;
+    &lt;profile&gt;
+      &lt;id&gt;jdk-1.8&lt;/id&gt;
+      &lt;activation&gt;
+        &lt;activeByDefault&gt;true&lt;/activeByDefault&gt;
+        &lt;jdk&gt;1.8&lt;/jdk&gt;
+      &lt;/activation&gt;
+      &lt;properties&gt;
+        &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+        &lt;maven.compiler.compilerVersion&gt;1.8&lt;/maven.compiler.compilerVersion&gt;
+      &lt;/properties&gt;
+    &lt;/profile&gt;
+&lt;/profiles&gt;
+</code></pre>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+<section id="comments">
+  
+</section>
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/git/" rel="prev">Git的基本操作</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/cros/" rel="next">通过 CROS 协议解决跨域问题</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

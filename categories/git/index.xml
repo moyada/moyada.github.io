@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Git | 疯狂的厨子</title>
+    <link>https://moyada.github.io/categories/git/</link>
+      <atom:link href="https://moyada.github.io/categories/git/index.xml" rel="self" type="application/rss+xml" />
+    <description>Git</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Tue, 25 Sep 2018 10:11:51 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
+      <title>Git</title>
+      <link>https://moyada.github.io/categories/git/</link>
+    </image>
+    
+    <item>
+      <title>Git 历史记录清洗</title>
+      <link>https://moyada.github.io/post/git-filter/</link>
+      <pubDate>Tue, 25 Sep 2018 10:11:51 +0000</pubDate>
+      <guid>https://moyada.github.io/post/git-filter/</guid>
+      <description>&lt;p&gt;当在公网环境下使用 git 仓库不小心把敏感信息提交上去时，则可以使用 &lt;code&gt;filter-branch&lt;/code&gt; 对代码仓库进行清洗。&lt;/p&gt;
+&lt;h2 id=&#34;1-先对本地历史进行清洗&#34;&gt;1. 先对本地历史进行清洗&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;git filter-branch --force --index-filter &#39;git rm --cached --ignore-unmatch &amp;lt;file_path&amp;gt;&#39; --prune-empty --tag-name-filter cat -- --all
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;filter-branch 是让git重写每个分支&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;ndash;force 假如遇到冲突也让git强制执行&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;ndash;index-filter 选项指定重写的时候应该执行什么命令&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;ndash;prune-empty 选项告诉git，如果因为重写导致某些commit变成了空（比如修改的文件全部被删除），那么忽略掉这个commit&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;ndash;tag-name-filter 表示对每一个tag如何重命名，重命名的命令紧跟在后面，当前的tag名会从标注输入送给后面的命令，用cat就表示保持tag名不变。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;其后的 &amp;ndash; 表示分割符，最后的 &amp;ndash;all 表示对所有的文件都考虑在内&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;2-然后更新仓库源引用为刚才的结果&#34;&gt;2. 然后更新仓库源引用为刚才的结果&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;git for-each-ref --format=&amp;quot;%(refname)&amp;quot; refs/original/ | xargs -n 1 git update-ref -d
+
+git reflog expire --expire=now --all
+git gc --prune=now
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;3-更新标签&#34;&gt;3. 更新标签&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;git push --all --force
+git push --tags --force
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.jianshu.com/p/11822884b924&#34;&gt;https://www.jianshu.com/p/11822884b924&lt;/a&gt;
+&lt;a href=&#34;https://blog.csdn.net/lwfcgz/article/details/49453375&#34;&gt;https://blog.csdn.net/lwfcgz/article/details/49453375&lt;/a&gt;
+&lt;a href=&#34;https://www.cnblogs.com/developer-ios/p/6211903.html&#34;&gt;https://www.cnblogs.com/developer-ios/p/6211903.html&lt;/a&gt;
+&lt;a href=&#34;https://stackoverflow.com/questions/7654822/remove-refs-original-heads-master-from-git-repo-after-filter-branch-tree-filte&#34;&gt;https://stackoverflow.com/questions/7654822/remove-refs-original-heads-master-from-git-repo-after-filter-branch-tree-filte&lt;/a&gt;
+&lt;a href=&#34;https://git-scm.com/book/zh/v1/Git-%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86-Git-References&#34;&gt;https://git-scm.com/book/zh/v1/Git-%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86-Git-References&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Git 文件忽略</title>
+      <link>https://moyada.github.io/post/git-ignore/</link>
+      <pubDate>Tue, 25 Sep 2018 09:21:26 +0000</pubDate>
+      <guid>https://moyada.github.io/post/git-ignore/</guid>
+      <description>&lt;h2 id=&#34;删除仓库文件&#34;&gt;删除仓库文件&lt;/h2&gt;
+&lt;p&gt;当不小心提交了不应提交的文件后，可以用此方法处理。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;git rm -r --cached &amp;lt;file_path&amp;gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;更新 &lt;code&gt;.gitignore&lt;/code&gt; 添加忽略文件。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;提交修改&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这样本地文件不会删除，但是 git 仓库里的文件则会被标记删除，&lt;/p&gt;
+&lt;h2 id=&#34;停止跟踪文件&#34;&gt;停止跟踪文件&lt;/h2&gt;
+&lt;p&gt;当有一份文件，只需要一份基础版本，每个机器独自增加配置时，则可以使用
+&lt;code&gt;git update-index --assume-unchanged &amp;lt;file_path&amp;gt;&lt;/code&gt;，忽略文件后续的变更。&lt;/p&gt;
+&lt;p&gt;当需要对这个基础版本再此迭代时，可以使用&lt;code&gt;git update-index --no-assume-unchanged &amp;lt;file_path&amp;gt;&lt;/code&gt;，重新跟踪文件的修改。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Git的基本操作</title>
+      <link>https://moyada.github.io/post/git/</link>
+      <pubDate>Sat, 25 Feb 2017 12:53:10 +0000</pubDate>
+      <guid>https://moyada.github.io/post/git/</guid>
+      <description>&lt;h2 id=&#34;设置基本配置&#34;&gt;设置基本配置&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;让Git显示颜色，会让命令输出看起来更醒目：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git config \-\-global color.ui true
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;设置全局用户信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git config \-\-global user.name &amp;quot;Your Name&amp;quot;
+$ git config \-\-global user.email &amp;quot;email@example.com&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;记录用户密码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;git config credential.helper store
+## 设置过期时间
+git config credential.helper &#39;cache \-\-timeout=3600&#39;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;增加删除信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git config \-\-list \-\-global
+$ git config \-\-global \-\-add user.name xyk
+$ git config \-\-get user.name
+$ git config \-\-global \-\-unset user.name xyk
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;设置命令别名&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;设置checkout别名为co
+$ git config \-\-global alias.co checkout
+设置stash别名为sh
+$ git config \-\-global alias.co checkout
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;简单使用&#34;&gt;简单使用&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;初始化一个Git仓库，可以使用$ git init命令。
+或者$ git clone [-b branch_name] &amp;ldquo;repository_url&amp;rdquo; 从远程仓库拉取&lt;/li&gt;
+&lt;li&gt;添加文件到Git仓库，分两步：
+第一步，使用命令$ git add &lt;file&gt; 添加文件到暂存区里。
+第二步，使用命令$ git commit [-a] -m &amp;ldquo;message&amp;rdquo;，将暂存区的文件提交到本地仓库里。
+要随时掌握工作区的状态，使用git status命令。
+如果$ git status告诉你有文件被修改过，用$ git diff可以查看修改内容。&lt;/li&gt;
+&lt;li&gt;如果需要丢弃未暂存的文件，可以使用$ git checkout [--] &lt;file&gt; 丢弃工作区的文件&lt;/li&gt;
+&lt;li&gt;如果需要丢弃已暂存的文件，可以使用$ git reset [HEAD] &lt;file&gt; 丢弃暂存区的文件
+移除文件: $ git rm --cached &lt;file&gt;
+移动重命名文件: $ git mv &lt;file&gt; &amp;lt;new_file&amp;gt;
+将暂存区的文件添加到本地仓库里的最后一次提交: $ git commit --amend&lt;/li&gt;
+&lt;li&gt;$ git push origin &amp;lt;branch_name&amp;gt; 提交到远程仓库&lt;/li&gt;
+&lt;li&gt;如果本地仓库与远程仓库不属于同一祖先的话，先git pull &amp;lt;remote_name&amp;gt; &lt;branch&gt; --allow-unrelated-histories 同步分支后在提交&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;忽略文件&#34;&gt;忽略文件&lt;/h2&gt;
+&lt;p&gt;如果有不需要参与提交的文件，可以创建文件.gitignore，以正则表达式的形式，将不需要的文件表达加入进去:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;表达式&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;*~&lt;/td&gt;
+&lt;td&gt;将vim中间文件，排除git管理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;*.class&lt;/td&gt;
+&lt;td&gt;将以class结尾的文件，排除git管理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;*.[ab]&lt;/td&gt;
+&lt;td&gt;将以a或b结尾的文件，排除git管理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;target/&lt;/td&gt;
+&lt;td&gt;将第一级的target文件夹，排除git管理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;**/log&lt;/td&gt;
+&lt;td&gt;将所有的log文件夹，排除git管理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;!git.class&lt;/td&gt;
+&lt;td&gt;将git.class文件纳入到git管理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;分支&#34;&gt;分支&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;查看分支：$ git branch
+创建分支：$ git branch &amp;lt;branch_name&amp;gt;
+创建远端分支: $ git checkout -b &amp;lt;branch_name&amp;gt; origin/&amp;lt;branch_name&amp;gt; 或 git fetch origin &amp;lt;branch_name&amp;gt;:&amp;lt;branch_name&amp;gt;
+建立远端映射关系: $ git branch -u origin/&amp;lt;branch_name&amp;gt;
+切换分支：$ git checkout &amp;lt;branch_name&amp;gt;
+创建+切换分支：$ git checkout -b &amp;lt;branch_name&amp;gt;
+删除分支：$ git branch -d &amp;lt;branch_name&amp;gt;
+删除远端分支: $ git branch -r -d origin/&amp;lt;branch_name&amp;gt;, git push origin :&amp;lt;branch_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;如果要丢弃一个没有被合并过的分支，可以通过$ git branch -D &amp;lt;branch_name&amp;gt;强行删除。&lt;/p&gt;
+&lt;h2 id=&#34;贮藏工作现场&#34;&gt;贮藏工作现场&lt;/h2&gt;
+&lt;p&gt;Git提供了一个stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git stash save [-a &amp;quot;stash_name&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;用$ git stash list命令可以查看所有工作现场。
+恢复有两个办法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一是用$ git stash apply恢复，但是恢复后，stash内容并不删除，你需要用$ git stash drop &amp;lt;stash_name&amp;gt;来删除；&lt;/li&gt;
+&lt;li&gt;另一种方式是用$ git stash pop，恢复的同时把stash内容也删了。
+当想要一次性清理全部stash时，可以通过命令$ git stash clear来完成。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;标签&#34;&gt;标签&lt;/h2&gt;
+&lt;p&gt;标签可以用于给分支打上多个tag，作为版本的标明
+从版本tag上新建分支bug分支，用于修复历史版本存在bug。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在Git中打标签非常简单，首先，切换到需要打标签的分支上，然后通过命令&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git tag [tagname]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;新建一个标签，默认为HEAD，也可以指定一个tag name。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;要对历史提交打标签，则需要在后面添加对应的commit id，敲入命令：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git tag &amp;lt;tagname&amp;gt; &amp;lt;commit_id&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;还可以创建带有说明的标签，用-a指定标签名，-m指定说明文字：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git tag -a &amp;lt;tagname&amp;gt; -m &amp;quot;version 0.1 released&amp;quot; 3628164
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;还可以通过-s用私钥签名一个标签：
+$ git tag -s &lt;tagname&gt;  -m &amp;ldquo;signed version 0.2 released&amp;rdquo; fec145a
+签名采用PGP签名，因此，必须首先安装gpg（GnuPG），如果没有找到gpg，或者没有gpg密钥对，就会报错&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;查看所有标签可以用命令: $ git tag&lt;/p&gt;
+&lt;p&gt;查看标签信息可以用: $ git show &lt;tagname&gt;&lt;/p&gt;
+&lt;p&gt;命令$ git push origin &lt;tagname&gt;可以推送一个本地标签；
+命令$ git push origin --tags可以推送全部未推送过的本地标签；
+命令$ git tag -d &lt;tagname&gt;可以删除一个本地标签；
+命令$ git push origin :refs/tags/&lt;tagname&gt;可以删除一个远程标签。&lt;/p&gt;
+&lt;h2 id=&#34;合并&#34;&gt;合并&lt;/h2&gt;
+&lt;p&gt;在需要合并某分支到当前分支时:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git merge &amp;lt;branch_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;当Git无法自动合并分支时，就必须首先解决冲突。解决冲突后，再提交，合并完成。
+如果想放弃此次合并的话，可以使用命令:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git merge \-\-abort
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;当合并的分支衍生处在一条分支上时，Git会用Fast forward模式。
+如果要强制禁用Fast forward模式，Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。&lt;/p&gt;
+&lt;p&gt;使用--no-ff参数，可以禁用Fast forward：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git merge \-\-no-ff -m &amp;quot;merge with no-ff&amp;quot; &amp;lt;branch_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;用$ git log --graph命令可以看到分支合并图。
+用带参数的git log也可以看到分支的合并情况：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git log \-\-graph \-\-oneline \-\-abbrev-commit
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;版本操作&#34;&gt;版本操作&lt;/h2&gt;
+&lt;h3 id=&#34;查看历史&#34;&gt;查看历史&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;查看所有分支的历史示意图:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git log \-\-oneline \-\-stat \-\-decorate \-\-graph \-\-all -p
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;查看工作区与历史提交之间的差异&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git diff
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;查看暂存区与历史提交之间的差异&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git diff \-\-cached
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;查看工作区与历史提交之间的差异&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git diff &amp;lt;commit_id&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;查看暂存区与历史提交之间的差异&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git diff \-\-cached &amp;lt;commit_id&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;查看历史提交之间的差异&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git diff &amp;lt;commit_id&amp;gt; &amp;lt;commit_id&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;查看工作区与历史提交的某个文件的单词差异&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git diff \-\-color-words [\-\-] &amp;lt;file&amp;gt;
+$ git diff \-\-word-diff [\-\-] &amp;lt;file&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;撤销操作&#34;&gt;撤销操作&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;恢复暂存区某个文件的某个历史版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git checkout &amp;lt;commit_id&amp;gt; [\-\-] &amp;lt;file&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;恢复工作区某个文件的某个历史版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;$ git reset &amp;lt;commit_id&amp;gt; [\-\-] &amp;lt;file&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;---
+清除操作:
+$ git clean
+-n 查看准备移除工作区文件
+-x 移除忽略文件内的表达式的文件
+-X 移除忽略文件内的表达式的文件及工作区文件
+-f 执行移除工作区文件&lt;/p&gt;
+&lt;p&gt;---
+移除某次提交的内容:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git revert &amp;lt;commit_id&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;修改历史&#34;&gt;修改历史&lt;/h3&gt;
+&lt;p&gt;替换最后一次提及
+$ git commit --amend&lt;/p&gt;
+&lt;p&gt;将当前分支设置为另一分支的衍生分支
+$ git rebase &amp;lt;branch_name&amp;gt;&lt;/p&gt;
+&lt;p&gt;要重返历史版本，可以用$ git reflog查看历史操作，以便确定要回到哪个版本。
+版本回退:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;HEAD指向的版本就是当前版本，Git允许我们在版本的历史之间穿梭，
+~和^均可代表向上一个版本
+$ git reset \-\-hard HEAD~  ## 回到上一个版本；
+$ git reset \-\-hard HEAD^^  ## 回到上两个版本；
+$ git reset \-\-hard &amp;lt;commit_tag&amp;gt;  ## 回退到指定版本。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;--hard 使用某次提交的内容还原暂存区和工作区
+--mixed 只使用某次提交的内容还原暂存区，并把HEAD和分支引用指向指定的commit
+--soft 只把HEAD和分支引用指向指定的commit&lt;/p&gt;
+&lt;h2 id=&#34;远程仓库&#34;&gt;远程仓库&lt;/h2&gt;
+&lt;h3 id=&#34;创建ssh-key&#34;&gt;创建SSH Key&lt;/h3&gt;
+&lt;p&gt;生成ssh密钥&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ ssh-keygen -t rsa -C &amp;quot;youremail@example.com&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;保存ssh密钥&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ eval &amp;quot;$(ssh-agent -s)&amp;quot;
+$ ssh-add ~/.ssh/id_rsa
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;登陆GitHub，打开“Account settings”，“SSH Keys”页面
+点“Add SSH Key”，填上任意Title，在Key文本框里粘贴id_rsa.pub文件的内容
+验证ssh密钥&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ ssh -T git@github.com
+Hi xueyikang! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;远程协作&#34;&gt;远程协作&lt;/h2&gt;
+&lt;h3 id=&#34;从远程库克隆&#34;&gt;从远程库克隆&lt;/h3&gt;
+&lt;p&gt;可以用命令git clone克隆一个本地库：
+$ git clone &amp;lt;http_url | ssh_url&amp;gt;
+或者建立本地仓库与远程仓库的联系
+$ git remote add &amp;lt;origin | else_name&amp;gt; &amp;lt;http_url | ssh_url&amp;gt;&lt;/p&gt;
+&lt;p&gt;查看所有远程库的配置信息：
+$ git remote -v&lt;/p&gt;
+&lt;p&gt;查看远程库的更详细的信息:
+$ git remote shop &amp;lt;branch_name&amp;gt;&lt;/p&gt;
+&lt;p&gt;重命名远程仓库
+$ git remote rename &amp;lt;origin_name&amp;gt; &amp;lt;else_name&amp;gt;&lt;/p&gt;
+&lt;p&gt;删除远程仓库
+$ git remote rm &amp;lt;origin_name&amp;gt;&lt;/p&gt;
+&lt;h3 id=&#34;远程库协作&#34;&gt;远程库协作&lt;/h3&gt;
+&lt;p&gt;没有关联关系的话需要先要使用命令创建本地分支与远程origin的链接关系：
+$ git checkout -b &amp;lt;local_branch_name&amp;gt; origin &amp;lt;remote_branch_name&amp;gt;&lt;/p&gt;
+&lt;p&gt;把本地库的所有内容推送到远程库上：
+$ git push [-u] origin &amp;lt;branch_name&amp;gt;
+我们第一次推送新分支时，加上了-u参数，Git不但会把本地分支内容推送的远程新分支，还会把本地分支和远程分支关联起来，在以后的推送或者拉取时就可以简化命令。&lt;/p&gt;
+&lt;p&gt;获取远程分支的最新代码到本地的远程分支上:
+$ git fetch [origin [branch_name]&lt;/p&gt;
+&lt;p&gt;获取远程分支的最新代码到本地的远程分支上并与本地分支合并:
+$ git pull [origin [branch_name]
+如果提示“no tracking information”，则说明本地分支和远程分支的链接关系没有创建，
+用命令建立:$ git branch --set-upstream &amp;lt;local_branch_name&amp;gt; origin &amp;lt;remote_branch_name&amp;gt;。&lt;/p&gt;
+&lt;p&gt;如果是是两个不同的项目，则需要先 git pull --allow-unrelated-histories&lt;/p&gt;
+&lt;p&gt;删除远程分支&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git push \-\-delete origin &amp;lt;branch_name&amp;gt;
+或者
+$ git push origin :&amp;lt;branch_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;搭建git服务器&#34;&gt;搭建Git服务器&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;安装git：
+$ sudo apt-get install git&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;创建一个git用户，用来运行git服务：
+$ sudo adduser git&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;创建证书登录：
+收集所有需要登录的用户的公钥，就是他们自己的id_rsa.pub文件，把所有公钥导入到/home/git/.ssh/authorized_keys文件里，一行一个。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;初始化Git仓库：
+先选定一个目录作为Git仓库，假定是/srv/sample.git，在/srv目录下输入命令：
+$ sudo git init --bare sample.git
+Git就会创建一个裸仓库，裸仓库没有工作区，因为服务器上的Git仓库纯粹是为了共享，所以不让用户直接登录到服务器上去改工作区，并且服务器上的Git仓库通常都以.git结尾。然后，把owner改为git：
+$ sudo chown -R git:git sample.git&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;禁用shell登录：
+出于安全考虑，第二步创建的git用户不允许登录shell，这可以通过编辑/etc/passwd文件完成。找到类似下面的一行：
+git❌1001:1001:,,,:/home/git:/bin/bash
+改为：
+git❌1001:1001:,,,:/home/git:/usr/bin/git-shell
+这样，git用户可以正常通过ssh使用git，但无法登录shell，因为我们为git用户指定的git-shell每次一登录就自动退出。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;克隆远程仓库：
+现在，可以通过git clone命令克隆远程仓库了，在各自的电脑上运行：
+$ git clone git@server:/srv/sample.gitCloning into &amp;lsquo;sample&amp;rsquo;&amp;hellip;warning: You appear to have cloned an empty repository.
+剩下的推送就简单了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;管理公钥&#34;&gt;管理公钥&lt;/h2&gt;
+&lt;p&gt;如果团队很小，把每个人的公钥收集起来放到服务器的/home/git/.ssh/authorized_keys文件里就是可行的。如果团队有几百号人，就没法这么玩了，这时，可以用Gitosis来管理公钥。
+这里我们不介绍怎么玩Gitosis了，几百号人的团队基本都在500强了，相信找个高水平的Linux管理员问题不大。
+管理权限
+有很多不但视源代码如生命，而且视员工为窃贼的公司，会在版本控制系统里设置一套完善的权限控制，每个人是否有读写权限会精确到每个分支甚至每个目录下。因为Git是为Linux源代码托管而开发的，所以Git也继承了开源社区的精神，不支持权限控制。不过，因为Git支持钩子（hook），所以，可以在服务器端编写一系列脚本来控制提交等操作，达到权限控制的目的。Gitolite就是这个工具。
+这里我们也不介绍Gitolite了，不要把有限的生命浪费到权限斗争中。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://mux.alimama.com/posts/711&#34;&gt;https://mux.alimama.com/posts/711&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

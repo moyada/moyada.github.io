@@ -232,11 +232,11 @@
   
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/categories/java/">
-  <meta property="og:title" content="java | 疯狂的厨子">
+  <meta property="og:title" content="Java | 疯狂的厨子">
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2020-03-21T16:44:57&#43;08:00">
+    <meta property="og:updated_time" content="2019-05-18T08:47:26&#43;00:00">
   
 
   
@@ -253,7 +253,7 @@
 
 
 
-  <title>java | 疯狂的厨子</title>
+  <title>Java | 疯狂的厨子</title>
 
 </head>
 
@@ -468,7 +468,7 @@
     
   
 <div class="universal-wrapper pt-3">
-  <h1>java</h1>
+  <h1>Java</h1>
 
   
 
@@ -486,22 +486,173 @@
     
     
     <div>
-      <h2><a href="/post/today/" >today</a></h2>
+      <h2><a href="/post/feign-eureka-without-springboot/" >在非 SpringBoot 工程中使用 Feign 整合 Eureka</a></h2>
       <div class="article-style">
         
-          234 A dsa
-dsa d ad
-B sad sa d abcde
-dsadsad
-d
-dsadsa
-C dsadas
+          背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 @EnableDiscoveryClient 和 @EnableFeignClients 即可获取服务接口实例。可是由于我使用了 BeanPostProcessor 对注解进行了切片代理，并且目标项目也存在非 SpringCloud 项目，那么便只能通过底层 API 构建服务方实例了。
+方案 EurekaClient 提供了服务发现注册功能，但是在 Feign 所接收的属性中并没有用于负载均衡的，其中最有可能的就是 Client 属性了，这是用于负责服务请求的模块，那么就需要调研下是否能够通过 EurekaClient 构建出一个带有负载均衡功能的客户端。
+创建 LBClientFactory  Feign 的官方 Wiki 提供了构建服务实例的 方法，但 Feign 并不提供构建所需属性的实现，而是由其他框架适配 Feign 所提供的接口来实现每个功能。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/diff-instanceof-isassignablefrom/" >instanceOf、isInstance、isAssignableFrom 的区别</a></h2>
+      <div class="article-style">
+        
+          在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeName]、class.isInstance(obj)、class.isAssignableFrom(class)，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。
+  其中 instanceof 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 templateTable.hpp 中发现了 instanceof 方法的定义，从其中 templateTable_x86.cpp、templateTable_arm.cpp 的 instanceof 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/java-serializer/" >序列化框架对比</a></h2>
+      <div class="article-style">
+        
+          背景 最近接到一个需求，涉及到大流量的数据传输，那么就不可避免序列化，正巧我也有想法对最近主流的序列化框架做一次对比。
+参数对比的序列化的框架如下，将对 序列化数据字节大小、序列化\反序列化平均耗时、序列化\反序列化吞吐量 这三个维度进行对比。
+ 该测试结果可能因为机器原因、框架使用方式、样本数据问题，导致结果不准确。
+ 工程代码见 https://github.com/moyada/java-serializers
+   框架 版本     avro 1.8.2   hessian 4.0.60   jackson 2.9.8   fastjson 1.
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/java-annotation-processor/" >Java 注解处理器</a></h2>
+      <div class="article-style">
+        
+          工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。
+ 编译器具体处理过程可查看 OpenJDK 官方文档: https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html
+   定义注解 创建注解处理器的第一步就是需要定义相关注解，并且在注解上定义 @Retention，当指定为 RetentionPolicy.SOURCE 时，该注解即在编译结束后会被擦除。
+  创建处理器 接着就需要创建处理器了，一般可通过继承 javax.annotation.processing.AbstractProcessor 定义处理器，由于注解处理器是通过反射获取的，所以需要提供无参构造函数。
+  设置解析注解 重写 getSupportedAnnotationTypes 或定义 @SupportedAnnotationTypes 将先前定义的注解类名加入解析目标，也可以使用 * 通配符。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/java-security/" >Java安全机制</a></h2>
+      <div class="article-style">
+        
+          Java 安全机制是针对程序在操作本地资源时的权限限制，避免在执行有害代码时 (例如网络上下载的 jar 包)导致不可预估的损失。
+这里简单介绍下使用方法。
+配置安全策略   创建以 .policy 结尾的文件
+  配置授权规则，可以参考 Java 默认的策略文件 ${java.home}/jre/lib/security/java.policy
+  以下面配置文件的语法为例
+grant codebase &quot;file:${user.dir}/-&quot; { permission java.io.FilePermission &quot;${user.home}/*&quot;, &quot;write&quot;; };  其中定义了一条对 ${user.
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/jmh/" >Java 基准测试框架(JMH)</a></h2>
+      <div class="article-style">
+        
+          在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致结果的偏差。 所以，为了在大程度上避免这种偏差问题，则会用到OpenJDK的性能基准测试项目 JMH。
+项目构建 可以通过maven命令构建项目
+mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjdk.jmh \ -DarchetypeArtifactId=jmh-java-benchmark-archetype \ -DgroupId=&lt;you_groupId&gt; \ -DartifactId=&lt;you_artifactId&gt; \ -Dversion=1.0-SNAPSHOT  或者在已有项目中引入依赖包
+&lt;dependency&gt; &lt;groupId&gt;org.openjdk.jmh&lt;/groupId&gt; &lt;artifactId&gt;jmh-core&lt;/artifactId&gt; &lt;version&gt;${jmh.version}&lt;/version&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.openjdk.jmh&lt;/groupId&gt; &lt;artifactId&gt;jmh-generator-annprocess&lt;/artifactId&gt; &lt;version&gt;${jmh.version}&lt;/version&gt; &lt;scope&gt;provided&lt;/scope&gt; &lt;/dependency&gt;  基本使用 注解    参数 作用 范围     @State 配置每个实例的生命周期 类   @BenchmarkMode 测试的维度，有吞吐量、平时时间、随机取样、单次运行 方法、类   @OutputTimeUnit 输出结果的时间单位 方法、类   @Warmup 预热迭代，以保证即时编译的工作 方法、类   @Measurement 设置执行测试迭代的参数 方法、类   @Fork 使用额外虚拟机测试数量 方法、类   @Setup 测试前置执行逻辑 方法   @TearDown 测试结束执行逻辑 方法   @Benchmark 标记该方法需要进行测试，并生成class类 方法   @Param 指定参数的测试范围 属性   @CompilerControl 设置即时编译的效果 构造器、类、方法    启动 编写 main 方法编译启动或打包成 jar 包运行
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/default-method/" >java8 default method 的使用见解</a></h2>
+      <div class="article-style">
+        
+          oracle 在 jdk8 中引入了接口的默认方法，用 default 关键字标识。
+public inteface Listener { default void start() { ... } }  该原语特性能将接口的 default 方法以 public 可见范围赋予所有实现类，同时允许重写。
+由于默认方法是定义在接口上的方法，只能使用接收参数和接口方法，并且是 public 可见范围，导致了使用的局限性。
+在实际开发中的常见场景为，一个功能的主流程固定，并且需由数个方法组成，而方法根据场景可能会有多种实现 (可以对照 Map 接口理解)。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/volatile/" >volatile 浅析</a></h2>
+      <div class="article-style">
+        
+          概念 volatile原语保障了多线程下变量的原子性、可见性、有序性。
+原子性 在32位虚拟机下对long、double类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证不存在中间值，但是由于读取的一刻其他线程也有可能改变值，所以复合操作无法达到原子性。
+ 64位下不存在该问题，并且近代jdk中普通操作也能达到原子性
+ 可见性 其目的是使多线程环境下对共享变量的修改能被其他线程立即查看到。
+由于线程对变量的读取是先从线程的工作内存(cpu缓存)中获取，不存在才从主内存中获取。
+那么在多线程环境下多普通共享变量的修改操作就会由于cpu缓存中已存在而导致的数据不一致。
+为了解决这个问题，处理器会对编译后指令增加lock指令前缀，大部分处理器架构采用了RingBus + MESI协议的方式来解决，部分老版本cpu架构则采用锁总线来达到效果。
+原理是在修改数据时候更新cpu缓存之后立即写回主存、并且通知到使用相同变量线程，将该变量设置为无效，当读取变量时再从主存或者寄存器中获取。
+ 由于volatile的可见性，也可用来完成轻量锁的实现，例如线程的终止判断
+ 有序性 操作系统为了使cpu流水线的各个阶段不存在空闲内核，往往会多当前编译好的指令进行重排序，但是只会保证单条线程的程序正确性，并不保障并发环境下的正确性。
+JVM为了保证volatile域的可见性(happens-before)，会在编译时对指令前后都加入内存屏障指令lock前缀，使得不会将后面的指令重排序到内存屏障之前的位置。
+ 当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。 当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。 当第一个操作是volatile写，第二个操作是volatile读时，不能重排序。   最经典的场景有double check单例，由于重排序，可能出现对象尚未创建成功，但是对象引用缺被赋值使用，造成空指针异常。
+ 
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/java-lock/" >Java 锁机制</a></h2>
+      <div class="article-style">
+        
+          synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量锁进行了优化。
+synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 javap 反编译能观察到。
+线程在进入 synchronized 代码块时，将通过获取对象头内 Mark Work 的锁标记来决定是否进入 临界区。
+偏向锁 没有多线程竞争环境，如果没有设置 -XX:-UseBiasedLocking 关闭偏向锁的话将会通过 CAS 获取锁，并设置持有锁的线程 id，当该线程再次尝试获取锁时，如果锁内线程为当前线程则直接判断获取锁标记。
+轻量锁 在多个线程尝试获取偏向锁时，当线程获取偏向锁失败时将会膨胀为轻量锁，通过CAS操作来获取锁标记进入临界区。
+重量锁 如果轻量锁的 CAS 操作失败时，将会升级为重量级锁。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/lombok-java9/" >在 jdk9 下使用 Lombok</a></h2>
+      <div class="article-style">
+        
+          由于jdk9中对lombok所依赖的类进行了迁移，所以使用lombok的程序无法直接升级。需按照如下方式升级：
+ 升级lombok依赖  &lt;properties&gt; &lt;lombok.version&gt;1.18.0&lt;/lombok.version&gt; &lt;/properties&gt; &lt;dependency&gt; &lt;groupId&gt;org.projectlombok&lt;/groupId&gt; &lt;artifactId&gt;lombok&lt;/artifactId&gt; &lt;version&gt;${lombok.version}&lt;/version&gt; &lt;/dependency&gt; &lt;plugin&gt; &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt; &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt; &lt;version&gt;3.7.0&lt;/version&gt; &lt;configuration&gt; &lt;source&gt;1.7&lt;/source&gt; &lt;target&gt;1.7&lt;/target&gt; &lt;encoding&gt;UTF-8&lt;/encoding&gt; &lt;annotationProcessorPaths&gt; &lt;path&gt; &lt;groupId&gt;org.projectlombok&lt;/groupId&gt; &lt;artifactId&gt;lombok&lt;/artifactId&gt; &lt;version&gt;${lombok.version}&lt;/version&gt; &lt;/path&gt; &lt;/annotationProcessorPaths&gt; &lt;/configuration&gt; &lt;/plugin&gt;  升级maven编译插件及配置  &lt;properties&gt; &lt;java.
         
       </div>
     </div>
   
 
   
+<nav>
+  <ul class="pagination justify-content-center">
+    
+    
+    <li class="page-item"><a class="page-link" href="/categories/java/page/2/">&raquo;</a></li>
+    
+  </ul>
+</nav>
+
 
 </div>
 

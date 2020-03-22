@@ -1,16 +1,245 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>gc | 疯狂的厨子</title>
+    <title>GC | 疯狂的厨子</title>
     <link>https://moyada.github.io/tags/gc/</link>
       <atom:link href="https://moyada.github.io/tags/gc/index.xml" rel="self" type="application/rss+xml" />
-    <description>gc</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sun, 15 Jul 2018 12:06:05 +0000</lastBuildDate>
+    <description>GC</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sun, 04 Aug 2019 13:30:02 +0000</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
-      <title>gc</title>
+      <title>GC</title>
       <link>https://moyada.github.io/tags/gc/</link>
     </image>
+    
+    <item>
+      <title>Shenandoah GC 介绍</title>
+      <link>https://moyada.github.io/post/shenandoah-gc/</link>
+      <pubDate>Sun, 04 Aug 2019 13:30:02 +0000</pubDate>
+      <guid>https://moyada.github.io/post/shenandoah-gc/</guid>
+      <description>&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;p&gt;Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 &lt;code&gt;标记整理&lt;/code&gt; 的垃圾回收器，它的目标时为了使大容量内存应用在垃圾回收时只进行短暂的应用暂停，使用 -XX:+UseShenandoahGC 开启。&lt;/p&gt;
+&lt;p&gt;它能够在垃圾回收周期中进行 &lt;code&gt;并发整理&lt;/code&gt; 和 &lt;code&gt;并发更新&lt;/code&gt;，不暂停应用线程，并将垃圾回收分解为多个阶段，来达到极短的暂停时间，同时不会随着堆内存大小而影响。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考资料:
+&lt;a href=&#34;https://wiki.openjdk.java.net/display/shenandoah/Main&#34;&gt;https://wiki.openjdk.java.net/display/shenandoah/Main&lt;/a&gt;
+&lt;a href=&#34;https://www.youtube.com/watch?v=VCeHkcwfF9Q&#34;&gt;https://www.youtube.com/watch?v=VCeHkcwfF9Q&lt;/a&gt;
+&lt;a href=&#34;https://www.youtube.com/watch?v=E1M3hNlhQCg&#34;&gt;https://www.youtube.com/watch?v=E1M3hNlhQCg&lt;/a&gt;
+&lt;a href=&#34;https://www.researchgate.net/publication/306112816_Shenandoah_An_open-source_concurrent_compacting_garbage_collector_for_OpenJDK&#34;&gt;https://www.researchgate.net/publication/306112816_Shenandoah_An_open-source_concurrent_compacting_garbage_collector_for_OpenJDK&lt;/a&gt;
+&lt;a href=&#34;https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/&#34;&gt;https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/&lt;/a&gt;
+&lt;a href=&#34;https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/&#34;&gt;https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;特性&#34;&gt;特性&lt;/h2&gt;
+&lt;h3 id=&#34;并发复制&#34;&gt;并发复制&lt;/h3&gt;
+&lt;p&gt;Shenandoah GC 是如何做到并发复制的呢？这主要是利用了 &lt;code&gt;读屏障&lt;/code&gt; 和 &lt;code&gt;Brooks Pointers&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://rkennke.wordpress.com/2013/10/23/shenandoah-gc-brooks-pointers/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Brooks Pointers&lt;/a&gt; 是为了保证并发环境下数据一致性而设计的字段，它在对象地址中占用了 8 位地址来标识实际对象地址的偏移值。&lt;/p&gt;
+&lt;p&gt;通常情况下它指向当前对象地址自身，当进入并发整理的对象拷贝阶段时，GC 将会利用 CAS 操作替换新的地址偏移值，并保证只进行一次成功的操作。&lt;/p&gt;
+&lt;p&gt;当应用线程操作该对象时将会使用 &lt;code&gt;读屏障&lt;/code&gt; 获取 &lt;code&gt;brooks pointers&lt;/code&gt; 偏移值再计算得出实际地址返回。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;hotspot/share/gc/shenandoah/shenandoahBrooksPointer.inline.hpp
+
+inline oop ShenandoahBrooksPointer::forwardee(oop obj) {
+  shenandoah_assert_correct(NULL, obj);
+  return oop(*brooks_ptr_addr(obj));
+}
+
+inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
+  return (HeapWord**)((HeapWord*) obj + word_offset());
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;由于通常情况下并不需要使用读屏障来获取地址，Shenandoah GC 又引入了 &lt;code&gt;slow path&lt;/code&gt; 的设计。&lt;/p&gt;
+&lt;p&gt;它的作用是，只有当垃圾回收进行中，并且对象处于 &lt;code&gt;collection set&lt;/code&gt; 中，那么程序才会使用 读屏障 来获取对象地址。&lt;/p&gt;
+&lt;p&gt;同时 Shenandoah GC 还会对字节码进行优化，以确保程序正确的情况下减少用读屏障获取地址的使用。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/concurrent-copy.png&#34; alt=&#34;concurrent-copy&#34; title=&#34;并发修改&#34;&gt;&lt;/p&gt;
+&lt;p&gt;由于需要使用额外的空间来存储 &lt;code&gt;brooks pointers&lt;/code&gt;，则必须使用 64 位地址，同时堆空间也会增加 3% ~ 15% 的开销，而 CAS 和 读屏障 则产生 2% ~ 20% 的吞吐量下降。&lt;/p&gt;
+&lt;h3 id=&#34;空间划为&#34;&gt;空间划为&lt;/h3&gt;
+&lt;p&gt;Shenandoah 与 G1 类似也是以 Region 来划分堆内存，但是不进行分代标记。&lt;/p&gt;
+&lt;p&gt;每个 Region 对应一个数组用来表示有哪些 Region 存在对象指向自身 Region 中的对象，这就避免了 G1 在年轻代之间的引用关系需要扫描整个年轻代甚至是堆的情况。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/region-incoming.png&#34; alt=&#34;region-incoming&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;numa&#34;&gt;NUMA&lt;/h3&gt;
+&lt;p&gt;与 ZGC 相同，利用 NUMA 架构的 CPU 亲和的内存分配策略，在分配对象时使用线程所处的 CPU 缓存，并且使 应用线程 与 GC线程 处于同一核心线程下，共享同一个 Region 的数据。&lt;/p&gt;
+&lt;h2 id=&#34;触发策略&#34;&gt;触发策略&lt;/h2&gt;
+&lt;p&gt;从 &lt;code&gt;hotspot/share/gc/shenandoah/shenandoahControlThread.cpp::run_service()&lt;/code&gt; 可以观察到 Shenandoah GC 的垃圾收回触发策略，将会根据 内存分配情况 或 提交的垃圾回收事件 &lt;code&gt;_requested_gc_cause&lt;/code&gt; 来决定所执行的具体垃圾回收流程。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  switch (mode) {
+    case none:
+      break;
+    case concurrent_traversal:
+      service_concurrent_traversal_cycle(cause);
+      break;
+    case concurrent_normal:
+      service_concurrent_normal_cycle(cause);
+      break;
+    case stw_degenerated:
+      service_stw_degenerated_cycle(cause, degen_point);
+      break;
+    case stw_full:
+      service_stw_full_cycle(cause);
+      break;
+    default:
+      ShouldNotReachHere();
+  }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;回收过程&#34;&gt;回收过程&lt;/h2&gt;
+&lt;p&gt;Shenandoah 的回收过程与 G1 类似，都是基于 Region 的收集策略，一般情况下将垃圾回收声明周期分解成数个阶段执行。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/imgs/shenandoah-gc/shenandoah-gc-cycle.png&#34; alt=&#34;shenandoah-gc-cycle&#34;&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;初始标记&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;暂停应用线程，扫描 GC Roots。&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;&lt;b&gt;并发标记&lt;/b&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;与应用程序并发进行，通过上一阶段的 GC Roots 遍历堆，使用 STAB 算法描绘存活对象图谱。&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;最终标记&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;暂停应用线程，处理位于队列中的标记和更新操作，并预先进行下一阶段，可能与下一阶段同时完成。&lt;/p&gt;
+&lt;p&gt;收集存在死亡对象的 Region&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;并发清理&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;将无存活对象的 Region 进行清理并加入空闲列表。&lt;/p&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;&lt;b&gt;并发疏散&lt;/b&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;将收集集合中的对象复制至空闲 Region 中，此阶段不会造成应用线程暂停。&lt;/p&gt;
+&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;初始更新引用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;短暂的暂停应用线程，只确保疏散操作均已完成。&lt;/p&gt;
+&lt;ol start=&#34;7&#34;&gt;
+&lt;li&gt;&lt;b&gt;并发更新引用&lt;/b&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;遍历堆中对象，更新疏散对象的引用。&lt;/p&gt;
+&lt;ol start=&#34;8&#34;&gt;
+&lt;li&gt;最终更新引用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;暂停应用线程，堆当前的 Root Set 进行更新，对收集集合的 Region 进行回收。&lt;/p&gt;
+&lt;ol start=&#34;9&#34;&gt;
+&lt;li&gt;并发清理&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;回收无任何对象引用的 Region。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ZGC 介绍</title>
+      <link>https://moyada.github.io/post/zgc/</link>
+      <pubDate>Fri, 28 Jun 2019 20:12:10 +0000</pubDate>
+      <guid>https://moyada.github.io/post/zgc/</guid>
+      <description>&lt;h2 id=&#34;什么是-zgc&#34;&gt;什么是 ZGC&lt;/h2&gt;
+&lt;p&gt;由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:+UseZGC 开启，目前仅支持 Linux x86 64位的系统。&lt;/p&gt;
+&lt;p&gt;ZGC 全称 Z Garbage Collector，是一款 &lt;code&gt;低停顿&lt;/code&gt; 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 &lt;code&gt;10毫秒&lt;/code&gt; 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考资料:
+&lt;a href=&#34;https://openjdk.java.net/projects/zgc/&#34;&gt;https://openjdk.java.net/projects/zgc/&lt;/a&gt;
+&lt;a href=&#34;https://www.youtube.com/watch?v=7k_XfLGu-Ts&#34;&gt;https://www.youtube.com/watch?v=7k_XfLGu-Ts&lt;/a&gt;
+&lt;a href=&#34;https://www.youtube.com/watch?v=kF_r3GE3zOo&#34;&gt;https://www.youtube.com/watch?v=kF_r3GE3zOo&lt;/a&gt;
+&lt;a href=&#34;https://dinfuehr.github.io/blog/a-first-look-into-zgc/&#34;&gt;https://dinfuehr.github.io/blog/a-first-look-into-zgc/&lt;/a&gt;
+&lt;a href=&#34;https://www.opsian.com/blog/javas-new-zgc-is-very-exciting/&#34;&gt;https://www.opsian.com/blog/javas-new-zgc-is-very-exciting/&lt;/a&gt;
+&lt;a href=&#34;https://mp.weixin.qq.com/s/KUCs_BJUNfMMCO1T3_WAjw&#34;&gt;https://mp.weixin.qq.com/s/KUCs_BJUNfMMCO1T3_WAjw&lt;/a&gt;
+&lt;a href=&#34;https://www.youtube.com/watch?v=tShc0dyFtgw&amp;amp;t=2007s&#34;&gt;https://www.youtube.com/watch?v=tShc0dyFtgw&amp;amp;t=2007s&lt;/a&gt;
+&lt;a href=&#34;https://www.youtube.com/watch?v=7cWiwu7kYkE&#34;&gt;https://www.youtube.com/watch?v=7cWiwu7kYkE&lt;/a&gt;
+&lt;a href=&#34;http://likehui.top/2019/04/11/ZGC-%E7%89%B9%E6%80%A7%E8%A7%A3%E8%AF%BB/&#34;&gt;http://likehui.top/2019/04/11/ZGC-%E7%89%B9%E6%80%A7%E8%A7%A3%E8%AF%BB/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/zgc/gc-concurrent.png&#34; alt=&#34;gc-concurrent&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;特性&#34;&gt;特性&lt;/h2&gt;
+&lt;h3 id=&#34;基于-region-的并发收集模式&#34;&gt;基于 Region 的并发收集模式&lt;/h3&gt;
+&lt;p&gt;ZGC 与 G1 类似，也是以 Region 划分堆内存结构的，不同的是，ZGC 中 Region 是以大小进行分组的，分别是 Small (2MB)、Medium (32MB)、Large (N*MB)，并且尚未进行分代。由于没有了分代，也就没有了 &lt;code&gt;CardTable&lt;/code&gt; 和 &lt;code&gt;RememberedSet&lt;/code&gt; 的开销。&lt;/p&gt;
+&lt;h3 id=&#34;使用-numa架构技术httpsenwikipediaorgwikinon-uniform_memory_access高效的分配空间和进行对象的扫描&#34;&gt;使用 
+&lt;a href=&#34;https://en.wikipedia.org/wiki/Non-uniform_memory_access&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;NUMA架构技术&lt;/a&gt;高效的分配空间和进行对象的扫描&lt;/h3&gt;
+&lt;p&gt;利用 NUMA 架构的 CPU 亲和的内存分配策略，在分配对象时使用线程所处的节点缓存，使线程在操作自身创建的对象时提高效率。&lt;/p&gt;
+&lt;h3 id=&#34;设计颜色指针标记对象状态保障引用关系一致&#34;&gt;设计颜色指针标记对象状态，保障引用关系一致&lt;/h3&gt;
+&lt;p&gt;颜色指针就好比状态机，ZGC 在对象地址的其中 4bit 的空间用于标记&lt;code&gt;颜色&lt;/code&gt;状态，这四个字节分别称之 &lt;code&gt;Finalizable&lt;/code&gt;、 &lt;code&gt;Remapped&lt;/code&gt; 、&lt;code&gt;Marked1&lt;/code&gt;、 &lt;code&gt;Marked0&lt;/code&gt;，通过在不同的收集阶段对指定标记的状态检测，从而采取不同的执行动作。&lt;/p&gt;
+&lt;p&gt;由于需要额外的空间来存储标记，因此不支持 32 位平台和指针压缩。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Makred0、 Marked1 用于识别对象在垃圾回收周期中是否被标记存活，存在两个的原因是因为一个被标记的对象可能来自上一个回收周期并未重新映射，此类对象则只需进行映射而无需重定位。&lt;/li&gt;
+&lt;li&gt;Remapped 表明该引用对象需要从地址映射表中获取新地址并转移。&lt;/li&gt;
+&lt;li&gt;Finalizable 表示这是一个 finalizar 对象，只有 Finalizer 可以对其进行访问。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;具体逻辑见 &lt;code&gt;hotspot/share/gc/z/zAddress.hpp&lt;/code&gt;、&lt;code&gt;hotspot/share/gc/z/zAddress.cpp&lt;/code&gt;、&lt;code&gt;hotspot/share/gc/z/zAddress.inline.hpp&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;利用-读屏障-修改引用来提高对象的整理迁移功能&#34;&gt;利用 读屏障 修改引用来提高对象的整理迁移功能&lt;/h3&gt;
+&lt;p&gt;对比 G1 使用 &lt;code&gt;写屏障&lt;/code&gt; 来保证引用关系一致，ZGC 则是使用 &lt;code&gt;读屏障&lt;/code&gt; 来达到。&lt;/p&gt;
+&lt;p&gt;在应用线程与 GC 线程同时操作同一对象时，通过读屏障检测对象状态，通过 CAS 对重映射对象进行迁移。&lt;/p&gt;
+&lt;p&gt;这种设计使得无需暂停应用线程就能保证引用正确，而读屏障的性能开销只有约 4%。&lt;/p&gt;
+&lt;h2 id=&#34;触发策略&#34;&gt;触发策略&lt;/h2&gt;
+&lt;p&gt;通过 &lt;code&gt;hotspot/share/gc/z/zDirector.cpp&lt;/code&gt; 中可得知，ZGC 与其他 GC 的回收策略有所不同，是一种主动式的垃圾回收模式。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;void ZDirector::run_service() {
+  // Main loop
+  while (_metronome.wait_for_tick()) {  // 1
+    sample_allocation_rate();
+    const GCCause::Cause cause = make_gc_decision(); // 2
+    if (cause != GCCause::_no_gc) {
+      ZCollectedHeap::heap()-&amp;gt;collect(cause);
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;在 &lt;code&gt;wait_for_tick&lt;/code&gt; 中，JVM 会利用时钟计算等待时间，当到达唤醒时间并且不在安全点期间则执行后续逻辑。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;make_gc_decision&lt;/code&gt; 是根据条件返回回收策略，包含 4 种可执行垃圾回收的策略。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;** 定时执行 **&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;判断当前时间距离上次垃圾回收的差值，当时间差值大于设定的间隔时间时则触发垃圾回收。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;** 内存预热 **&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;根据堆内存使用率判断是否进行垃圾回收，当每突破一个 10% 值时进行垃圾回收，例如超过 20%、30% 时。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;** 吞吐量过大 **&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对比剩余空间所需分配时间与最久 GC 时间差值，当大于指定间距时 (默认 0.1) 则说明存在空间不足分配的可能性，需要进行垃圾回收。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;** 主动触发 **&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当距离上次垃圾回收已经过了 5 分钟同时堆空间上涨了 10%，并且距离上次 GC 的时间大于最久 GC 时间的 49 倍。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;当这些条件满足时 JVM 将会调用 Monitor (synchronized 底层线程安全模块) 唤醒线程，&lt;code&gt;异步&lt;/code&gt; 执行垃圾回收。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;回收过程&#34;&gt;回收过程&lt;/h2&gt;
+&lt;p&gt;ZGC 的回收过程几乎是完全并发进行的，只会在三个阶段进行短短的暂停: 标记开始(mark-start)、标记结束(mark-final)、迁移开始(relocate-start)，具体流程可见于 &lt;code&gt;src/hotspot/share/gc/z/zDriver.cpp::run_gc_cycle()&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/zgc/phases.png&#34; alt=&#34;zgc-phases&#34;&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;【标记开始】&lt;/strong&gt; 开始标记时，会暂停所有应用线程，标记出堆中的 
+&lt;a href=&#34;https://www.ibm.com/support/knowledgecenter/en/SS3KLZ/com.ibm.java.diagnostics.memory.analyzer.doc/gcroots.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GC Roots&lt;/a&gt;。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/zgc/mark-start.png&#34; alt=&#34;mark-start&#34;&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;&lt;strong&gt;【并发标记】&lt;/strong&gt; 释放应用线程，通过 GC Roots 遍历堆中所有对象，找出存活的对象集合 (类似一个 bitmap)。应用线程利用&lt;code&gt;读屏障&lt;/code&gt;将对象的变化信息保存于线程中，之后转交由 GC 线程处理引用关系。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/zgc/concurrent-mark.png&#34; alt=&#34;concurrent-mark&#34;&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;strong&gt;【标记结束】&lt;/strong&gt; 完成所有对象的标记后，短时暂停应用线程，完成标记阶段。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/zgc/mark-final.png&#34; alt=&#34;mark-final&#34;&gt;&lt;/p&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;&lt;strong&gt;【并发准备】&lt;/strong&gt; 为下一阶段的重定位做准备，收集那些垃圾对象占比最大或最多的 page 加入 &lt;code&gt;relocate set&lt;/code&gt;，每个 page 都分配一个 &lt;code&gt;forwarding table&lt;/code&gt; 保存重定向地址，还进行一些其他数据的清理 (比如软弱虚引用、Finalizer 对象、字符串常量池、元数据)。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/zgc/prepare.png&#34; alt=&#34;prepare&#34;&gt;&lt;/p&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;&lt;strong&gt;【迁移开始】&lt;/strong&gt; 暂停应用线程，扫描 GC Roots 的指向对象，对 &lt;code&gt;relocate set&lt;/code&gt; 内对象进行迁移并将重定位地址写入 &lt;code&gt;forwarding table&lt;/code&gt;。将本地线程状态设置为 &lt;code&gt;bad mask&lt;/code&gt;，对应用线程内对迁移对象的引用标记为 &lt;code&gt;Remapped relocate&lt;/code&gt;。分配大块连续空间，以便能够存放要迁移的对象，申请一下阶段所需的工作线程。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/zgc/relocate-start.png&#34; alt=&#34;relocate-start&#34;&gt;&lt;/p&gt;
+&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;&lt;strong&gt;【并发迁移】&lt;/strong&gt; 对 &lt;code&gt;relocate set&lt;/code&gt; 中 page 里剩余的存活对象进行迁移，将重定位地址写入 &lt;code&gt;forwarding table&lt;/code&gt; 中。应用线程在操作 &lt;code&gt;Remapped relocate&lt;/code&gt; 对象时将通过读屏障进行重新映射地址，同时 GC线程 也对程序内的对象引用进行重映射。当映射地址与原地址一致时则表明所有引用均已重映射，标记 page 在之后清除释放空间。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/zgc/concurrent-relocate.png&#34; alt=&#34;concurrent-relocate&#34;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如未重映射对象在下一垃圾回收周期也被标记，则该对象则不会进行分配重定位地址，为了达到这一区别所以才有了 &lt;code&gt;Makred0&lt;/code&gt;、 &lt;code&gt;Marked1&lt;/code&gt; 两个标记标识。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;停顿时间不会随着堆空间的大小增长，但是与 GC Root 的数量是成正比，而 GC Root 的数量则与应用线程的数量有关。
+在 GC 的周期内，标记开始和迁移开始操作会比较花费时间，但所有停顿时间总共也是小于 10 毫秒。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
     
     <item>
       <title>Java GC过程</title>

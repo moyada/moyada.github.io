@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="博客   计算机书籍控  开源文档  程序猿DD - Spring Boot教程与Spring Cloud教程  老高的技术博客  阿里中间件团队博客  ELK 大数据  猿天地  Java工程师成神之路 http://blog.csdn.net/dengsilinming/article/list/1   分布式 Hystrix  https://my.oschina.net/yangshaokai/blog/674685  Spring Cloud与Dubbo  http://blog.">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/collection/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/bak/collection/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/bak/collection/">
+  <meta property="og:title" content="收藏 | 疯狂的厨子">
+  <meta property="og:description" content="博客   计算机书籍控  开源文档  程序猿DD - Spring Boot教程与Spring Cloud教程  老高的技术博客  阿里中间件团队博客  ELK 大数据  猿天地  Java工程师成神之路 http://blog.csdn.net/dengsilinming/article/list/1   分布式 Hystrix  https://my.oschina.net/yangshaokai/blog/674685  Spring Cloud与Dubbo  http://blog."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2017-02-21T23:06:33&#43;00:00">
+    
+    <meta property="article:modified_time" content="2017-02-21T23:06:33&#43;00:00">
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>收藏 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">收藏</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#博客">博客</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#hystrix">Hystrix</a></li>
+    <li><a href="#spring-cloud与dubbo">Spring Cloud与Dubbo</a></li>
+    <li><a href="#zabbix">Zabbix</a></li>
+    <li><a href="#微服务">微服务</a></li>
+    <li><a href="#redis分布式锁">redis分布式锁</a></li>
+    <li><a href="#zkclientcurator使用">zkclient,curator使用</a></li>
+    <li><a href="#最终一致性">最终一致性</a></li>
+    <li><a href="#日志分析">日志分析</a></li>
+    <li><a href="#kafka">Kafka</a></li>
+    <li><a href="#kafka-设计与原理详解">Kafka 设计与原理详解</a></li>
+    <li><a href="#分布式系统事务一致性解决方案">分布式系统事务一致性解决方案</a></li>
+    <li><a href="#同程旅游redis缓存系统">同程旅游Redis缓存系统</a></li>
+    <li><a href="#spring-cloud">Spring Cloud</a></li>
+    <li><a href="#分布式事务">分布式事务</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#docker">Docker</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#snowflake">Snowflake</a></li>
+    <li><a href="#tf-idf">TF-IDF</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#pagerank">PageRank</a></li>
+    <li><a href="#crc16-三种算法及c实现">CRC16 三种算法及c实现</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#大数据实时处理实战">大数据实时处理实战</a></li>
+    <li><a href="#beam">Beam</a></li>
+    <li><a href="#mahout">Mahout</a></li>
+    <li><a href="#azkaban">Azkaban</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#keras中文文档">Keras中文文档</a></li>
+    <li><a href="#tensorflow">TensorFlow</a></li>
+    <li><a href="#deeplearning4jdl4j">Deeplearning4j(DL4J)</a></li>
+    <li><a href="#自动图像补全">自动图像补全</a></li>
+    <li><a href="#部署">部署</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#vi与vim区别">VI与VIM区别</a></li>
+    <li><a href="#epoll">epoll</a></li>
+    <li><a href="#网络io之阻塞非阻塞同步异步">网络IO之阻塞、非阻塞、同步、异步</a></li>
+    <li><a href="#linux-44-之后-tcp-三路握手的新流程">Linux 4.4 之后 TCP 三路握手的新流程</a></li>
+    <li><a href="#learn">Learn</a></li>
+    <li><a href="#iptables">iptables</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#maven">maven</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#mvcc">MVCC</a></li>
+    <li><a href="#redoundo">Redo、Undo</a></li>
+    <li><a href="#innodb锁机制">Innodb锁机制</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#java-内存分配和回收机制">Java 内存分配和回收机制</a></li>
+    <li><a href="#面向gc的java编程">面向GC的Java编程</a></li>
+    <li><a href="#jersey开发restful服务">Jersey开发RESTful服务</a></li>
+    <li><a href="#atomic">Atomic</a></li>
+    <li><a href="#netty-mina">Netty-Mina</a></li>
+    <li><a href="#disruptor">Disruptor</a></li>
+    <li><a href="#深入浅出mybatis-configuration">深入浅出MyBatis-Configuration</a></li>
+    <li><a href="#spring监听器">spring监听器</a></li>
+    <li><a href="#bio--nio--aio">BIO | NIO | AIO</a></li>
+    <li><a href="#im4java">Im4java</a></li>
+    <li><a href="#锁">锁</a></li>
+    <li><a href="#drools">Drools</a></li>
+    <li><a href="#jvm">JVM</a></li>
+    <li><a href="#java8">java8</a>
+      <ul>
+        <li><a href="#io">IO</a></li>
+        <li><a href="#stream">Stream</a></li>
+        <li><a href="#hashmap">HashMap</a></li>
+        <li><a href="#spring-boot参考指南">Spring Boot参考指南</a></li>
+        <li><a href="#spring-boot-入门">Spring Boot 入门</a></li>
+        <li><a href="#spring-4">Spring 4</a></li>
+        <li><a href="#cas">CAS</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#python守护进程demo">python守护进程demo</a></li>
+    <li><a href="#python-tutorial">Python Tutorial</a></li>
+    <li><a href="#爬虫">爬虫</a></li>
+    <li><a href="#文本挖掘">文本挖掘</a></li>
+    <li><a href="#配置编译环境">配置编译环境</a></li>
+    <li><a href="#pip">pip</a></li>
+    <li><a href="#nginx--gunicorn--django">Nginx + Gunicorn + Django</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#调试">调试</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#websocket">WebSocket</a></li>
+    <li><a href="#css-selectors-level-4">CSS Selectors Level 4</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#devops">DevOps</a></li>
+    <li><a href="#sre之道">SRE之道</a></li>
+    <li><a href="#技术领域">技术领域</a></li>
+    <li><a href="#https-与-http2-协议分析">HTTPS 与 HTTP2 协议分析</a></li>
+    <li><a href="#reactor和proactor模式">Reactor和Proactor模式</a></li>
+    <li><a href="#管道模型pipeline">管道模型(Pipeline)</a></li>
+    <li><a href="#半包粘包">半包、粘包</a></li>
+    <li><a href="#sftp和ftp-区别工作原理等">Sftp和ftp 区别、工作原理等</a></li>
+    <li><a href="#双向数据绑定">双向数据绑定</a></li>
+    <li><a href="#json-web-token">JSON Web Token</a></li>
+    <li><a href="#oauth-20">OAuth 2.0</a></li>
+    <li><a href="#restful-api-设计">RESTful API 设计</a></li>
+    <li><a href="#微服务的技术架构术语定义">微服务的技术架构术语定义</a></li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>收藏</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2017-02-21
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <h2 id="博客">博客</h2>
+<ul>
+<li>
+<a href="http://bestcbooks.com" target="_blank" rel="noopener">计算机书籍控</a></li>
+<li>
+<a href="http://udn.yyuap.com/general.php?mod=index&amp;op=document#serverApp" target="_blank" rel="noopener">开源文档</a></li>
+<li>
+<a href="http://blog.didispace.com" target="_blank" rel="noopener">程序猿DD - Spring Boot教程与Spring Cloud教程</a></li>
+<li>
+<a href="https://blog.phpgao.com/vpses.html" target="_blank" rel="noopener">老高的技术博客</a></li>
+<li>
+<a href="http://jm.taobao.org/categories/" target="_blank" rel="noopener">阿里中间件团队博客</a></li>
+<li>
+<a href="http://www.cnblogs.com/xing901022/p/4704319.html" target="_blank" rel="noopener">ELK 大数据</a></li>
+<li>
+<a href="http://cxytiandi.com" target="_blank" rel="noopener">猿天地</a></li>
+<li>
+<a href="http://www.hollischuang.com/archives/1001" target="_blank" rel="noopener">Java工程师成神之路</a></li>
+<li><a href="http://blog.csdn.net/dengsilinming/article/list/1">http://blog.csdn.net/dengsilinming/article/list/1</a></li>
+</ul>
+<hr>
+<h1 id="分布式">分布式</h1>
+<h2 id="hystrix">Hystrix</h2>
+<ul>
+<li><a href="https://my.oschina.net/yangshaokai/blog/674685">https://my.oschina.net/yangshaokai/blog/674685</a></li>
+</ul>
+<h2 id="spring-cloud与dubbo">Spring Cloud与Dubbo</h2>
+<ul>
+<li><a href="http://blog.csdn.net/kobejayandy/article/details/52078275">http://blog.csdn.net/kobejayandy/article/details/52078275</a></li>
+</ul>
+<h2 id="zabbix">Zabbix</h2>
+<ul>
+<li><a href="https://www.zhihu.com/question/19973178">https://www.zhihu.com/question/19973178</a></li>
+</ul>
+<h2 id="微服务">微服务</h2>
+<ul>
+<li><a href="https://www.ibm.com/developerworks/cn/java/j-cn-java-and-microservice-1st/index.html?cm_mmc=dwchina-_-homepage-_-social-_-weibo">https://www.ibm.com/developerworks/cn/java/j-cn-java-and-microservice-1st/index.html?cm_mmc=dwchina-_-homepage-_-social-_-weibo</a></li>
+</ul>
+<h2 id="redis分布式锁">redis分布式锁</h2>
+<ul>
+<li><a href="http://www.cnblogs.com/0201zcr/p/5942748.html">http://www.cnblogs.com/0201zcr/p/5942748.html</a></li>
+</ul>
+<h2 id="zkclientcurator使用">zkclient,curator使用</h2>
+<ul>
+<li><a href="http://blueyan.iteye.com/blog/2298276">http://blueyan.iteye.com/blog/2298276</a></li>
+</ul>
+<h2 id="最终一致性">最终一致性</h2>
+<ul>
+<li><a href="http://blog.csdn.net/xiaoqiangxx/article/details/7566654">http://blog.csdn.net/xiaoqiangxx/article/details/7566654</a></li>
+</ul>
+<h2 id="日志分析">日志分析</h2>
+<ul>
+<li><a href="http://blog.csdn.net/changdazhong/article/details/52536186">http://blog.csdn.net/changdazhong/article/details/52536186</a></li>
+<li><a href="http://blog.csdn.net/cnbird2008/article/details/39901087">http://blog.csdn.net/cnbird2008/article/details/39901087</a></li>
+<li><a href="http://www.cnblogs.com/smartloli/p/4615908.html">http://www.cnblogs.com/smartloli/p/4615908.html</a></li>
+<li><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzEzODYwOA==&amp;mid=2665283950&amp;idx=1&amp;sn=9005fcaf85f8d4673c62f4067bf3d0ca&amp;scene=0#wechat_redirect">http://mp.weixin.qq.com/s?__biz=MzIzMzEzODYwOA==&amp;mid=2665283950&amp;idx=1&amp;sn=9005fcaf85f8d4673c62f4067bf3d0ca&amp;scene=0#wechat_redirect</a></li>
+<li><a href="http://www.elain.org/2016/02/15/ELK">http://www.elain.org/2016/02/15/ELK</a>实战一:架构的选择/?hmsr=toutiao.io&amp;utm_medium=toutiao.io&amp;utm_source=toutiao.io</li>
+<li><a href="http://www.elain.org/2015/12/17/EFK">http://www.elain.org/2015/12/17/EFK</a>日志收集丢失率测试报告/</li>
+<li><a href="http://www.icyfire.me/2014/11/13/logstash-es-kibana.html">http://www.icyfire.me/2014/11/13/logstash-es-kibana.html</a></li>
+<li><a href="http://blog.magicmanufactory.com/efk">http://blog.magicmanufactory.com/efk</a>框架搭建/</li>
+</ul>
+<h2 id="kafka">Kafka</h2>
+<ul>
+<li><a href="http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;mid=2247483898&amp;idx=1&amp;sn=e5abc4cd7ae3650efc920498483d479b&amp;chksm=ec2c4b4adb5bc25c774b900d579ea9cf9ea3bc04d5c0df517fe2c775b85b406dd1a2efd82a39&amp;mpshare=1&amp;scene=23&amp;srcid=0217hWKtP4AK21NuFM5DnAvr#rd">http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;mid=2247483898&amp;idx=1&amp;sn=e5abc4cd7ae3650efc920498483d479b&amp;chksm=ec2c4b4adb5bc25c774b900d579ea9cf9ea3bc04d5c0df517fe2c775b85b406dd1a2efd82a39&amp;mpshare=1&amp;scene=23&amp;srcid=0217hWKtP4AK21NuFM5DnAvr#rd</a></li>
+</ul>
+<h2 id="kafka-设计与原理详解">Kafka 设计与原理详解</h2>
+<ul>
+<li><a href="http://blog.csdn.net/suifeng3051/article/details/48053965">http://blog.csdn.net/suifeng3051/article/details/48053965</a></li>
+</ul>
+<h2 id="分布式系统事务一致性解决方案">分布式系统事务一致性解决方案</h2>
+<ul>
+<li><a href="http://www.infoq.com/cn/articles/solution-of-distributed-system-transaction-consistency">http://www.infoq.com/cn/articles/solution-of-distributed-system-transaction-consistency</a></li>
+</ul>
+<h2 id="同程旅游redis缓存系统">同程旅游Redis缓存系统</h2>
+<ul>
+<li><a href="http://geek.csdn.net/news/detail/136648">http://geek.csdn.net/news/detail/136648</a></li>
+</ul>
+<h2 id="spring-cloud">Spring Cloud</h2>
+<ul>
+<li><a href="http://blog.didispace.com/springcloud1/">http://blog.didispace.com/springcloud1/</a></li>
+</ul>
+<h2 id="分布式事务">分布式事务</h2>
+<ul>
+<li><a href="http://blog.csdn.net/bluishglc/article/details/7612811">http://blog.csdn.net/bluishglc/article/details/7612811</a></li>
+</ul>
+<hr>
+<h1 id="容器">容器</h1>
+<h2 id="docker">Docker</h2>
+<ul>
+<li><a href="http://blog.csdn.net/haiyan_qi/article/details/52777298">http://blog.csdn.net/haiyan_qi/article/details/52777298</a></li>
+<li><a href="http://geek.csdn.net/news/detail/131711">http://geek.csdn.net/news/detail/131711</a></li>
+</ul>
+<hr>
+<h1 id="架构">架构</h1>
+<ul>
+<li>
+<p><a href="http://mp.weixin.qq.com/s/zsbCnXioxTA1F5cIs_2Ytg">http://mp.weixin.qq.com/s/zsbCnXioxTA1F5cIs_2Ytg</a></p>
+</li>
+<li>
+<p>
+<a href="http://bigbully.github.io/Dapper-translation" target="_blank" rel="noopener">Dapper，大规模分布式系统的跟踪系统</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzIyNjE4NDcyMA==&amp;mid=2247484013&amp;idx=1&amp;sn=dd96e2ec4e995844dbe65cf4c923f961&amp;chksm=e8751912df02900409dc01efdc41bc96bb9b456042b59736c8c21de20ea980e24a0eaa344b6e&amp;mpshare=1&amp;scene=1&amp;srcid=0227wo5zhY8PP2qnllpDq3A6#rd" target="_blank" rel="noopener">SOA 设计的 9 大原则</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;mid=2247483824&amp;idx=1&amp;sn=4c4aa8647d8deac858fc084db9f64bfa&amp;chksm=ec2c4b00db5bc2165d2ce4132214bbae5ac570f3173a038ce463569fb58344e94b178dfe36eb&amp;mpshare=1&amp;scene=23&amp;srcid=0116XqNFW9Vy8aQPEBCrSuqX#rd" target="_blank" rel="noopener">荔枝FM异地多活IDC机房架构</a></p>
+</li>
+<li>
+<p>
+<a href="http://tech.meituan.com/mq-design.html?hmsr=toutiao.io&amp;utm_medium=toutiao.io&amp;utm_source=toutiao.io" target="_blank" rel="noopener">消息队列设计精要</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;mid=2247483797&amp;idx=1&amp;sn=108bc92611366079f689310373de3c7e&amp;chksm=ec2c4b25db5bc233de4a51461567a961a5b6e865ca3e75079cd85ecfeba2ce9d3778a1907b5b&amp;mpshare=1&amp;scene=23&amp;srcid=0113Okn3umkwlUjE99SKRTfY#rd" target="_blank" rel="noopener">消息队列</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzIyNjE4NDcyMA==&amp;mid=2247483958&amp;idx=1&amp;sn=852fad32176db697b9730c1e3d03feb8&amp;chksm=e8751949df02905f07380c1927af0e06fe95efd48c32dc7d62468b3cf302b79035cd7657d12f&amp;mpshare=1&amp;scene=23&amp;srcid=0120zbgRno9kc7p25bvkuAh0#rd" target="_blank" rel="noopener">各种大型网站技术架构</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MjM5OTA1MDUyMA==&amp;mid=2655437766&amp;idx=1&amp;sn=3371a38c59b6eefaa0cd909408d7953b&amp;chksm=bd730fb18a0486a702e83a949acb829729e364cc045f9aee6d51ab9e64aae4995b856f8f2dd9&amp;mpshare=1&amp;scene=22&amp;srcid=0206s8122MIPPwiBQndsfQo0#rd" target="_blank" rel="noopener">支付宝钱包</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzIyNjE4NDcyMA==&amp;mid=2247483998&amp;idx=1&amp;sn=c93261b74bb82d46bac49074fdbb7686&amp;chksm=e8751921df02903750d5be6697bf74aa782d0d7ec199b56207db118687ab36c455c02341852a&amp;mpshare=1&amp;scene=23&amp;srcid=0217qgnHdCsGcBasEBpXYnXN#rd" target="_blank" rel="noopener">唯品会</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;mid=2247483895&amp;idx=1&amp;sn=0eaa312f6dee151fba10598052e197fe&amp;chksm=ec2c4b47db5bc2517305bf88f2c83254830a6eddaccd81639234413ff6ea147f2449fccaad56&amp;mpshare=1&amp;scene=23&amp;srcid=0214ymM2mMPWI1RYcwqMcafE#rd" target="_blank" rel="noopener">京东、宅急送</a></p>
+</li>
+<li>
+<p>
+<a href="http://www.ityouknow.com/%e6%9e%b6%e6%9e%84/2017/01/10/%e4%bb%8e%e9%9b%b6%e5%88%b0%e7%99%be%e4%ba%bf%e4%ba%92%e8%81%94%e7%bd%91%e9%87%91%e8%9e%8d%e6%9e%b6%e6%9e%84%e5%8f%91%e5%b1%95%e5%8f%b2.html?hmsr=toutiao.io&amp;utm_medium=toutiao.io&amp;utm_source=toutiao.io" target="_blank" rel="noopener">金融架构</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;mid=2247483948&amp;idx=1&amp;sn=7a9d2095c1031186b48d72e2ed84401f&amp;chksm=ec2c489cdb5bc18acc74b138017b8ec001a4941f57e794abb17676d530caf6977dbb2b04ec69&amp;mpshare=1&amp;scene=23&amp;srcid=0304n33JjVWCL8SACm5WQqOc#rd" target="_blank" rel="noopener">支付系统架构</a></p>
+</li>
+<li>
+<p>
+<a href="http://blog.jobbole.com/83459/" target="_blank" rel="noopener">亿级用户下的新浪微博平台架构</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;mid=2247483882&amp;idx=1&amp;sn=a40e61dd96361d46a6c33524e1859248&amp;chksm=ec2c4b5adb5bc24cc2685bf8159f0e14e1f6b4b9f4b2c144fd1b44186ba2096ff392e53c8191&amp;mpshare=1&amp;scene=23&amp;srcid=0209mOFMd3gYi2UZ9pkOhfXs#rd" target="_blank" rel="noopener">去哪儿网支付系统</a></p>
+</li>
+<li>
+<p>
+<a href="https://zhuanlan.zhihu.com/p/24714711" target="_blank" rel="noopener">MTDDL——美团点评分布式数据访问层中间件</a></p>
+</li>
+<li>
+<p>
+<a href="http://mp.weixin.qq.com/s?__biz=MzIyNjE4NDcyMA==&amp;mid=2247484003&amp;idx=1&amp;sn=8fe3144cd63a63aa7c68fc6ca08be180&amp;chksm=e875191cdf02900a7556f958df4de45436818cc8015fe7870ef25408d92ab8ea677067d5d9a0&amp;mpshare=1&amp;scene=23&amp;srcid=0219ygyQaZz0saQMj5kfBBSV#rd" target="_blank" rel="noopener">ELK 日志分析系统</a></p>
+</li>
+<li>
+<p>
+<a href="http://blog.jobbole.com/108036/" target="_blank" rel="noopener">Google 是如何做负载均衡</a></p>
+</li>
+<li>
+<p>
+<a href="http://www.cnblogs.com/chowmin/articles/4629220.html" target="_blank" rel="noopener">搜索引擎选择： Elasticsearch与Solr</a></p>
+</li>
+<li>
+<p>
+<a href="http://blog.csdn.net/suifeng3051/article/details/23739295" target="_blank" rel="noopener">Memcache,Redis,MongoDB（数据缓存系统）方案对比与分析</a></p>
+</li>
+<li>
+<p>
+<a href="http://tech.meituan.com/mq-design.html?hmsr=toutiao.io&amp;utm_medium=toutiao.io&amp;utm_source=toutiao.io" target="_blank" rel="noopener">消息队列设计精要</a></p>
+</li>
+<li>
+<p>
+<a href="https://zhuanlan.zhihu.com/p/25958589" target="_blank" rel="noopener">游戏架构</a></p>
+</li>
+</ul>
+<hr>
+<h1 id="算法">算法</h1>
+<h2 id="snowflake">Snowflake</h2>
+<ul>
+<li><a href="http://www.lanindex.com/twitter-snowflake">http://www.lanindex.com/twitter-snowflake</a>，64位自增id算法详解/</li>
+</ul>
+<h2 id="tf-idf">TF-IDF</h2>
+<ul>
+<li><a href="http://www.cnblogs.com/ywl925/archive/2013/08/26/3275878.html">http://www.cnblogs.com/ywl925/archive/2013/08/26/3275878.html</a></li>
+</ul>
+<h1 id="mesicpu缓存一致性协议">MESI－CPU缓存一致性协议</h1>
+<ul>
+<li><a href="http://blog.csdn.net/realxie/article/details/7317630">http://blog.csdn.net/realxie/article/details/7317630</a></li>
+<li><a href="http://blog.csdn.net/cqu20093154/article/details/46909903">http://blog.csdn.net/cqu20093154/article/details/46909903</a></li>
+<li><a href="https://en.wikipedia.org/wiki/MESI_protocol">https://en.wikipedia.org/wiki/MESI_protocol</a></li>
+</ul>
+<h2 id="pagerank">PageRank</h2>
+<ul>
+<li><a href="http://blog.csdn.net/hguisu/article/details/7996185">http://blog.csdn.net/hguisu/article/details/7996185</a></li>
+<li><a href="https://segmentfault.com/a/1190000000711128">https://segmentfault.com/a/1190000000711128</a></li>
+</ul>
+<h2 id="crc16-三种算法及c实现">CRC16 三种算法及c实现</h2>
+<ul>
+<li><a href="http://www.cnblogs.com/Msisiterc/archive/2011/12/20/2294910.html">http://www.cnblogs.com/Msisiterc/archive/2011/12/20/2294910.html</a></li>
+</ul>
+<hr>
+<h1 id="大数据">大数据</h1>
+<h2 id="大数据实时处理实战">大数据实时处理实战</h2>
+<ul>
+<li><a href="http://geek.csdn.net/news/detail/163702">http://geek.csdn.net/news/detail/163702</a></li>
+</ul>
+<h2 id="beam">Beam</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/23618169">https://zhuanlan.zhihu.com/p/23618169</a></li>
+</ul>
+<h2 id="mahout">Mahout</h2>
+<ul>
+<li><a href="https://www.ibm.com/developerworks/cn/java/j-mahout/index.html">https://www.ibm.com/developerworks/cn/java/j-mahout/index.html</a></li>
+<li><a href="http://www.open-open.com/lib/view/open1383390452040.html">http://www.open-open.com/lib/view/open1383390452040.html</a></li>
+<li><a href="http://hadoop.readthedocs.io/en/latest/Hadoop-Mahout.html">http://hadoop.readthedocs.io/en/latest/Hadoop-Mahout.html</a></li>
+<li><a href="http://blog.csdn.net/zhoubl668/article/details/13297663">http://blog.csdn.net/zhoubl668/article/details/13297663</a></li>
+</ul>
+<h2 id="azkaban">Azkaban</h2>
+<ul>
+<li><a href="https://oschina.net/p/azkaban">https://oschina.net/p/azkaban</a></li>
+<li><a href="https://azkaban.github.io/">https://azkaban.github.io/</a></li>
+<li><a href="http://www.cnblogs.com/fbiswt/p/3318876.html">http://www.cnblogs.com/fbiswt/p/3318876.html</a></li>
+</ul>
+<hr>
+<h1 id="机器学习">机器学习</h1>
+<ul>
+<li><a href="http://it.sohu.com/20161221/n476512671.shtml">http://it.sohu.com/20161221/n476512671.shtml</a></li>
+<li><a href="http://blog.csdn.net/BaiHuaXiu123/article/category/6477383">http://blog.csdn.net/BaiHuaXiu123/article/category/6477383</a></li>
+</ul>
+<h2 id="keras中文文档">Keras中文文档</h2>
+<ul>
+<li><a href="http://keras-cn.readthedocs.io/en/latest/#theanotensorflow">http://keras-cn.readthedocs.io/en/latest/#theanotensorflow</a></li>
+</ul>
+<h2 id="tensorflow">TensorFlow</h2>
+<ul>
+<li><a href="http://tensorfly.cn">http://tensorfly.cn</a></li>
+<li><a href="http://blog.csdn.net/matrix_space/article/details/54286086">http://blog.csdn.net/matrix_space/article/details/54286086</a></li>
+<li><a href="http://geek.csdn.net/news/detail/159031">http://geek.csdn.net/news/detail/159031</a></li>
+<li><a href="http://mp.weixin.qq.com/s/w7sVasusVUntfNXbUaTltg">http://mp.weixin.qq.com/s/w7sVasusVUntfNXbUaTltg</a></li>
+<li><a href="http://blog.jobbole.com/110558/">http://blog.jobbole.com/110558/</a></li>
+</ul>
+<h2 id="deeplearning4jdl4j">Deeplearning4j(DL4J)</h2>
+<ul>
+<li><a href="https://deeplearning4j.org/cn/">https://deeplearning4j.org/cn/</a></li>
+<li><a href="http://www.oschina.net/p/deeplearning4j">http://www.oschina.net/p/deeplearning4j</a></li>
+</ul>
+<h2 id="自动图像补全">自动图像补全</h2>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s/oWUDqhhi2B4mjqZpe0_oaQ">https://mp.weixin.qq.com/s/oWUDqhhi2B4mjqZpe0_oaQ</a></li>
+</ul>
+<h2 id="部署">部署</h2>
+<ul>
+<li><a href="http://geek.csdn.net/news/detail/134150">http://geek.csdn.net/news/detail/134150</a></li>
+</ul>
+<hr>
+<h1 id="linux">Linux</h1>
+<h2 id="vi与vim区别">VI与VIM区别</h2>
+<ul>
+<li><a href="http://blog.csdn.net/carolzhang8406/article/details/6117593">http://blog.csdn.net/carolzhang8406/article/details/6117593</a></li>
+</ul>
+<h2 id="epoll">epoll</h2>
+<ul>
+<li><a href="http://blog.163.com/huchengsz@126/blog/static/73483745201181824629285/">http://blog.163.com/huchengsz@126/blog/static/73483745201181824629285/</a></li>
+<li><a href="http://blog.csdn.net/xiajun07061225/article/details/9250579">http://blog.csdn.net/xiajun07061225/article/details/9250579</a></li>
+<li><a href="https://my.oschina.net/dclink/blog/287198">https://my.oschina.net/dclink/blog/287198</a></li>
+<li><a href="http://blog.csdn.net/sparkliang/article/details/4770655">http://blog.csdn.net/sparkliang/article/details/4770655</a></li>
+<li><a href="http://www.cnblogs.com/venow/archive/2012/11/30/2790031.html">http://www.cnblogs.com/venow/archive/2012/11/30/2790031.html</a></li>
+<li><a href="http://blog.csdn.net/ljx0305/article/details/4065058">http://blog.csdn.net/ljx0305/article/details/4065058</a></li>
+<li><a href="http://www.cnblogs.com/Anker/p/3265058.html">http://www.cnblogs.com/Anker/p/3265058.html</a></li>
+</ul>
+<h2 id="网络io之阻塞非阻塞同步异步">网络IO之阻塞、非阻塞、同步、异步</h2>
+<ul>
+<li><a href="http://www.cnblogs.com/Anker/p/3254269.html">http://www.cnblogs.com/Anker/p/3254269.html</a></li>
+</ul>
+<h2 id="linux-44-之后-tcp-三路握手的新流程">Linux 4.4 之后 TCP 三路握手的新流程</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/25313903">https://zhuanlan.zhihu.com/p/25313903</a></li>
+</ul>
+<h2 id="learn">Learn</h2>
+<ul>
+<li><a href="http://roclinux.cn/?page_id=3759">http://roclinux.cn/?page_id=3759</a></li>
+<li><a href="http://www.cnblogs.com/peida/archive/2012/12/05/2803591.html">http://www.cnblogs.com/peida/archive/2012/12/05/2803591.html</a></li>
+<li><a href="http://codingstandards.iteye.com/blog/786653">http://codingstandards.iteye.com/blog/786653</a></li>
+</ul>
+<h2 id="iptables">iptables</h2>
+<ul>
+<li><a href="http://www.cnblogs.com/JemBai/archive/2009/03/19/1416364.html">http://www.cnblogs.com/JemBai/archive/2009/03/19/1416364.html</a></li>
+</ul>
+<hr>
+<h1 id="依赖管理">依赖管理</h1>
+<h2 id="maven">maven</h2>
+<ul>
+<li><a href="http://blog.csdn.net/sin90lzc/article/details/7543262">http://blog.csdn.net/sin90lzc/article/details/7543262</a></li>
+</ul>
+<hr>
+<h1 id="mysql">MySQL</h1>
+<h2 id="mvcc">MVCC</h2>
+<ul>
+<li><a href="http://blog.csdn.net/chen77716/article/details/6742128">http://blog.csdn.net/chen77716/article/details/6742128</a></li>
+<li><a href="http://www.cnblogs.com/chenpingzhao/p/5065316.html">http://www.cnblogs.com/chenpingzhao/p/5065316.html</a></li>
+</ul>
+<h2 id="redoundo">Redo、Undo</h2>
+<ul>
+<li><a href="http://www.cnblogs.com/liuhao/p/3714012.html">http://www.cnblogs.com/liuhao/p/3714012.html</a></li>
+<li><a href="http://blog.csdn.net/chenlvzhou/article/details/40537839">http://blog.csdn.net/chenlvzhou/article/details/40537839</a></li>
+</ul>
+<h2 id="innodb锁机制">Innodb锁机制</h2>
+<ul>
+<li><a href="http://blog.chinaunix.net/uid-24111901-id-2627857.html">http://blog.chinaunix.net/uid-24111901-id-2627857.html</a></li>
+</ul>
+<hr>
+<h1 id="java">JAVA</h1>
+<ul>
+<li>
+<a href="http://docs.oracle.com/javase/tutorial/essential/io/index.html" target="_blank" rel="noopener">IO Tutorials</a></li>
+<li>
+<a href="https://www.ibm.com/developerworks/cn/java/j-cn-java-and-microservice-1st/index.html?cm_mmc=dwchina-_-homepage-_-social-_-weibo" target="_blank" rel="noopener">Java 和微服务</a></li>
+</ul>
+<h2 id="java-内存分配和回收机制">Java 内存分配和回收机制</h2>
+<ul>
+<li><a href="http://blog.csdn.net/initphp/article/details/30487407">http://blog.csdn.net/initphp/article/details/30487407</a></li>
+</ul>
+<h2 id="面向gc的java编程">面向GC的Java编程</h2>
+<ul>
+<li><a href="http://blog.hesey.net/2014/05/gc-oriented-java-programming.html">http://blog.hesey.net/2014/05/gc-oriented-java-programming.html</a></li>
+</ul>
+<h2 id="jersey开发restful服务">Jersey开发RESTful服务</h2>
+<ul>
+<li><a href="http://www.jdon.com/soa/jersey.html">http://www.jdon.com/soa/jersey.html</a></li>
+</ul>
+<h2 id="atomic">Atomic</h2>
+<ul>
+<li><a href="http://ifeve.com/java-atomic/">http://ifeve.com/java-atomic/</a></li>
+</ul>
+<h2 id="netty-mina">Netty-Mina</h2>
+<ul>
+<li><a href="http://ifeve.com/netty-mina-in-depth-1/">http://ifeve.com/netty-mina-in-depth-1/</a></li>
+</ul>
+<h2 id="disruptor">Disruptor</h2>
+<ul>
+<li><a href="http://ifeve.com/disruptor/">http://ifeve.com/disruptor/</a></li>
+<li><a href="http://ifeve.com/disruptor-getting-started/">http://ifeve.com/disruptor-getting-started/</a></li>
+</ul>
+<h2 id="深入浅出mybatis-configuration">深入浅出MyBatis-Configuration</h2>
+<ul>
+<li><a href="http://blog.csdn.net/hupanfeng/article/details/9080545">http://blog.csdn.net/hupanfeng/article/details/9080545</a></li>
+</ul>
+<h2 id="spring监听器">spring监听器</h2>
+<ul>
+<li><a href="http://blog.csdn.net/blueboz/article/details/49949573">http://blog.csdn.net/blueboz/article/details/49949573</a></li>
+<li><a href="https://my.oschina.net/huangcongcong/blog/527779">https://my.oschina.net/huangcongcong/blog/527779</a></li>
+<li><a href="http://blog.csdn.net/sd0902/article/details/8394082">http://blog.csdn.net/sd0902/article/details/8394082</a></li>
+</ul>
+<h2 id="bio--nio--aio">BIO | NIO | AIO</h2>
+<ul>
+<li><a href="https://my.oschina.net/bluesky0leon/blog/132361">https://my.oschina.net/bluesky0leon/blog/132361</a></li>
+<li><a href="http://blog.csdn.net/liuj2511981/article/details/8658440">http://blog.csdn.net/liuj2511981/article/details/8658440</a></li>
+<li><a href="http://www.programering.com/a/MTO3IzMwATk.html">http://www.programering.com/a/MTO3IzMwATk.html</a></li>
+</ul>
+<h2 id="im4java">Im4java</h2>
+<ul>
+<li><a href="http://www.open-open.com/lib/view/open1378730603412.html">http://www.open-open.com/lib/view/open1378730603412.html</a></li>
+<li><a href="http://windows9834.blog.163.com/blog/static/273450042013030115742860/">http://windows9834.blog.163.com/blog/static/273450042013030115742860/</a></li>
+</ul>
+<h2 id="锁">锁</h2>
+<ul>
+<li><a href="http://www.infoq.com/cn/articles/java-memory-model-5">http://www.infoq.com/cn/articles/java-memory-model-5</a></li>
+</ul>
+<h2 id="drools">Drools</h2>
+<ul>
+<li><a href="http://blog.csdn.net/quzishen/article/details/6163012/">http://blog.csdn.net/quzishen/article/details/6163012/</a></li>
+<li><a href="http://dengkane.iteye.com/blog/2208953">http://dengkane.iteye.com/blog/2208953</a></li>
+</ul>
+<h2 id="jvm">JVM</h2>
+<ul>
+<li><a href="http://geek.csdn.net/news/detail/131976">http://geek.csdn.net/news/detail/131976</a></li>
+<li><a href="http://www.importnew.com/22240.html#comment-541402">http://www.importnew.com/22240.html#comment-541402</a></li>
+<li><a href="http://blog.csdn.net/qq_35101189/article/details/55657798">http://blog.csdn.net/qq_35101189/article/details/55657798</a></li>
+<li><a href="http://blog.csdn.net/renfufei/article/details/56678064">http://blog.csdn.net/renfufei/article/details/56678064</a></li>
+</ul>
+<h2 id="java8">java8</h2>
+<ul>
+<li><a href="https://www.ibm.com/developerworks/cn/java/j-lo-jdk8newfeature/index.html">https://www.ibm.com/developerworks/cn/java/j-lo-jdk8newfeature/index.html</a></li>
+</ul>
+<h3 id="io">IO</h3>
+<ul>
+<li><a href="http://it.deepinmind.com/java/2014/02/13/Java8-features-new-new-io.html">http://it.deepinmind.com/java/2014/02/13/Java8-features-new-new-io.html</a></li>
+</ul>
+<h3 id="stream">Stream</h3>
+<ul>
+<li><a href="http://blog.csdn.net/youzhouliu/article/details/51820088">http://blog.csdn.net/youzhouliu/article/details/51820088</a></li>
+<li><a href="http://www.infoq.com/cn/articles/java8-new-features-new-stream-api">http://www.infoq.com/cn/articles/java8-new-features-new-stream-api</a></li>
+</ul>
+<h3 id="hashmap">HashMap</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/huaizuo/p/5371099.html">http://www.cnblogs.com/huaizuo/p/5371099.html</a></li>
+<li><a href="https://yq.aliyun.com/articles/36781">https://yq.aliyun.com/articles/36781</a></li>
+</ul>
+<h3 id="spring-boot参考指南">Spring Boot参考指南</h3>
+<ul>
+<li><a href="https://www.gitbook.com/book/qbgbook/spring-boot-reference-guide-zh/details">https://www.gitbook.com/book/qbgbook/spring-boot-reference-guide-zh/details</a></li>
+</ul>
+<h3 id="spring-boot-入门">Spring Boot 入门</h3>
+<ul>
+<li><a href="http://blog.csdn.net/isea533/article/details/50278205">http://blog.csdn.net/isea533/article/details/50278205</a></li>
+</ul>
+<h3 id="spring-4">Spring 4</h3>
+<ul>
+<li><a href="http://www.infoq.com/cn/articles/spring-4-java-8">http://www.infoq.com/cn/articles/spring-4-java-8</a></li>
+<li><a href="https://www.techempower.com/blog/2013/03/26/everything-about-java-8/">https://www.techempower.com/blog/2013/03/26/everything-about-java-8/</a></li>
+<li><a href="http://blog.csdn.net/dm_vincent/article/category/2648241">http://blog.csdn.net/dm_vincent/article/category/2648241</a></li>
+<li><a href="http://www.oschina.net/translate/everything-about-java-8">http://www.oschina.net/translate/everything-about-java-8</a></li>
+<li><a href="http://www.ibm.com/developerworks/cn/java/j-lo-jdk8newfeature/index.html">http://www.ibm.com/developerworks/cn/java/j-lo-jdk8newfeature/index.html</a></li>
+<li><a href="http://winterbe.com/posts/2015/03/25/java8-examples-string-number-math-files/">http://winterbe.com/posts/2015/03/25/java8-examples-string-number-math-files/</a></li>
+<li><a href="http://eherrera.net/ocpj8-notes/09-java-file-io-(NIO.2)">http://eherrera.net/ocpj8-notes/09-java-file-io-(NIO.2)</a></li>
+<li><a href="http://ifeve.com/java-8-features-tutorial/">http://ifeve.com/java-8-features-tutorial/</a></li>
+</ul>
+<h3 id="cas">CAS</h3>
+<ul>
+<li><a href="http://blog.hesey.net/2011/09/resolve-aba-by-atomicstampedreference.html">http://blog.hesey.net/2011/09/resolve-aba-by-atomicstampedreference.html</a></li>
+<li><a href="http://ifeve.com/atomic-operation/">http://ifeve.com/atomic-operation/</a></li>
+<li><a href="https://www.ibm.com/developerworks/cn/java/j-jtp11234/">https://www.ibm.com/developerworks/cn/java/j-jtp11234/</a></li>
+<li><a href="https://www.ibm.com/developerworks/cn/java/j-jtp04186/">https://www.ibm.com/developerworks/cn/java/j-jtp04186/</a></li>
+<li><a href="http://zl198751.iteye.com/blog/1848575">http://zl198751.iteye.com/blog/1848575</a></li>
+</ul>
+<hr>
+<h1 id="python">Python</h1>
+<ul>
+<li>
+<a href="https://opensourcehacker.com/2015/05/02/pycharm-vs-sublime-text/" target="_blank" rel="noopener">PyCharm vs. Sublime Text</a></li>
+</ul>
+<h2 id="python守护进程demo">python守护进程demo</h2>
+<ul>
+<li><a href="https://blog.phpgao.com/pythond.html">https://blog.phpgao.com/pythond.html</a></li>
+</ul>
+<h2 id="python-tutorial">Python Tutorial</h2>
+<ul>
+<li><a href="http://www.pythondoc.com">http://www.pythondoc.com</a></li>
+<li><a href="http://www.runoob.com/python3/python3-basic-syntax.html">http://www.runoob.com/python3/python3-basic-syntax.html</a></li>
+<li><a href="http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431658624177ea4f8fcb06bc4d0e8aab2fd7aa65dd95000">http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431658624177ea4f8fcb06bc4d0e8aab2fd7aa65dd95000</a></li>
+</ul>
+<h2 id="爬虫">爬虫</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/21377121">https://zhuanlan.zhihu.com/p/21377121</a></li>
+<li><a href="https://xlzd.me/tag/crawler/2/">https://xlzd.me/tag/crawler/2/</a></li>
+</ul>
+<h2 id="文本挖掘">文本挖掘</h2>
+<ul>
+<li><a href="http://geek.csdn.net/news/detail/129348">http://geek.csdn.net/news/detail/129348</a></li>
+</ul>
+<h2 id="配置编译环境">配置编译环境</h2>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/22704462">https://zhuanlan.zhihu.com/p/22704462</a></li>
+</ul>
+<h2 id="pip">pip</h2>
+<ul>
+<li><a href="http://blog.163.com/yang_jianli/blog/static/161990006201162152724339/">http://blog.163.com/yang_jianli/blog/static/161990006201162152724339/</a></li>
+</ul>
+<h2 id="nginx--gunicorn--django">Nginx + Gunicorn + Django</h2>
+<ul>
+<li><a href="http://www.isaced.com/post-248.html">http://www.isaced.com/post-248.html</a></li>
+</ul>
+<h1 id="mysql-1">MySQL</h1>
+<ul>
+<li><a href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001391435131816c6a377e100ec4d43b3fc9145f3bb8056000">http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001391435131816c6a377e100ec4d43b3fc9145f3bb8056000</a></li>
+</ul>
+<h2 id="调试">调试</h2>
+<ul>
+<li><a href="https://www.zhihu.com/question/21572891">https://www.zhihu.com/question/21572891</a></li>
+</ul>
+<hr>
+<h1 id="html">HTML</h1>
+<h2 id="websocket">WebSocket</h2>
+<ul>
+<li><a href="https://www.zhihu.com/question/20215561">https://www.zhihu.com/question/20215561</a></li>
+</ul>
+<h2 id="css-selectors-level-4">CSS Selectors Level 4</h2>
+<ul>
+<li><a href="http://geek.csdn.net/news/detail/127566">http://geek.csdn.net/news/detail/127566</a></li>
+</ul>
+<hr>
+<h1 id="其他">其他</h1>
+<h2 id="devops">DevOps</h2>
+<ul>
+<li><a href="http://www.infoq.com/cn/articles/devops-not-legend">http://www.infoq.com/cn/articles/devops-not-legend</a></li>
+</ul>
+<h2 id="sre之道">SRE之道</h2>
+<ul>
+<li><a href="https://yq.aliyun.com/articles/70525">https://yq.aliyun.com/articles/70525</a></li>
+</ul>
+<h2 id="技术领域">技术领域</h2>
+<p>** <a href="http://geek.csdn.net/news/detail/134070">http://geek.csdn.net/news/detail/134070</a></p>
+<h2 id="https-与-http2-协议分析">HTTPS 与 HTTP2 协议分析</h2>
+<ul>
+<li><a href="http://geek.csdn.net/news/detail/188003">http://geek.csdn.net/news/detail/188003</a></li>
+</ul>
+<h2 id="reactor和proactor模式">Reactor和Proactor模式</h2>
+<ul>
+<li><a href="http://blog.csdn.net/caiwenfeng_for_23/article/details/8458299">http://blog.csdn.net/caiwenfeng_for_23/article/details/8458299</a></li>
+<li><a href="http://www.blogjava.net/DLevin/archive/2015/09/02/427045.html">http://www.blogjava.net/DLevin/archive/2015/09/02/427045.html</a></li>
+<li><a href="http://blog.jobbole.com/59676/">http://blog.jobbole.com/59676/</a></li>
+</ul>
+<h2 id="管道模型pipeline">管道模型(Pipeline)</h2>
+<ul>
+<li><a href="http://blog.csdn.net/yanghua_kobe/article/details/7561016">http://blog.csdn.net/yanghua_kobe/article/details/7561016</a></li>
+</ul>
+<h2 id="半包粘包">半包、粘包</h2>
+<ul>
+<li><a href="http://www.cnblogs.com/jiangtong/archive/2012/03/22/2411985.html">http://www.cnblogs.com/jiangtong/archive/2012/03/22/2411985.html</a></li>
+<li><a href="http://www.itstack.org/?post=12">http://www.itstack.org/?post=12</a></li>
+</ul>
+<h2 id="sftp和ftp-区别工作原理等">Sftp和ftp 区别、工作原理等</h2>
+<ul>
+<li><a href="http://blog.csdn.net/cuker919/article/details/6403925">http://blog.csdn.net/cuker919/article/details/6403925</a></li>
+</ul>
+<h2 id="双向数据绑定">双向数据绑定</h2>
+<ul>
+<li><a href="https://segmentfault.com/q/1010000002511449/a-1020000002514653">https://segmentfault.com/q/1010000002511449/a-1020000002514653</a></li>
+</ul>
+<h2 id="json-web-token">JSON Web Token</h2>
+<ul>
+<li><a href="http://blog.leapoahead.com/2015/09/06/understanding-jwt/">http://blog.leapoahead.com/2015/09/06/understanding-jwt/</a></li>
+<li><a href="https://segmentfault.com/a/1190000005047525?utm_source=tuicool&amp;utm_medium=referral">https://segmentfault.com/a/1190000005047525?utm_source=tuicool&amp;utm_medium=referral</a></li>
+</ul>
+<h2 id="oauth-20">OAuth 2.0</h2>
+<ul>
+<li><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html">http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html</a></li>
+</ul>
+<h2 id="restful-api-设计">RESTful API 设计</h2>
+<ul>
+<li><a href="http://www.ruanyifeng.com/blog/2014/05/restful_api.html">http://www.ruanyifeng.com/blog/2014/05/restful_api.html</a></li>
+</ul>
+<h2 id="微服务的技术架构术语定义">微服务的技术架构术语定义</h2>
+<ul>
+<li><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjEwNTEzOQ==&amp;amp;mid=401500724&amp;amp;idx=1&amp;amp;sn=4e42fa2ffcd5732ae044fe6a387a1cc3">http://mp.weixin.qq.com/s?__biz=MjM5MjEwNTEzOQ==&amp;amp;mid=401500724&amp;amp;idx=1&amp;amp;sn=4e42fa2ffcd5732ae044fe6a387a1cc3</a></li>
+</ul>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    <span style="padding-right: 75%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/bak/scala/" rel="next">scala学习笔记</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

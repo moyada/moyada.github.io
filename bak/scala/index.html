@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="数据类型    数据类型 描述     Byte 8位有符号补码整数   Short 16位有符号补码整数   Int 32位有符号补码整数   Long 64位有符号补码整数   Float 32位IEEE754单精度浮点数   Double 64位IEEE754单精度浮点数   Char 16位无符号Unicode字符, 区间值为 U&#43;0000 到 U&#43;FFFF   String 字符序列   Boolean true或false   Unit 表示无值，和其他语言中void等同。   Null null 或空引用   Nothing Nothing类型在Scala的类层级的最低端；它是任何其他类型的子类型。   Any Any是所有其他类的超类   AnyRef AnyRef类是Scala里所有引用类(reference class)的基类    scala中变量类型可由编译器的类型推断来确定，也可以显示声明数据类型，如下形式即可">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/scala/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/bak/scala/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/bak/scala/">
+  <meta property="og:title" content="scala学习笔记 | 疯狂的厨子">
+  <meta property="og:description" content="数据类型    数据类型 描述     Byte 8位有符号补码整数   Short 16位有符号补码整数   Int 32位有符号补码整数   Long 64位有符号补码整数   Float 32位IEEE754单精度浮点数   Double 64位IEEE754单精度浮点数   Char 16位无符号Unicode字符, 区间值为 U&#43;0000 到 U&#43;FFFF   String 字符序列   Boolean true或false   Unit 表示无值，和其他语言中void等同。   Null null 或空引用   Nothing Nothing类型在Scala的类层级的最低端；它是任何其他类型的子类型。   Any Any是所有其他类的超类   AnyRef AnyRef类是Scala里所有引用类(reference class)的基类    scala中变量类型可由编译器的类型推断来确定，也可以显示声明数据类型，如下形式即可"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2017-03-02T09:33:13&#43;00:00">
+    
+    <meta property="article:modified_time" content="2017-03-02T09:33:13&#43;00:00">
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>scala学习笔记 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">scala学习笔记</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#循环集合">循环集合</a></li>
+    <li><a href="#循环过滤">循环过滤</a></li>
+    <li><a href="#存储返回值变量">存储返回值变量</a></li>
+    <li><a href="#break语句">break语句</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#可变参数-函数的最后一个参数可以是重复的参数类型后面以设置">可变参数: 函数的最后一个参数可以是重复的，参数类型后面以*设置</a></li>
+    <li><a href="#默认参数值-参数后跟-参数值-可以设置默认参数值">默认参数值: 参数后跟 =参数值 可以设置默认参数值</a></li>
+    <li><a href="#高阶函数">高阶函数</a></li>
+    <li><a href="#匿名函数">匿名函数</a></li>
+    <li><a href="#偏应用函数">偏应用函数</a></li>
+    <li><a href="#函数柯里化currying">函数柯里化(Currying)</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#继承">继承</a></li>
+    <li><a href="#单例对象">单例对象</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#特征构造顺序">特征构造顺序</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#样例类">样例类</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#从屏幕上读取用户输入">从屏幕上读取用户输入</a></li>
+    <li><a href="#从文件上读取内容">从文件上读取内容</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#捕获异常">捕获异常</a></li>
+    <li><a href="#抛出异常">抛出异常</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#提取器使用模式匹配">提取器使用模式匹配</a></li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>scala学习笔记</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2017-03-02
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <h1 id="数据类型">数据类型</h1>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Byte</td>
+<td>8位有符号补码整数</td>
+</tr>
+<tr>
+<td>Short</td>
+<td>16位有符号补码整数</td>
+</tr>
+<tr>
+<td>Int</td>
+<td>32位有符号补码整数</td>
+</tr>
+<tr>
+<td>Long</td>
+<td>64位有符号补码整数</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>32位IEEE754单精度浮点数</td>
+</tr>
+<tr>
+<td>Double</td>
+<td>64位IEEE754单精度浮点数</td>
+</tr>
+<tr>
+<td>Char</td>
+<td>16位无符号Unicode字符, 区间值为 U+0000 到 U+FFFF</td>
+</tr>
+<tr>
+<td>String</td>
+<td>字符序列</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>true或false</td>
+</tr>
+<tr>
+<td>Unit</td>
+<td>表示无值，和其他语言中void等同。</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>null 或空引用</td>
+</tr>
+<tr>
+<td>Nothing</td>
+<td>Nothing类型在Scala的类层级的最低端；它是任何其他类型的子类型。</td>
+</tr>
+<tr>
+<td>Any</td>
+<td>Any是所有其他类的超类</td>
+</tr>
+<tr>
+<td>AnyRef</td>
+<td>AnyRef类是Scala里所有引用类(reference class)的基类</td>
+</tr>
+</tbody>
+</table>
+<p>scala中变量类型可由编译器的类型推断来确定，也可以显示声明数据类型，如下形式即可</p>
+<pre><code>val str : String = null
+</code></pre>
+<p>在scala中有一种特殊的数据类型Unit，代表任意类型，也等价于Java中的void，以如下形式声明</p>
+<pre><code>var any = ()
+any = 1
+any = &quot;any&quot;
+</code></pre>
+<h1 id="var与val的区别">var与val的区别</h1>
+<p>var用作声明可变变量，val用作声明不可变变量</p>
+<h1 id="for-循环">for 循环</h1>
+<pre><code>for( var x &lt;- Range ){
+   statement(s);
+}
+</code></pre>
+<p>Range 可以是一个数字区间表示 i to j ，或者 i until j。左箭头 &lt;- 用于为变量 x 赋值。
+i to j　的循环区间为[i,j]，而i until j 的循环区间为[i,j)。</p>
+<p>嵌套循环在 for 循环 中可以使用分号 (;) 来设置多个区间，它将迭代给定区间所有的可能值。</p>
+<pre><code>for( var x &lt;- Range; var y &lt;- Range ){
+   statement(s);
+}
+</code></pre>
+<h2 id="循环集合">循环集合</h2>
+<pre><code>for( var x &lt;- List ){
+   statement(s);
+}
+</code></pre>
+<h2 id="循环过滤">循环过滤</h2>
+<pre><code>for( var x &lt;- List
+      if condition1; if condition2...) {
+	statement(s);
+}
+</code></pre>
+<h2 id="存储返回值变量">存储返回值变量</h2>
+<pre><code> var retVal = for{ a &lt;- numList 
+                        if a != 3; if a &lt; 8
+                      }yield a
+
+</code></pre>
+<h2 id="break语句">break语句</h2>
+<pre><code>// 导入以下包
+import scala.util.control._
+
+// 创建 Breaks 对象
+val loop = new Breaks;
+
+// 在 breakable 中循环
+loop.breakable{
+    // 循环
+    for(...){
+       ....
+       // 循环中断
+       loop.break;
+   }
+}
+</code></pre>
+<h1 id="函数">函数</h1>
+<p>函数定义格式如下：</p>
+<pre><code>def functionName ([参数列表]) : [return type] = {
+   function body
+   return [expr]
+}
+</code></pre>
+<p>方法定义由一个def 关键字开始，紧接着是可选的参数列表，一个冒号&rdquo;：&rdquo; 和方法的返回类型，一个等于号&quot;=&rdquo;，最后是方法的主体。</p>
+<h2 id="可变参数-函数的最后一个参数可以是重复的参数类型后面以设置">可变参数: 函数的最后一个参数可以是重复的，参数类型后面以*设置</h2>
+<h2 id="默认参数值-参数后跟-参数值-可以设置默认参数值">默认参数值: 参数后跟 =参数值 可以设置默认参数值</h2>
+<p>Scala的解释器在解析函数参数(function arguments)时有两种方式：</p>
+<ul>
+<li>传值调用（call-by-value）：先计算参数表达式的值，再应用到函数内部</li>
+<li>传名调用（call-by-name）：将未计算的参数表达式直接应用到函数内部
+在进入函数内部前，传值调用方式就已经将参数表达式的值计算完毕，而传名调用是在函数内部进行参数表达式的值计算的。
+这就造成了一种现象，每次使用传名调用时，解释器都会计算一次表达式的值。</li>
+</ul>
+<pre><code>object Test {
+   def main(args: Array[String]) {
+        delayed(time());
+   }
+
+   def time() = {
+      println(&quot;获取时间，单位为纳秒&quot;)
+      System.nanoTime
+   }
+   def delayed( t: =&gt; Long ) = {
+      println(&quot;在 delayed 方法内&quot;)
+      println(&quot;参数： &quot; + t)
+      t
+   }
+}
+
+\\ 输出 
+\\ 在 delayed 方法内
+\\ 获取时间，单位为纳秒
+\\ 参数： 241550840475831
+\\ 获取时间，单位为纳秒
+</code></pre>
+<h2 id="高阶函数">高阶函数</h2>
+<p>高阶函数可以使用其他函数作为参数，或者使用函数作为输出结果。</p>
+<pre><code>object Test {
+   def main(args: Array[String]) {
+
+      println( apply( layout, 10) )
+
+   }
+   // 函数 f 和 值 v 作为参数，而函数 f 又调用了参数 v
+   def apply(f: Int =&gt; String, v: Int) = f(v)
+
+   def layout[A](x: A) = &quot;[&quot; + x.toString() + &quot;]&quot;  
+}
+</code></pre>
+<h2 id="匿名函数">匿名函数</h2>
+<p>定义匿名函数的语法很简单，箭头左边是参数列表，右边是函数体。</p>
+<pre><code>def add2 = new Function1[Int,Int]{  
+	def apply(x:Int):Int = x+1;  
+// 简写：
+var inc = (x:Int) =&gt; x+1
+} 
+</code></pre>
+<p>不给匿名函数设置参数则参数列表为()</p>
+<h2 id="偏应用函数">偏应用函数</h2>
+<p>使用偏应用函数绑定第一个 date 参数，第二个参数使用下划线(_)替换缺失的参数列表，并把这个新的函数值的索引的赋给变量。</p>
+<pre><code>def main(args: Array[String]) {
+  val date = new Date
+  val logWithDateBound = log(date, _ : String)
+
+  logWithDateBound(&quot;message1&quot; )
+  Thread.sleep(1000)
+  logWithDateBound(&quot;message2&quot; )
+  Thread.sleep(1000)
+  logWithDateBound(&quot;message3&quot; )
+}
+
+def log(date: Date, message: String)  = {
+ println(date + &quot;----&quot; + message)
+}
+</code></pre>
+<h2 id="函数柯里化currying">函数柯里化(Currying)</h2>
+<p>柯里化(Currying)指的是将原来接受两个参数的函数变成新的接受一个参数的函数的过程。新的函数返回一个以原有第二个参数为参数的函数。</p>
+<pre><code>// 接收一个x为参数，返回一个匿名函数，该匿名函数的定义是：接收一个Int型参数y，函数体为x+y。
+def add(x:Int)=(y:Int)=&gt;x+y
+
+// 接收两个个String型参数s1, s2，返回一个匿名函数，函数体为s1 + s2。
+def strcat(s1: String)(s2: String) = {
+  s1 + s2
+}
+</code></pre>
+<h1 id="类和对象">类和对象</h1>
+<p>类(class)是抽象的，不占用内存，而对象(object)是具体的，占用存储空间。</p>
+<h2 id="继承">继承</h2>
+<ol>
+<li>重写一个非抽象方法必须使用override修饰符。</li>
+<li>只有主构造函数才可以往父类的构造函数里写参数。</li>
+<li>在子类中重写父类的抽象方法时，你不需要使用override关键字。</li>
+</ol>
+<h2 id="单例对象">单例对象</h2>
+<p>使用单例模式时，除了定义的类之外，还要定义一个同名的 object 对象，它和类的区别是，object对象不能带参数。</p>
+<h1 id="trait特征">Trait(特征)</h1>
+<p>类似于Java的抽象类，除了定义未实现的方法外，还可以定义属性和方法的实现，
+并且可以多继承，使用的关键字是 trait。</p>
+<h2 id="特征构造顺序">特征构造顺序</h2>
+<ol>
+<li>调用超类的构造器；</li>
+<li>特征构造器在超类构造器之后、类构造器之前执行；</li>
+<li>特质由左到右被构造；</li>
+<li>每个特征当中，父特质先被构造；</li>
+<li>如果多个特征共有一个父特质，父特质不会被重复构造</li>
+<li>所有特征被构造完毕，子类被构造。</li>
+</ol>
+<h1 id="模式匹配">模式匹配</h1>
+<pre><code>x match {
+      case 1 =&gt; &quot;one&quot;
+      case 2 =&gt; &quot;two&quot;
+      case y: Int =&gt; &quot;int&quot;
+      case _ =&gt; &quot;many&quot;
+   }
+</code></pre>
+<p>match 对应 Java 里的 switch，但是写在选择器表达式之后。即： 选择器 match {备选项}。
+只要发现有一个匹配的case，剩下的case不会继续匹配。</p>
+<h2 id="样例类">样例类</h2>
+<p>使用了case关键字的类定义就是就是样例类(case classes)，样例类是种特殊的类，经过优化以用于模式匹配。</p>
+<pre><code>object Test {
+   def main(args: Array[String]) {
+   	val alice = new Person(&quot;Alice&quot;, 25)
+	val bob = new Person(&quot;Bob&quot;, 32)
+   	val charlie = new Person(&quot;Charlie&quot;, 32)
+   
+    for (person &lt;- List(alice, bob, charlie)) {
+    	person match {
+            case Person(&quot;Alice&quot;, 25) =&gt; println(&quot;Hi Alice!&quot;)
+            case Person(&quot;Bob&quot;, 32) =&gt; println(&quot;Hi Bob!&quot;)
+            case Person(name, age) =&gt;
+               println(&quot;Age: &quot; + age + &quot; year, name: &quot; + name + &quot;?&quot;)
+         }
+      }
+   }
+   // 样例类
+   case class Person(name: String, age: Int)
+}
+</code></pre>
+<p>在声明样例类时，下面的过程自动发生了：</p>
+<ul>
+<li>构造器的每个参数都成为val，除非显式被声明为var，但是并不推荐这么做；</li>
+<li>在伴生对象中提供了apply方法，所以可以不使用new关键字就可构建对象；</li>
+<li>提供unapply方法使模式匹配可以工作；</li>
+<li>生成toString、equals、hashCode和copy方法，除非显示给出这些方法的定义。</li>
+</ul>
+<h1 id="文件-io">文件 I/O</h1>
+<p>Scala 进行文件写操作，直接用的都是 java中 的 I/O 类 （java.io.File)：</p>
+<pre><code>val writer = new PrintWriter(new File(&quot;test.txt&quot; ))
+
+writer.write(&quot;菜鸟教程&quot;)
+writer.close()
+</code></pre>
+<h2 id="从屏幕上读取用户输入">从屏幕上读取用户输入</h2>
+<pre><code>val line = Console.readLine
+</code></pre>
+<h2 id="从文件上读取内容">从文件上读取内容</h2>
+<pre><code>Source.fromFile(&quot;test.txt&quot; ).foreach{ 
+	print 
+}
+</code></pre>
+<h1 id="异常处理">异常处理</h1>
+<h2 id="捕获异常">捕获异常</h2>
+<pre><code>try {
+ val f = new FileReader(&quot;input.txt&quot;)
+} catch {
+ case ex: FileNotFoundException =&gt; {
+    println(&quot;Missing file exception&quot;)
+ }
+ case ex: IOException =&gt; {
+    println(&quot;IO Exception&quot;)
+ }
+} finally {
+ println(&quot;Exiting finally...&quot;)
+}
+</code></pre>
+<h2 id="抛出异常">抛出异常</h2>
+<pre><code>throw new IllegalArgumentException
+</code></pre>
+<h1 id="提取器extractor">提取器(Extractor)</h1>
+<p>提取器是从传递给它的对象中提取出构造该对象的参数。</p>
+<p>Scala 提取器是一个带有unapply方法的对象。unapply方法算是apply方法的反向操作：unapply接受一个对象，然后从对象中提取值，提取的值通常是用来构造该对象的值。</p>
+<h2 id="提取器使用模式匹配">提取器使用模式匹配</h2>
+<p>在我们实例化一个类的时，可以带上0个或者多个的参数，编译器在实例化的时会调用 apply 方法。我们可以在类和对象中都定义 apply 方法。
+就像我们之前提到过的，unapply 用于提取我们指定查找的值，它与 apply 的操作相反。 当我们在提取器对象中使用 match 语句是，unapply 将自动执行。</p>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/bak/collection/" rel="prev">收藏</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/bak/database-design/" rel="next">数据库设计</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

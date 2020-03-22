@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:&#43;UseZGC 开启，目前仅支持 Linux x86 64位的系统。
+ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 10毫秒 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。
+ 参考资料: https://openjdk.">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/zgc/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/post/zgc/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/post/zgc/">
+  <meta property="og:title" content="ZGC 介绍 | 疯狂的厨子">
+  <meta property="og:description" content="什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:&#43;UseZGC 开启，目前仅支持 Linux x86 64位的系统。
+ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 10毫秒 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。
+ 参考资料: https://openjdk."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2019-06-28T20:12:10&#43;00:00">
+    
+    <meta property="article:modified_time" content="2019-06-28T20:12:10&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://moyada.github.io/post/zgc/"
+  },
+  "headline": "ZGC 介绍",
+  
+  "datePublished": "2019-06-28T20:12:10Z",
+  "dateModified": "2019-06-28T20:12:10Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "薛毅康"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "疯狂的厨子",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:+UseZGC 开启，目前仅支持 Linux x86 64位的系统。\nZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 10毫秒 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。\n 参考资料: https://openjdk."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>ZGC 介绍 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">ZGC 介绍</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是-zgc">什么是 ZGC</a></li>
+    <li><a href="#特性">特性</a>
+      <ul>
+        <li><a href="#基于-region-的并发收集模式">基于 Region 的并发收集模式</a></li>
+        <li><a href="#使用-numa架构技术httpsenwikipediaorgwikinon-uniform_memory_access高效的分配空间和进行对象的扫描">使用 <a href="https://en.wikipedia.org/wiki/Non-uniform_memory_access">NUMA架构技术</a>高效的分配空间和进行对象的扫描</a></li>
+        <li><a href="#设计颜色指针标记对象状态保障引用关系一致">设计颜色指针标记对象状态，保障引用关系一致</a></li>
+        <li><a href="#利用-读屏障-修改引用来提高对象的整理迁移功能">利用 读屏障 修改引用来提高对象的整理迁移功能</a></li>
+      </ul>
+    </li>
+    <li><a href="#触发策略">触发策略</a></li>
+    <li><a href="#回收过程">回收过程</a></li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>ZGC 介绍</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-06-28
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/jvm/">JVM</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <h2 id="什么是-zgc">什么是 ZGC</h2>
+<p>由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:+UseZGC 开启，目前仅支持 Linux x86 64位的系统。</p>
+<p>ZGC 全称 Z Garbage Collector，是一款 <code>低停顿</code> 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 <code>10毫秒</code> 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。</p>
+<blockquote>
+<p>参考资料:
+<a href="https://openjdk.java.net/projects/zgc/">https://openjdk.java.net/projects/zgc/</a>
+<a href="https://www.youtube.com/watch?v=7k_XfLGu-Ts">https://www.youtube.com/watch?v=7k_XfLGu-Ts</a>
+<a href="https://www.youtube.com/watch?v=kF_r3GE3zOo">https://www.youtube.com/watch?v=kF_r3GE3zOo</a>
+<a href="https://dinfuehr.github.io/blog/a-first-look-into-zgc/">https://dinfuehr.github.io/blog/a-first-look-into-zgc/</a>
+<a href="https://www.opsian.com/blog/javas-new-zgc-is-very-exciting/">https://www.opsian.com/blog/javas-new-zgc-is-very-exciting/</a>
+<a href="https://mp.weixin.qq.com/s/KUCs_BJUNfMMCO1T3_WAjw">https://mp.weixin.qq.com/s/KUCs_BJUNfMMCO1T3_WAjw</a>
+<a href="https://www.youtube.com/watch?v=tShc0dyFtgw&amp;t=2007s">https://www.youtube.com/watch?v=tShc0dyFtgw&amp;t=2007s</a>
+<a href="https://www.youtube.com/watch?v=7cWiwu7kYkE">https://www.youtube.com/watch?v=7cWiwu7kYkE</a>
+<a href="http://likehui.top/2019/04/11/ZGC-%E7%89%B9%E6%80%A7%E8%A7%A3%E8%AF%BB/">http://likehui.top/2019/04/11/ZGC-%E7%89%B9%E6%80%A7%E8%A7%A3%E8%AF%BB/</a></p>
+</blockquote>
+<p><img src="/img/zgc/gc-concurrent.png" alt="gc-concurrent"></p>
+<h2 id="特性">特性</h2>
+<h3 id="基于-region-的并发收集模式">基于 Region 的并发收集模式</h3>
+<p>ZGC 与 G1 类似，也是以 Region 划分堆内存结构的，不同的是，ZGC 中 Region 是以大小进行分组的，分别是 Small (2MB)、Medium (32MB)、Large (N*MB)，并且尚未进行分代。由于没有了分代，也就没有了 <code>CardTable</code> 和 <code>RememberedSet</code> 的开销。</p>
+<h3 id="使用-numa架构技术httpsenwikipediaorgwikinon-uniform_memory_access高效的分配空间和进行对象的扫描">使用 
+<a href="https://en.wikipedia.org/wiki/Non-uniform_memory_access" target="_blank" rel="noopener">NUMA架构技术</a>高效的分配空间和进行对象的扫描</h3>
+<p>利用 NUMA 架构的 CPU 亲和的内存分配策略，在分配对象时使用线程所处的节点缓存，使线程在操作自身创建的对象时提高效率。</p>
+<h3 id="设计颜色指针标记对象状态保障引用关系一致">设计颜色指针标记对象状态，保障引用关系一致</h3>
+<p>颜色指针就好比状态机，ZGC 在对象地址的其中 4bit 的空间用于标记<code>颜色</code>状态，这四个字节分别称之 <code>Finalizable</code>、 <code>Remapped</code> 、<code>Marked1</code>、 <code>Marked0</code>，通过在不同的收集阶段对指定标记的状态检测，从而采取不同的执行动作。</p>
+<p>由于需要额外的空间来存储标记，因此不支持 32 位平台和指针压缩。</p>
+<ul>
+<li>Makred0、 Marked1 用于识别对象在垃圾回收周期中是否被标记存活，存在两个的原因是因为一个被标记的对象可能来自上一个回收周期并未重新映射，此类对象则只需进行映射而无需重定位。</li>
+<li>Remapped 表明该引用对象需要从地址映射表中获取新地址并转移。</li>
+<li>Finalizable 表示这是一个 finalizar 对象，只有 Finalizer 可以对其进行访问。</li>
+</ul>
+<p>具体逻辑见 <code>hotspot/share/gc/z/zAddress.hpp</code>、<code>hotspot/share/gc/z/zAddress.cpp</code>、<code>hotspot/share/gc/z/zAddress.inline.hpp</code></p>
+<h3 id="利用-读屏障-修改引用来提高对象的整理迁移功能">利用 读屏障 修改引用来提高对象的整理迁移功能</h3>
+<p>对比 G1 使用 <code>写屏障</code> 来保证引用关系一致，ZGC 则是使用 <code>读屏障</code> 来达到。</p>
+<p>在应用线程与 GC 线程同时操作同一对象时，通过读屏障检测对象状态，通过 CAS 对重映射对象进行迁移。</p>
+<p>这种设计使得无需暂停应用线程就能保证引用正确，而读屏障的性能开销只有约 4%。</p>
+<h2 id="触发策略">触发策略</h2>
+<p>通过 <code>hotspot/share/gc/z/zDirector.cpp</code> 中可得知，ZGC 与其他 GC 的回收策略有所不同，是一种主动式的垃圾回收模式。</p>
+<pre><code>void ZDirector::run_service() {
+  // Main loop
+  while (_metronome.wait_for_tick()) {  // 1
+    sample_allocation_rate();
+    const GCCause::Cause cause = make_gc_decision(); // 2
+    if (cause != GCCause::_no_gc) {
+      ZCollectedHeap::heap()-&gt;collect(cause);
+    }
+  }
+}
+</code></pre>
+<ol>
+<li>
+<p>在 <code>wait_for_tick</code> 中，JVM 会利用时钟计算等待时间，当到达唤醒时间并且不在安全点期间则执行后续逻辑。</p>
+</li>
+<li>
+<p><code>make_gc_decision</code> 是根据条件返回回收策略，包含 4 种可执行垃圾回收的策略。</p>
+</li>
+</ol>
+<ul>
+<li>** 定时执行 **</li>
+</ul>
+<p>判断当前时间距离上次垃圾回收的差值，当时间差值大于设定的间隔时间时则触发垃圾回收。</p>
+<ul>
+<li>** 内存预热 **</li>
+</ul>
+<p>根据堆内存使用率判断是否进行垃圾回收，当每突破一个 10% 值时进行垃圾回收，例如超过 20%、30% 时。</p>
+<ul>
+<li>** 吞吐量过大 **</li>
+</ul>
+<p>对比剩余空间所需分配时间与最久 GC 时间差值，当大于指定间距时 (默认 0.1) 则说明存在空间不足分配的可能性，需要进行垃圾回收。</p>
+<ul>
+<li>** 主动触发 **</li>
+</ul>
+<p>当距离上次垃圾回收已经过了 5 分钟同时堆空间上涨了 10%，并且距离上次 GC 的时间大于最久 GC 时间的 49 倍。</p>
+<blockquote>
+<p>当这些条件满足时 JVM 将会调用 Monitor (synchronized 底层线程安全模块) 唤醒线程，<code>异步</code> 执行垃圾回收。</p>
+</blockquote>
+<h2 id="回收过程">回收过程</h2>
+<p>ZGC 的回收过程几乎是完全并发进行的，只会在三个阶段进行短短的暂停: 标记开始(mark-start)、标记结束(mark-final)、迁移开始(relocate-start)，具体流程可见于 <code>src/hotspot/share/gc/z/zDriver.cpp::run_gc_cycle()</code>。</p>
+<p><img src="/img/zgc/phases.png" alt="zgc-phases"></p>
+<ol>
+<li><strong>【标记开始】</strong> 开始标记时，会暂停所有应用线程，标记出堆中的 
+<a href="https://www.ibm.com/support/knowledgecenter/en/SS3KLZ/com.ibm.java.diagnostics.memory.analyzer.doc/gcroots.html" target="_blank" rel="noopener">GC Roots</a>。</li>
+</ol>
+<p><img src="/img/zgc/mark-start.png" alt="mark-start"></p>
+<ol start="2">
+<li><strong>【并发标记】</strong> 释放应用线程，通过 GC Roots 遍历堆中所有对象，找出存活的对象集合 (类似一个 bitmap)。应用线程利用<code>读屏障</code>将对象的变化信息保存于线程中，之后转交由 GC 线程处理引用关系。</li>
+</ol>
+<p><img src="/img/zgc/concurrent-mark.png" alt="concurrent-mark"></p>
+<ol start="3">
+<li><strong>【标记结束】</strong> 完成所有对象的标记后，短时暂停应用线程，完成标记阶段。</li>
+</ol>
+<p><img src="/img/zgc/mark-final.png" alt="mark-final"></p>
+<ol start="4">
+<li><strong>【并发准备】</strong> 为下一阶段的重定位做准备，收集那些垃圾对象占比最大或最多的 page 加入 <code>relocate set</code>，每个 page 都分配一个 <code>forwarding table</code> 保存重定向地址，还进行一些其他数据的清理 (比如软弱虚引用、Finalizer 对象、字符串常量池、元数据)。</li>
+</ol>
+<p><img src="/img/zgc/prepare.png" alt="prepare"></p>
+<ol start="5">
+<li><strong>【迁移开始】</strong> 暂停应用线程，扫描 GC Roots 的指向对象，对 <code>relocate set</code> 内对象进行迁移并将重定位地址写入 <code>forwarding table</code>。将本地线程状态设置为 <code>bad mask</code>，对应用线程内对迁移对象的引用标记为 <code>Remapped relocate</code>。分配大块连续空间，以便能够存放要迁移的对象，申请一下阶段所需的工作线程。</li>
+</ol>
+<p><img src="/img/zgc/relocate-start.png" alt="relocate-start"></p>
+<ol start="6">
+<li><strong>【并发迁移】</strong> 对 <code>relocate set</code> 中 page 里剩余的存活对象进行迁移，将重定位地址写入 <code>forwarding table</code> 中。应用线程在操作 <code>Remapped relocate</code> 对象时将通过读屏障进行重新映射地址，同时 GC线程 也对程序内的对象引用进行重映射。当映射地址与原地址一致时则表明所有引用均已重映射，标记 page 在之后清除释放空间。</li>
+</ol>
+<p><img src="/img/zgc/concurrent-relocate.png" alt="concurrent-relocate"></p>
+<ul>
+<li>如未重映射对象在下一垃圾回收周期也被标记，则该对象则不会进行分配重定位地址，为了达到这一区别所以才有了 <code>Makred0</code>、 <code>Marked1</code> 两个标记标识。</li>
+</ul>
+<blockquote>
+<p>停顿时间不会随着堆空间的大小增长，但是与 GC Root 的数量是成正比，而 GC Root 的数量则与应用线程的数量有关。
+在 GC 的周期内，标记开始和迁移开始操作会比较花费时间，但所有停顿时间总共也是小于 10 毫秒。</p>
+</blockquote>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/gc/">GC</a>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+<section id="comments">
+  
+</section>
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/feign-eureka-without-springboot/" rel="prev">在非 SpringBoot 工程中使用 Feign 整合 Eureka</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/shenandoah-gc/" rel="next">Shenandoah GC 介绍</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>相关</h3>
+    <ul>
+      
+      <li><a href="/post/jvm-gc/">Java GC过程</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

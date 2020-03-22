@@ -1,38 +1,1095 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>java | 疯狂的厨子</title>
+    <title>Java | 疯狂的厨子</title>
     <link>https://moyada.github.io/categories/java/</link>
       <atom:link href="https://moyada.github.io/categories/java/index.xml" rel="self" type="application/rss+xml" />
-    <description>java</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 21 Mar 2020 16:44:57 +0800</lastBuildDate>
+    <description>Java</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 18 May 2019 08:47:26 +0000</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
-      <title>java</title>
+      <title>Java</title>
       <link>https://moyada.github.io/categories/java/</link>
     </image>
     
     <item>
-      <title>today</title>
-      <link>https://moyada.github.io/post/today/</link>
-      <pubDate>Sat, 21 Mar 2020 16:44:57 +0800</pubDate>
-      <guid>https://moyada.github.io/post/today/</guid>
-      <description>&lt;h1 id=&#34;234&#34;&gt;234&lt;/h1&gt;
-&lt;h2 id=&#34;a&#34;&gt;A&lt;/h2&gt;
-&lt;p&gt;dsa&lt;/p&gt;
-&lt;p&gt;dsa
-d
-ad&lt;/p&gt;
-&lt;h2 id=&#34;b&#34;&gt;B&lt;/h2&gt;
-&lt;p&gt;sad
-sa
-d
-abcde&lt;/p&gt;
-&lt;p&gt;dsadsad&lt;/p&gt;
-&lt;p&gt;d&lt;/p&gt;
-&lt;p&gt;dsadsa&lt;/p&gt;
-&lt;h2 id=&#34;c&#34;&gt;C&lt;/h2&gt;
-&lt;p&gt;dsadas&lt;/p&gt;
+      <title>在非 SpringBoot 工程中使用 Feign 整合 Eureka</title>
+      <link>https://moyada.github.io/post/feign-eureka-without-springboot/</link>
+      <pubDate>Sat, 18 May 2019 08:47:26 +0000</pubDate>
+      <guid>https://moyada.github.io/post/feign-eureka-without-springboot/</guid>
+      <description>&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
+&lt;p&gt;最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 &lt;code&gt;@EnableDiscoveryClient&lt;/code&gt; 和 &lt;code&gt;@EnableFeignClients&lt;/code&gt; 即可获取服务接口实例。可是由于我使用了 BeanPostProcessor 对注解进行了切片代理，并且目标项目也存在非 SpringCloud 项目，那么便只能通过底层 API 构建服务方实例了。&lt;/p&gt;
+&lt;h2 id=&#34;方案&#34;&gt;方案&lt;/h2&gt;
+&lt;p&gt;EurekaClient 提供了服务发现注册功能，但是在 Feign 所接收的属性中并没有用于负载均衡的，其中最有可能的就是 Client 属性了，这是用于负责服务请求的模块，那么就需要调研下是否能够通过 EurekaClient 构建出一个带有负载均衡功能的客户端。&lt;/p&gt;
+&lt;h3 id=&#34;创建-lbclientfactory&#34;&gt;创建 LBClientFactory&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Feign&lt;/strong&gt; 的官方 Wiki 提供了构建服务实例的
+&lt;a href=&#34;https://github.com/OpenFeign/feign#integrations&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;方法&lt;/a&gt;，但 Feign 并不提供构建所需属性的实现，而是由其他框架适配 Feign 所提供的接口来实现每个功能。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在分析 &lt;strong&gt;Ribbon&lt;/strong&gt; 的 Client 实现 &lt;code&gt;RibbonClient&lt;/code&gt;，其构造器接收一个 &lt;code&gt;LBClientFactory&lt;/code&gt; 参数，负载均衡的功能就是由它提供。&lt;/p&gt;
+&lt;p&gt;通过搜索引擎发现了打通 Robbion 与 EurekaClient 的实现方式，需要引入依赖 &lt;code&gt;&amp;amp;lt;artifactId&amp;amp;gt;ribbon-eureka&amp;amp;lt;/artifactId&amp;amp;gt;&lt;/code&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;private Client newClient(String vipAddress, Provider&amp;lt;EurekaClient&amp;gt; provider) {
+    ServerList&amp;lt;DiscoveryEnabledServer&amp;gt; list = new DiscoveryEnabledNIWSServerList(vipAddress, provider);
+    ServerListFilter&amp;lt;DiscoveryEnabledServer&amp;gt; filter = new ZoneAffinityServerListFilter&amp;lt;DiscoveryEnabledServer&amp;gt;();
+
+    ZoneAwareLoadBalancer&amp;lt;DiscoveryEnabledServer&amp;gt; lb = LoadBalancerBuilder.&amp;lt;DiscoveryEnabledServer&amp;gt;newBuilder()
+            .withDynamicServerList(list)
+            .withRule(new AvailabilityFilteringRule())
+            .withServerListFilter(filter)
+            .buildDynamicServerListLoadBalancer();
+
+    return RibbonClient.builder().lbClientFactory(new LBClientFactory() {
+        @Override
+        public LBClient create(String clientName) {
+            return LBClient.create(lb, ClientFactory.getNamedConfig(clientName));
+        }
+    }).build();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其中需要使用 &lt;code&gt;DiscoveryEnabledNIWSServerList&lt;/code&gt; 用于发现服务集合，它接收两个提供两个参数，一个是项目的 vipAddress，一个是 Provider&lt;EurekaClient&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;创建-eurekaclient&#34;&gt;创建 EurekaClient&lt;/h3&gt;
+&lt;p&gt;在 &lt;strong&gt;Eureka&lt;/strong&gt; 的官方 Wiki 中提供了 EurekaClient 的
+&lt;a href=&#34;https://github.com/Netflix/eureka/tree/master/eureka-examples/src/main/java/com/netflix/eureka&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;构造方式&lt;/a&gt;，需要传入 &lt;code&gt;EurekaClientConfig&lt;/code&gt; 和 &lt;code&gt;EurekaInstanceConfig&lt;/code&gt; 用来提供模块的配置信息。&lt;/p&gt;
+&lt;p&gt;在 netflix 提供的 eureka-client 模块下，提供了 &lt;code&gt;DefaultEurekaClientConfig&lt;/code&gt; 和 &lt;code&gt;MyDataCenterInstanceConfig&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;这两个类默认将会读取 eureka-client.properties 下的配置，可以通过设置 &lt;code&gt;eureka.client.props&lt;/code&gt; 参数更改读取的配置文件，也可以使用 &lt;code&gt;ConfigurationManager&lt;/code&gt; 的静态方法来指定读取配置文件。&lt;/p&gt;
+&lt;p&gt;除此之外，spring-cloud 也提供了相应的实现类 &lt;code&gt;EurekaClientConfigBean&lt;/code&gt; 和 &lt;code&gt;EurekaInstanceConfigBean&lt;/code&gt;，通过 spring 的配置资源解析器将属性装配成对象使用。&lt;/p&gt;
+&lt;p&gt;入参已经拿到了，但是还未结束，在跟进 &lt;code&gt;DiscoveryClient&lt;/code&gt; 代码实现中，发现他在构造方法中会对属性进行静态保存。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// This is a bit of hack to allow for existing code using DiscoveryManager.getInstance()
+// to work with DI&#39;d DiscoveryClient
+DiscoveryManager.getInstance().setDiscoveryClient(this);
+DiscoveryManager.getInstance().setEurekaClientConfig(config);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在这个项目中，有可能存在业务项目内部与嵌入模块使用了不同的 Eureka 服务，为了保持与业务项目的隔离，这里需要对官方提供的代码模版进行点改造。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;private static volatile EurekaClient eurekaClient = null;
+
+public EurekaClient initEurekaClient(EurekaInstanceConfig instanceConfig, EurekaClientConfig clientConfig) {
+    if (null != eurekaClient) {
+        return eurekaClient;
+    }
+
+    synchronized (DiscoveryManager.class) {
+        if (null == eurekaClient) {
+            DiscoveryClient discoveryClient = DiscoveryManager.getInstance().getDiscoveryClient();
+            EurekaClientConfig eurekaClientConfig = DiscoveryManager.getInstance().getEurekaClientConfig();
+            EurekaInstanceConfig eurekaInstanceConfig = DiscoveryManager.getInstance().getEurekaInstanceConfig();
+
+            // create the client
+            InstanceInfo instanceInfo = new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();
+            ApplicationInfoManager infoManager = new ApplicationInfoManager(instanceConfig, instanceInfo);
+            infoManager.setInstanceStatus(InstanceInfo.InstanceStatus.STARTING);
+
+            EurekaClient client = new DiscoveryClient(infoManager, clientConfig);
+            infoManager.setInstanceStatus(InstanceInfo.InstanceStatus.UP);
+
+            eurekaClient = client;
+
+            DiscoveryManager.getInstance().setDiscoveryClient(discoveryClient);
+            DiscoveryManager.getInstance().setEurekaClientConfig(eurekaClientConfig);
+            DiscoveryManager.getInstance().setEurekaInstanceConfig(eurekaInstanceConfig);
+        }
+    }
+    return eurekaClient;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在实际开发中可通过 DiscoveryManager 的静态属性对其进行管理的，避免重复构建。但是在这个场景下需要保证与业务之间的隔离，则以这种方式构建。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;创建-providereurekaclient&#34;&gt;创建 Provider&lt;EurekaClient&gt;&lt;/h3&gt;
+&lt;p&gt;在创建 LBClientFactory 的过程中，我们需要构建 DiscoveryEnabledNIWSServerList 用于服务的发现，由于构造方法接收的参数为 &lt;code&gt;Provider&amp;lt;EurekaClient&amp;gt;&lt;/code&gt;，这里还需要对 EurekaClient 再经过包装后使用。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;new Provider&amp;lt;EurekaClient&amp;gt;() {
+    @Override
+    public EurekaClient get() {
+        return eurekaClient;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;构造服务实例&#34;&gt;构造服务实例&lt;/h3&gt;
+&lt;p&gt;通过上述步骤基本完成了一个 EurekaClient 到 RobbionClient 的各个过程，最后代入 Feign 的创建方法中便可构造使用 Eureka 进行服务发现的实例。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public &amp;lt;T&amp;gt; T getInstance(Class&amp;lt;T&amp;gt; target, String namespace, Provider&amp;lt;EurekaClient&amp;gt; provider) {
+    return Feign.builder()
+        .client(newClient(namespace, provider))
+        .encoder(new JacksonEncoder())
+        .decoder(new JacksonDecoder())
+        .options(new Request.Options(1000, 3000))
+        .logLevel(Logger.Level.FULL)
+        .target(target, &amp;quot;http://&amp;quot; + namespace);
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>instanceOf、isInstance、isAssignableFrom 的区别</title>
+      <link>https://moyada.github.io/post/diff-instanceof-isassignablefrom/</link>
+      <pubDate>Sun, 05 May 2019 20:23:32 +0000</pubDate>
+      <guid>https://moyada.github.io/post/diff-instanceof-isassignablefrom/</guid>
+      <description>&lt;p&gt;在 Java 中，对一个类的子类判断有三种方式，分别是 &lt;code&gt;obj instanceof [TypeName]&lt;/code&gt;、&lt;code&gt;class.isInstance(obj)&lt;/code&gt;、&lt;code&gt;class.isAssignableFrom(class)&lt;/code&gt;，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;其中 &lt;code&gt;instanceof&lt;/code&gt; 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 &lt;code&gt;templateTable.hpp&lt;/code&gt; 中发现了 instanceof 方法的定义，从其中 &lt;code&gt;templateTable_x86.cpp&lt;/code&gt;、&lt;code&gt;templateTable_arm.cpp&lt;/code&gt; 的 &lt;code&gt;instanceof&lt;/code&gt; 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;isInstance&lt;/code&gt; 是 Class 类下的 native 方法，接收参数为对象。分析了在 &lt;code&gt;jni.cpp&lt;/code&gt; 中的大体流程，程序先通过 class 获取到 Klass，调用 object 内 klass 的 &lt;code&gt;is_subtype_of&lt;/code&gt; 方法，传入方才获取的 Klass，判断二者地址是否相同，是则判定为同一类型，否则再调用 &lt;code&gt;search_secondary_supers&lt;/code&gt;，判断父级类型是否存在与传入的 Klass 相匹配。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;JNI_QUICK_ENTRY(jboolean, jni_IsInstanceOf(JNIEnv *env, jobject obj, jclass clazz))
+  JNIWrapper(&amp;quot;IsInstanceOf&amp;quot;);
+
+  HOTSPOT_JNI_ISINSTANCEOF_ENTRY(env, obj, clazz);
+
+  jboolean ret = JNI_TRUE;
+  if (obj != NULL) {
+    ret = JNI_FALSE;
+    Klass* k = java_lang_Class::as_Klass(
+      JNIHandles::resolve_non_null(clazz));
+    if (k != NULL) {
+      ret = JNIHandles::resolve_non_null(obj)-&amp;gt;is_a(k) ? JNI_TRUE : JNI_FALSE;
+    }
+  }
+
+  HOTSPOT_JNI_ISINSTANCEOF_RETURN(ret);
+  return ret;
+JNI_END
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;// hotspot/share/oops/oop.inline.hpp
+
+bool oopDesc::is_a(Klass* k) const {
+  return klass()-&amp;gt;is_subtype_of(k);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;// hotspot/share/oops/klass.hpp
+
+// subtype check: true if is_subclass_of, or if k is interface and receiver implements it
+bool is_subtype_of(Klass* k) const {
+  juint    off = k-&amp;gt;super_check_offset();
+  Klass* sup = *(Klass**)( (address)this + off );
+  const juint secondary_offset = in_bytes(secondary_super_cache_offset());
+  if (sup == k) {
+    return true;
+  } else if (off != secondary_offset) {
+    return false;
+  } else {
+    return search_secondary_supers(k);
+  }
+}
+
+bool Klass::search_secondary_supers(Klass* k) const {
+  // Put some extra logic here out-of-line, before the search proper.
+  // This cuts down the size of the inline method.
+
+  // This is necessary, since I am never in my own secondary_super list.
+  if (this == k)
+    return true;
+  // Scan the array-of-objects for a match
+  int cnt = secondary_supers()-&amp;gt;length();
+  for (int i = 0; i &amp;lt; cnt; i++) {
+    if (secondary_supers()-&amp;gt;at(i) == k) {
+      ((Klass*)this)-&amp;gt;set_secondary_super_cache(k);
+      return true;
+    }
+  }
+  return false;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;code&gt;isAssignableFrom&lt;/code&gt; 也是 Class 类下的 native 方法，接收参数为 Class 类。主要逻辑与 &lt;code&gt;isInstance&lt;/code&gt; 相同，区别在于当 主体 Class 与 参数 Class 其中一个为原生类型时，则选择使用对象头判断类型是否相等。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;isInstance&lt;/code&gt; 和 &lt;code&gt;isAssignableFrom&lt;/code&gt; 对入参校验上也有区别，isInstance 当对象为空时将会返回 &lt;code&gt;false&lt;/code&gt; isAssignableFrom 则会对参数进行非空校验。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;isInstance&lt;/code&gt; 和 &lt;code&gt;isAssignableFrom&lt;/code&gt; 在方法标记上都有 &lt;code&gt;@HotSpotIntrinsicCandidate&lt;/code&gt;，会被 JVM 使用更高效的字节码替换，节省了 JNI 调用的开销。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;JNI_QUICK_ENTRY(jboolean, jni_IsAssignableFrom(JNIEnv *env, jclass sub, jclass super))
+  JNIWrapper(&amp;quot;IsSubclassOf&amp;quot;);
+
+  HOTSPOT_JNI_ISASSIGNABLEFROM_ENTRY(env, sub, super);
+
+  oop sub_mirror   = JNIHandles::resolve_non_null(sub);
+  oop super_mirror = JNIHandles::resolve_non_null(super);
+  if (java_lang_Class::is_primitive(sub_mirror) ||
+      java_lang_Class::is_primitive(super_mirror)) {
+    jboolean ret = oopDesc::equals(sub_mirror, super_mirror);
+
+    HOTSPOT_JNI_ISASSIGNABLEFROM_RETURN(ret);
+    return ret;
+  }
+  Klass* sub_klass   = java_lang_Class::as_Klass(sub_mirror);
+  Klass* super_klass = java_lang_Class::as_Klass(super_mirror);
+  assert(sub_klass != NULL &amp;amp;&amp;amp; super_klass != NULL, &amp;quot;invalid arguments to jni_IsAssignableFrom&amp;quot;);
+  jboolean ret = sub_klass-&amp;gt;is_subtype_of(super_klass) ?
+                   JNI_TRUE : JNI_FALSE;
+
+  HOTSPOT_JNI_ISASSIGNABLEFROM_RETURN(ret);
+  return ret;
+JNI_END
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;总结一下，&lt;code&gt;instanceof&lt;/code&gt;、&lt;code&gt;isInstance&lt;/code&gt;、&lt;code&gt;isAssignableFrom&lt;/code&gt; 其实无太大区别，instanceof 和 isInstance 适用于主体是对象，并且 instanceof 需要在编译期就指定类型，灵活性不如 isInstance。而 isAssignableFrom 是针对两个类的关系校验，在泛型对比上比较适合。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://stackoverflow.com/questions/496928/what-is-the-difference-between-instanceof-and-class-isassignablefrom&#34;&gt;https://stackoverflow.com/questions/496928/what-is-the-difference-between-instanceof-and-class-isassignablefrom&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>序列化框架对比</title>
+      <link>https://moyada.github.io/post/java-serializer/</link>
+      <pubDate>Fri, 03 May 2019 20:19:46 +0000</pubDate>
+      <guid>https://moyada.github.io/post/java-serializer/</guid>
+      <description>&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
+&lt;p&gt;最近接到一个需求，涉及到大流量的数据传输，那么就不可避免序列化，正巧我也有想法对最近主流的序列化框架做一次对比。&lt;/p&gt;
+&lt;p&gt;参数对比的序列化的框架如下，将对 &lt;code&gt;序列化数据字节大小&lt;/code&gt;、&lt;code&gt;序列化\反序列化平均耗时&lt;/code&gt;、&lt;code&gt;序列化\反序列化吞吐量&lt;/code&gt; 这三个维度进行对比。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;该测试结果可能因为机器原因、框架使用方式、样本数据问题，导致结果不准确。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;工程代码见 &lt;a href=&#34;https://github.com/moyada/java-serializers&#34;&gt;https://github.com/moyada/java-serializers&lt;/a&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;框架&lt;/th&gt;
+&lt;th&gt;版本&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;avro&lt;/td&gt;
+&lt;td&gt;1.8.2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;hessian&lt;/td&gt;
+&lt;td&gt;4.0.60&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;jackson&lt;/td&gt;
+&lt;td&gt;2.9.8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;fastjson&lt;/td&gt;
+&lt;td&gt;1.2.57&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;gson&lt;/td&gt;
+&lt;td&gt;2.8.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;kryo&lt;/td&gt;
+&lt;td&gt;4.0.2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;protobuf&lt;/td&gt;
+&lt;td&gt;3.7.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;protostuff&lt;/td&gt;
+&lt;td&gt;1.5.9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;这里我对所有框架再进行了一次封装，更方便接入测试，也是一般开发中的正常操作，在序列化框架的使用上主要是参考官方文档。&lt;/p&gt;
+&lt;h2 id=&#34;测试环境&#34;&gt;测试环境&lt;/h2&gt;
+&lt;p&gt;JDK 版本为 1.8.0_191，使用 &lt;code&gt;BenchMark&lt;/code&gt; 进行测试，环境参数为&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# VM options: -server -Xms2048m -Xmx2048m -XX:+UseTLAB -XX:+UseG1GC
+# Warmup: 3 iterations, 40 s each
+# Measurement: 5 iterations, 60 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads, will synchronize iterations
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;测试的数据结构如下，数据统一为 &lt;code&gt;{&amp;quot;id&amp;quot;: 34501231422, &amp;quot;name&amp;quot;: &amp;quot;moyada&amp;quot;, &amp;quot;age&amp;quot;: 18, &amp;quot;gender&amp;quot;: true, &amp;quot;scope&amp;quot;: 33.23, &amp;quot;identifies&amp;quot;: [&amp;quot;moyada&amp;quot;, &amp;quot;people&amp;quot;, &amp;quot;person&amp;quot;, &amp;quot;animal&amp;quot;], &amp;quot;info&amp;quot;: {&amp;quot;haha&amp;quot;: &amp;quot;666&amp;quot;, &amp;quot;test&amp;quot;: &amp;quot;111&amp;quot;}}&lt;/code&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public class User implements Serializable {
+    private long id;
+    private String name;
+    private int age;
+    private boolean gender;
+    private Double scope;
+    private List&amp;lt;String&amp;gt; identifies;
+    private Map&amp;lt;String, String&amp;gt; info;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;序列化后数据对比&#34;&gt;序列化后数据对比&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;框架&lt;/th&gt;
+&lt;th&gt;字节大小&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Avro&lt;/td&gt;
+&lt;td&gt;76&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protobuf&lt;/td&gt;
+&lt;td&gt;76&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protostuff&lt;/td&gt;
+&lt;td&gt;79&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Kryo&lt;/td&gt;
+&lt;td&gt;109&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Hessian&lt;/td&gt;
+&lt;td&gt;140&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Gson&lt;/td&gt;
+&lt;td&gt;140&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;FastJson&lt;/td&gt;
+&lt;td&gt;140&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Jackson&lt;/td&gt;
+&lt;td&gt;153&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;平均耗时对比&#34;&gt;平均耗时对比&lt;/h2&gt;
+&lt;h3 id=&#34;序列化平均耗时&#34;&gt;序列化平均耗时&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;框架&lt;/th&gt;
+&lt;th&gt;耗时&lt;/th&gt;
+&lt;th&gt;方差&lt;/th&gt;
+&lt;th&gt;单位时间&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Avro&lt;/td&gt;
+&lt;td&gt;11189.699&lt;/td&gt;
+&lt;td&gt;228.857&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fastjson&lt;/td&gt;
+&lt;td&gt;8859.637&lt;/td&gt;
+&lt;td&gt;58.009&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Gson&lt;/td&gt;
+&lt;td&gt;14581.029&lt;/td&gt;
+&lt;td&gt;59.314&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Hessian&lt;/td&gt;
+&lt;td&gt;16504.562&lt;/td&gt;
+&lt;td&gt;85.219&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Jackson&lt;/td&gt;
+&lt;td&gt;8795.401&lt;/td&gt;
+&lt;td&gt;48.109&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Kryo&lt;/td&gt;
+&lt;td&gt;12437.866&lt;/td&gt;
+&lt;td&gt;52.945&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protobuf&lt;/td&gt;
+&lt;td&gt;10775.097&lt;/td&gt;
+&lt;td&gt;147.737&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protostuff&lt;/td&gt;
+&lt;td&gt;6027.095&lt;/td&gt;
+&lt;td&gt;33.662&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/serializer/ser-avgt.png&#34; alt=&#34;ser-avgt&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;反序列化平均耗时&#34;&gt;反序列化平均耗时&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;框架&lt;/th&gt;
+&lt;th&gt;耗时&lt;/th&gt;
+&lt;th&gt;方差&lt;/th&gt;
+&lt;th&gt;单位时间&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Avro&lt;/td&gt;
+&lt;td&gt;25422.477&lt;/td&gt;
+&lt;td&gt;658.969&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fastjson&lt;/td&gt;
+&lt;td&gt;8736.501&lt;/td&gt;
+&lt;td&gt;81.286&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Gson&lt;/td&gt;
+&lt;td&gt;10366.847&lt;/td&gt;
+&lt;td&gt;941.759&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Hessian&lt;/td&gt;
+&lt;td&gt;9293.557&lt;/td&gt;
+&lt;td&gt;543.865&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Jackson&lt;/td&gt;
+&lt;td&gt;9594.744&lt;/td&gt;
+&lt;td&gt;103.369&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Kryo&lt;/td&gt;
+&lt;td&gt;9190.082&lt;/td&gt;
+&lt;td&gt;243.400&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protobuf&lt;/td&gt;
+&lt;td&gt;5455.168&lt;/td&gt;
+&lt;td&gt;120.927&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protostuff&lt;/td&gt;
+&lt;td&gt;4861.520&lt;/td&gt;
+&lt;td&gt;31.993&lt;/td&gt;
+&lt;td&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/serializer/deser-avgt.png&#34; alt=&#34;deser-avgt&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;平均耗时综合对比&#34;&gt;平均耗时综合对比&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/serializer/avgt.png&#34; alt=&#34;avgt&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;吞吐量对比&#34;&gt;吞吐量对比&lt;/h2&gt;
+&lt;h3 id=&#34;序列化吞吐量&#34;&gt;序列化吞吐量&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;框架&lt;/th&gt;
+&lt;th&gt;吞吐量&lt;/th&gt;
+&lt;th&gt;方差&lt;/th&gt;
+&lt;th&gt;单位时间&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Avro&lt;/td&gt;
+&lt;td&gt;951.174&lt;/td&gt;
+&lt;td&gt;15.053&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fastjson&lt;/td&gt;
+&lt;td&gt;1160.132&lt;/td&gt;
+&lt;td&gt;11.835&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Gson&lt;/td&gt;
+&lt;td&gt;711.199&lt;/td&gt;
+&lt;td&gt;8.525&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Hessian&lt;/td&gt;
+&lt;td&gt;620.666&lt;/td&gt;
+&lt;td&gt;4.321&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Jackson&lt;/td&gt;
+&lt;td&gt;1215.150&lt;/td&gt;
+&lt;td&gt;19.994&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Kryo&lt;/td&gt;
+&lt;td&gt;836.276&lt;/td&gt;
+&lt;td&gt;16.079&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protobuf&lt;/td&gt;
+&lt;td&gt;1103.661&lt;/td&gt;
+&lt;td&gt;18.079&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protostuff&lt;/td&gt;
+&lt;td&gt;1756.591&lt;/td&gt;
+&lt;td&gt;27.101&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/serializer/ser-thrpt.png&#34; alt=&#34;ser-thrpt&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;反序列化吞吐量&#34;&gt;反序列化吞吐量&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;框架&lt;/th&gt;
+&lt;th&gt;吞吐量&lt;/th&gt;
+&lt;th&gt;方差&lt;/th&gt;
+&lt;th&gt;单位时间&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Avro&lt;/td&gt;
+&lt;td&gt;389.745&lt;/td&gt;
+&lt;td&gt;24.479&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fastjson&lt;/td&gt;
+&lt;td&gt;1103.777&lt;/td&gt;
+&lt;td&gt;29.458&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Gson&lt;/td&gt;
+&lt;td&gt;977.951&lt;/td&gt;
+&lt;td&gt;38.406&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Hessian&lt;/td&gt;
+&lt;td&gt;1153.816&lt;/td&gt;
+&lt;td&gt;44.385&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Jackson&lt;/td&gt;
+&lt;td&gt;1072.346&lt;/td&gt;
+&lt;td&gt;12.922&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Kryo&lt;/td&gt;
+&lt;td&gt;1098.548&lt;/td&gt;
+&lt;td&gt;33.257&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protobuf&lt;/td&gt;
+&lt;td&gt;1847.549&lt;/td&gt;
+&lt;td&gt;43.935&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Protostuff&lt;/td&gt;
+&lt;td&gt;2055.013&lt;/td&gt;
+&lt;td&gt;61.317&lt;/td&gt;
+&lt;td&gt;ms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/serializer/deser-thrpt.png&#34; alt=&#34;deser-thrpt&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;吞吐量综合对比&#34;&gt;吞吐量综合对比&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/serializer/thrpt.png&#34; alt=&#34;thrpt&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;综合对比下来，抛开未采样的内存占用及 cpu 消耗，大部分序列化框架效率还是比较不错的。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Avro&lt;/code&gt; 在反序列化时耗时比较严重，怀疑是否因为多线程而导致的，并且在反序列化后 map 数据还发生了顺序变化。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Protostuff&lt;/code&gt; 在各方面都优于其他框架，但是需要预先定义类，不过比起 &lt;code&gt;Protobuf&lt;/code&gt;、&lt;code&gt;Thrift&lt;/code&gt; 等预先定义数据格式已经方便很多了。&lt;/p&gt;
+&lt;p&gt;如果传输量不是很大，但是对数据的可视化有要求的，那么 &lt;code&gt;Fastjson&lt;/code&gt; 和 &lt;code&gt;Jackson&lt;/code&gt; 是不错的选择，而且 &lt;code&gt;json&lt;/code&gt; 格式在跨语言上也天然有优势。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Java 注解处理器</title>
+      <link>https://moyada.github.io/post/java-annotation-processor/</link>
+      <pubDate>Tue, 15 Jan 2019 19:40:15 +0000</pubDate>
+      <guid>https://moyada.github.io/post/java-annotation-processor/</guid>
+      <description>&lt;h2 id=&#34;工作流程&#34;&gt;工作流程&lt;/h2&gt;
+&lt;p&gt;注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;编译器具体处理过程可查看 OpenJDK 官方文档: &lt;a href=&#34;https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html&#34;&gt;https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;定义注解
+创建注解处理器的第一步就是需要定义相关注解，并且在注解上定义 &lt;code&gt;@Retention&lt;/code&gt;，当指定为 &lt;code&gt;RetentionPolicy.SOURCE&lt;/code&gt; 时，该注解即在编译结束后会被擦除。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;创建处理器
+接着就需要创建处理器了，一般可通过继承 &lt;code&gt;javax.annotation.processing.AbstractProcessor&lt;/code&gt; 定义处理器，由于注解处理器是通过反射获取的，所以需要提供无参构造函数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;设置解析注解
+重写 &lt;code&gt;getSupportedAnnotationTypes&lt;/code&gt; 或定义 &lt;code&gt;@SupportedAnnotationTypes&lt;/code&gt; 将先前定义的注解类名加入解析目标，也可以使用 &lt;code&gt;*&lt;/code&gt; 通配符。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;指定支持版本
+对于存在源文件版本需求的处理器，则可以通过重写 &lt;code&gt;SupportedSourceVersion&lt;/code&gt; 或定义 &lt;code&gt;@SupportedSourceVersion&lt;/code&gt; 来指定版本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;初始化处理器
+注解处理器拥有许多可供使用的工具类，但是这些工具类需要通过 &lt;code&gt;init&lt;/code&gt; 方法的 &lt;code&gt;ProcessingEnvironment&lt;/code&gt; 才可获取，一般做法也是重写此方法，提取所需工具对象保存至处理器中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实现处理流程
+注解处理器的核心流程为 &lt;code&gt;process&lt;/code&gt; 方法，可通过参数 &lt;code&gt;RoundEnvironment&lt;/code&gt; 获取被注解标记的元素，实现想提供的功能，一般为 &lt;code&gt;动态创建源文件&lt;/code&gt; 或 &lt;code&gt;修改语法树&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;注册处理器
+注册注解处理器的方式可以在编译时通过 &lt;code&gt;javac -processor&lt;/code&gt; 指定。
+也可以配置自动加载，依照 &lt;code&gt;ServiceLoader&lt;/code&gt; 形式，在 &lt;code&gt;META-INF/services&lt;/code&gt; 下创建名为 &lt;code&gt;javax.annotation.processing.Processor&lt;/code&gt; 的文件，将创建的注解处理器全类名填入，由于注解处理器是作用于编译期的，在编译时需要增加参数 &lt;code&gt;-proc:none&lt;/code&gt; 以不使用注解处理器。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;创建文件&#34;&gt;创建文件&lt;/h2&gt;
+&lt;p&gt;文件的创建需要通过 &lt;code&gt;javax.annotation.processing.Filer&lt;/code&gt; 来实现，可通过 &lt;code&gt;init&lt;/code&gt; 方法获取。
+通过 Filer 可以新建源文件并获取 &lt;code&gt;JavaFileObject&lt;/code&gt;，以 Java 代码的方法将内容写入源文件。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;MapStruct&lt;/code&gt; 和 &lt;code&gt;JavaPoet&lt;/code&gt; 就是利用这个功能开发的工具。&lt;/p&gt;
+&lt;h2 id=&#34;修改语法树&#34;&gt;修改语法树&lt;/h2&gt;
+&lt;p&gt;对比创建文件，修改语法树则是十分复杂且麻烦的工作，同样要通过 &lt;code&gt;init&lt;/code&gt; 获取语法树构造器 &lt;code&gt;com.sun.source.util.Trees&lt;/code&gt;。
+通过 Trees 可以将元素转换为语法树，并接受 &lt;code&gt;Visitor&lt;/code&gt; 以进行语法树节点扫描和修改，一般监视器的实现可以通过继承 &lt;code&gt;TreeTranslator&lt;/code&gt; 或 &lt;code&gt;TreeScanner&lt;/code&gt;，对需要的方法进行重写。&lt;/p&gt;
+&lt;p&gt;而语法树操作的难点在于其他方面:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;文档的缺少，这是无疑是对开发人员不友好的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;不稳定 api，有可能这个版本还能用的，在下一个版本就无效了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;未知的异常，可能由于操作失误而引发的，而且通过异常信息无法准确定位问题。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;无法很好的控制注解处理器之间的顺序。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;Lombok&lt;/code&gt; 就是一种修改语法树的工具。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这是我开发的一款通过修改语法树增加方法校验功能的工具: &lt;a href=&#34;https://moyada.github.io/medivh/&#34;&gt;https://moyada.github.io/medivh/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Java安全机制</title>
+      <link>https://moyada.github.io/post/java-security/</link>
+      <pubDate>Tue, 11 Dec 2018 14:20:10 +0000</pubDate>
+      <guid>https://moyada.github.io/post/java-security/</guid>
+      <description>&lt;p&gt;Java 安全机制是针对程序在操作本地资源时的权限限制，避免在执行有害代码时 (例如网络上下载的 jar 包)导致不可预估的损失。&lt;/p&gt;
+&lt;p&gt;这里简单介绍下使用方法。&lt;/p&gt;
+&lt;h2 id=&#34;配置安全策略&#34;&gt;配置安全策略&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;创建以 &lt;code&gt;.policy&lt;/code&gt; 结尾的文件&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;配置授权规则，可以参考 Java 默认的策略文件 &lt;code&gt;${java.home}/jre/lib/security/java.policy&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以下面配置文件的语法为例&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;grant codebase &amp;quot;file:${user.dir}/-&amp;quot; {
+    permission java.io.FilePermission &amp;quot;${user.home}/*&amp;quot;, &amp;quot;write&amp;quot;;
+};
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其中定义了一条对 &lt;code&gt;${user.dir}/permission/&lt;/code&gt; 路径下所有文件的权限，规定对 &lt;code&gt;${user.home}&lt;/code&gt; 路径下一层级的文件拥有写入权限。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;codebase &amp;quot;url&amp;quot;&lt;/code&gt; 为可选项，表示权限规则的授予目标，不设置则对所有文件生效。也可使用 
+&lt;a href=&#34;https://docs.oracle.com/javase/7/docs/technotes/guides/security/PolicyFiles.html##FileSyntax&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;其他目标语法&lt;/a&gt;，或者自定义语法。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;permission&lt;/code&gt; 表示一条权限规则，后面需跟随 继承 &lt;code&gt;Permission&lt;/code&gt; 类的全路径类名、构造方法参数，以 &lt;code&gt;;&lt;/code&gt; 结尾，可设置多条规则。&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;设置策略文件&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;追加策略文件 -Djava.security.policy=my.policy&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;替换策略文件 -Djava.security.policy==my.policy&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;开启安全机制&#34;&gt;开启安全机制&lt;/h2&gt;
+&lt;p&gt;一般开启安全机制的方式有两种，设置 JVM 参数，或者通过代码配置。&lt;/p&gt;
+&lt;h3 id=&#34;配置-jvm-options&#34;&gt;配置 JVM Options&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;-Djava.security.manager 
+-Djava.security.policy=my.policy
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;代码设置&#34;&gt;代码设置&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;static {
+    String dir = System.getProperty(&amp;quot;user.dir&amp;quot;);
+    System.setProperty(&amp;quot;java.security.policy&amp;quot;, dir + &amp;quot;/my.policy&amp;quot;);
+    if (System.getSecurityManager() == null) {
+        System.setSecurityManager(new SecurityManager());
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;注意在使用代码时会与 &lt;code&gt;JVM Options&lt;/code&gt; 方式冲突，抛出 &lt;code&gt;java.security.AccessControlException: access denied&lt;/code&gt; 异常信息，需要配置权限规则解决，可以选择追加在 Java 策略文件里。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;grant {
+	permission java.lang.RuntimePermission &amp;quot;setSecurityManager&amp;quot;;
+	permission java.util.PropertyPermission &amp;quot;java.security.policy&amp;quot;, &amp;quot;write&amp;quot;;
+	permission java.util.PropertyPermission &amp;quot;os.name&amp;quot;, &amp;quot;read&amp;quot;;
+	permission java.util.PropertyPermission &amp;quot;user.home&amp;quot;, &amp;quot;read&amp;quot;;
+	permission java.util.PropertyPermission &amp;quot;user.dir&amp;quot;, &amp;quot;read&amp;quot;;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;跳过权限检查&#34;&gt;跳过权限检查&lt;/h2&gt;
+&lt;p&gt;对于开启了安全策略后又不想定义权限规则时，则可以使用 &lt;code&gt;AccessController&lt;/code&gt; 类的 &lt;code&gt;doPrivileged&lt;/code&gt; 方法，跳过 &lt;code&gt;checkPermission&lt;/code&gt; 步骤，直接调用方法体。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;AccessController.doPrivileged(new PrivilegedAction&amp;lt;Object&amp;gt;() {
+    @Override
+    public Object run() {
+        ...
+        return null;
+    }
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;那么你可能会想，这样在其他依赖中也调用此方法不是绕过了安全机制。其实并不会，Java 在打包时会对实现了 &lt;code&gt;PrivilegedAction&lt;/code&gt; 接口的元类信息进行清除，强制调用则会抛出 &lt;code&gt;java.lang.NoClassDefFoundError&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;第三方工具&#34;&gt;第三方工具&lt;/h2&gt;
+&lt;p&gt;如果觉得默认的策略规则配置太繁琐了，那么可以使用 &lt;code&gt;pro-grade&lt;/code&gt; 这个第三方依赖，他通过自定义语法简化了规则的配置，具体步骤可以参考
+&lt;a href=&#34;http://pro-grade.sourceforge.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;官网&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;net.sourceforge.pro-grade&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;pro-grade&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.1.3&amp;lt;/version&amp;gt;
+    &amp;lt;scope&amp;gt;compile&amp;lt;/scope&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Java 基准测试框架(JMH)</title>
+      <link>https://moyada.github.io/post/jmh/</link>
+      <pubDate>Sat, 13 Oct 2018 15:23:53 +0000</pubDate>
+      <guid>https://moyada.github.io/post/jmh/</guid>
+      <description>&lt;p&gt;在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致结果的偏差。
+所以，为了在大程度上避免这种偏差问题，则会用到OpenJDK的性能基准测试项目
+&lt;a href=&#34;http://openjdk.java.net/projects/code-tools/jmh/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;JMH&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;项目构建&#34;&gt;项目构建&lt;/h2&gt;
+&lt;p&gt;可以通过maven命令构建项目&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mvn archetype:generate \
+  -DinteractiveMode=false \
+  -DarchetypeGroupId=org.openjdk.jmh \
+  -DarchetypeArtifactId=jmh-java-benchmark-archetype \
+  -DgroupId=&amp;lt;you_groupId&amp;gt; \
+  -DartifactId=&amp;lt;you_artifactId&amp;gt; \
+  -Dversion=1.0-SNAPSHOT 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;或者在已有项目中引入依赖包&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.openjdk.jmh&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;jmh-core&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;${jmh.version}&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.openjdk.jmh&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;jmh-generator-annprocess&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;${jmh.version}&amp;lt;/version&amp;gt;
+    &amp;lt;scope&amp;gt;provided&amp;lt;/scope&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;基本使用&#34;&gt;基本使用&lt;/h2&gt;
+&lt;h3 id=&#34;注解&#34;&gt;注解&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;参数&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;th&gt;范围&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;@State&lt;/td&gt;
+&lt;td&gt;配置每个实例的生命周期&lt;/td&gt;
+&lt;td&gt;类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@BenchmarkMode&lt;/td&gt;
+&lt;td&gt;测试的维度，有吞吐量、平时时间、随机取样、单次运行&lt;/td&gt;
+&lt;td&gt;方法、类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@OutputTimeUnit&lt;/td&gt;
+&lt;td&gt;输出结果的时间单位&lt;/td&gt;
+&lt;td&gt;方法、类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@Warmup&lt;/td&gt;
+&lt;td&gt;预热迭代，以保证即时编译的工作&lt;/td&gt;
+&lt;td&gt;方法、类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@Measurement&lt;/td&gt;
+&lt;td&gt;设置执行测试迭代的参数&lt;/td&gt;
+&lt;td&gt;方法、类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@Fork&lt;/td&gt;
+&lt;td&gt;使用额外虚拟机测试数量&lt;/td&gt;
+&lt;td&gt;方法、类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@Setup&lt;/td&gt;
+&lt;td&gt;测试前置执行逻辑&lt;/td&gt;
+&lt;td&gt;方法&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@TearDown&lt;/td&gt;
+&lt;td&gt;测试结束执行逻辑&lt;/td&gt;
+&lt;td&gt;方法&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@Benchmark&lt;/td&gt;
+&lt;td&gt;标记该方法需要进行测试，并生成class类&lt;/td&gt;
+&lt;td&gt;方法&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@Param&lt;/td&gt;
+&lt;td&gt;指定参数的测试范围&lt;/td&gt;
+&lt;td&gt;属性&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;@CompilerControl&lt;/td&gt;
+&lt;td&gt;设置即时编译的效果&lt;/td&gt;
+&lt;td&gt;构造器、类、方法&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;启动&#34;&gt;启动&lt;/h3&gt;
+&lt;p&gt;编写 main 方法编译启动或打包成 jar 包运行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public static void main(String[] args) throws RunnerException {
+	Options opt = new OptionsBuilder()
+	    .include(MyBenchmark.class.getSimpleName())
+		.jvmArgs(&amp;quot;-server&amp;quot;, &amp;quot;-Xms2048m&amp;quot;, &amp;quot;-Xmx2048m&amp;quot;)
+		.addProfiler(GCProfiler.class)
+		.addProfiler(StackProfiler.class)
+		.build();
+
+	new Runner(opt).run();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://blog.csdn.net/lxbjkben/article/details/79410740&#34;&gt;https://blog.csdn.net/lxbjkben/article/details/79410740&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>java8 default method 的使用见解</title>
+      <link>https://moyada.github.io/post/default-method/</link>
+      <pubDate>Thu, 09 Aug 2018 23:58:11 +0000</pubDate>
+      <guid>https://moyada.github.io/post/default-method/</guid>
+      <description>&lt;p&gt;oracle 在 jdk8 中引入了接口的默认方法，用 &lt;code&gt;default&lt;/code&gt; 关键字标识。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public inteface Listener {
+	default void start() {
+		...
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;该原语特性能将接口的 &lt;code&gt;default&lt;/code&gt; 方法以 &lt;code&gt;public&lt;/code&gt; 可见范围赋予所有实现类，同时允许重写。&lt;/p&gt;
+&lt;p&gt;由于默认方法是定义在接口上的方法，只能使用接收参数和接口方法，并且是 public 可见范围，导致了使用的局限性。&lt;/p&gt;
+&lt;p&gt;在实际开发中的常见场景为，一个功能的主流程固定，并且需由数个方法组成，而方法根据场景可能会有多种实现 (可以对照 &lt;code&gt;Map&lt;/code&gt; 接口理解)。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://stackoverflow.com/questions/19998454/interface-with-default-methods-vs-abstract-class-in-java-8&#34;&gt;https://stackoverflow.com/questions/19998454/interface-with-default-methods-vs-abstract-class-in-java-8&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>volatile 浅析</title>
+      <link>https://moyada.github.io/post/volatile/</link>
+      <pubDate>Sat, 14 Jul 2018 18:01:17 +0000</pubDate>
+      <guid>https://moyada.github.io/post/volatile/</guid>
+      <description>&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;
+&lt;p&gt;volatile原语保障了多线程下变量的原子性、可见性、有序性。&lt;/p&gt;
+&lt;h2 id=&#34;原子性&#34;&gt;原子性&lt;/h2&gt;
+&lt;p&gt;在32位虚拟机下对&lt;code&gt;long&lt;/code&gt;、&lt;code&gt;double&lt;/code&gt;类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证不存在中间值，但是由于读取的一刻其他线程也有可能改变值，所以复合操作无法达到原子性。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;64位下不存在该问题，并且近代jdk中普通操作也能达到原子性&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;可见性&#34;&gt;可见性&lt;/h2&gt;
+&lt;p&gt;其目的是使多线程环境下对共享变量的修改能被其他线程立即查看到。&lt;/p&gt;
+&lt;p&gt;由于线程对变量的读取是先从线程的工作内存(cpu缓存)中获取，不存在才从主内存中获取。&lt;/p&gt;
+&lt;p&gt;那么在多线程环境下多普通共享变量的修改操作就会由于cpu缓存中已存在而导致的数据不一致。&lt;/p&gt;
+&lt;p&gt;为了解决这个问题，处理器会对编译后指令增加lock指令前缀，大部分处理器架构采用了&lt;code&gt;RingBus&lt;/code&gt; + &lt;code&gt;MESI协议&lt;/code&gt;的方式来解决，部分老版本cpu架构则采用锁总线来达到效果。&lt;/p&gt;
+&lt;p&gt;原理是在修改数据时候更新cpu缓存之后立即写回主存、并且通知到使用相同变量线程，将该变量设置为无效，当读取变量时再从主存或者寄存器中获取。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由于volatile的可见性，也可用来完成轻量锁的实现，例如线程的终止判断&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;有序性&#34;&gt;有序性&lt;/h2&gt;
+&lt;p&gt;操作系统为了使cpu流水线的各个阶段不存在空闲内核，往往会多当前编译好的指令进行重排序，但是只会保证单条线程的程序正确性，并不保障并发环境下的正确性。&lt;/p&gt;
+&lt;p&gt;JVM为了保证volatile域的可见性(happens-before)，会在编译时对指令前后都加入内存屏障指令lock前缀，使得不会将后面的指令重排序到内存屏障之前的位置。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。&lt;/li&gt;
+&lt;li&gt;当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。&lt;/li&gt;
+&lt;li&gt;当第一个操作是volatile写，第二个操作是volatile读时，不能重排序。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;最经典的场景有double check单例，由于重排序，可能出现对象尚未创建成功，但是对象引用缺被赋值使用，造成空指针异常。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Java 锁机制</title>
+      <link>https://moyada.github.io/post/java-lock/</link>
+      <pubDate>Tue, 12 Jun 2018 10:20:44 +0000</pubDate>
+      <guid>https://moyada.github.io/post/java-lock/</guid>
+      <description>&lt;h2 id=&#34;synchronized&#34;&gt;synchronized&lt;/h2&gt;
+&lt;p&gt;在 jdk1.6 之后,&lt;code&gt;synchronized&lt;/code&gt; 原语通过引入偏向锁、轻量锁进行了优化。&lt;/p&gt;
+&lt;p&gt;synchronized 是通过 &lt;code&gt;monitor_enter&lt;/code&gt; 和 &lt;code&gt;monitor_exit&lt;/code&gt; 来控制的，通过 javap 反编译能观察到。&lt;/p&gt;
+&lt;p&gt;线程在进入 synchronized 代码块时，将通过获取对象头内 &lt;code&gt;Mark Work&lt;/code&gt; 的锁标记来决定是否进入 临界区。&lt;/p&gt;
+&lt;h2 id=&#34;偏向锁&#34;&gt;偏向锁&lt;/h2&gt;
+&lt;p&gt;没有多线程竞争环境，如果没有设置 &lt;code&gt;-XX:-UseBiasedLocking&lt;/code&gt; 关闭偏向锁的话将会通过 CAS 获取锁，并设置持有锁的线程 id，当该线程再次尝试获取锁时，如果锁内线程为当前线程则直接判断获取锁标记。&lt;/p&gt;
+&lt;h2 id=&#34;轻量锁&#34;&gt;轻量锁&lt;/h2&gt;
+&lt;p&gt;在多个线程尝试获取偏向锁时，当线程获取偏向锁失败时将会膨胀为轻量锁，通过CAS操作来获取锁标记进入临界区。&lt;/p&gt;
+&lt;h2 id=&#34;重量锁&#34;&gt;重量锁&lt;/h2&gt;
+&lt;p&gt;如果轻量锁的 CAS 操作失败时，将会升级为重量级锁。&lt;/p&gt;
+&lt;p&gt;重量锁依赖底层的 &lt;code&gt;Mutex Lock&lt;/code&gt; 总线锁，需要将用户态切换为内核态，成本较大。&lt;/p&gt;
+&lt;h2 id=&#34;重入锁&#34;&gt;重入锁&lt;/h2&gt;
+&lt;p&gt;在 &lt;code&gt;synchronized&lt;/code&gt; 偏向锁和 &lt;code&gt;ReentrantLock&lt;/code&gt; 中都设计了重入锁，&lt;/p&gt;
+&lt;h2 id=&#34;自旋锁&#34;&gt;自旋锁&lt;/h2&gt;
+&lt;p&gt;当多线程环境下，线程获取锁标记或立马释放时，自旋锁就有其意义。&lt;/p&gt;
+&lt;p&gt;在 Java 源码的&lt;code&gt;AbstractQueuedSynchronizer&lt;/code&gt; 中，线程的出现竞争时就是先是尝试进行自旋锁，之后再进行锁升级。&lt;/p&gt;
+&lt;p&gt;自旋锁消除了用户态切换至内核态的上下文切换，但是也增加cpu的消耗。&lt;/p&gt;
+&lt;h2 id=&#34;锁降级&#34;&gt;锁降级&lt;/h2&gt;
+&lt;p&gt;在jvm进入安全点时，会检测空闲的 &lt;code&gt;monitor&lt;/code&gt; 并对其进行锁降级以提高下次获取锁时的效率。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>在 jdk9 下使用 Lombok</title>
+      <link>https://moyada.github.io/post/lombok-java9/</link>
+      <pubDate>Wed, 06 Jun 2018 20:51:56 +0000</pubDate>
+      <guid>https://moyada.github.io/post/lombok-java9/</guid>
+      <description>&lt;p&gt;由于jdk9中对lombok所依赖的类进行了迁移，所以使用lombok的程序无法直接升级。需按照如下方式升级：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;升级lombok依赖&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;properties&amp;gt;
+    &amp;lt;lombok.version&amp;gt;1.18.0&amp;lt;/lombok.version&amp;gt;
+&amp;lt;/properties&amp;gt;
+
+&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.projectlombok&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;lombok&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;${lombok.version}&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+
+
+&amp;lt;plugin&amp;gt;
+    &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;3.7.0&amp;lt;/version&amp;gt;
+    &amp;lt;configuration&amp;gt;
+        &amp;lt;source&amp;gt;1.7&amp;lt;/source&amp;gt;
+        &amp;lt;target&amp;gt;1.7&amp;lt;/target&amp;gt;
+        &amp;lt;encoding&amp;gt;UTF-8&amp;lt;/encoding&amp;gt;
+        &amp;lt;annotationProcessorPaths&amp;gt;
+            &amp;lt;path&amp;gt;
+                &amp;lt;groupId&amp;gt;org.projectlombok&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;lombok&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;${lombok.version}&amp;lt;/version&amp;gt;
+            &amp;lt;/path&amp;gt;
+        &amp;lt;/annotationProcessorPaths&amp;gt;
+    &amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;升级maven编译插件及配置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;properties&amp;gt;
+    &amp;lt;java.version&amp;gt;9&amp;lt;/java.version&amp;gt;
+&amp;lt;/properties&amp;gt;
+
+&amp;lt;plugin&amp;gt;
+    &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;3.7.0&amp;lt;/version&amp;gt;
+    &amp;lt;configuration&amp;gt;
+        &amp;lt;source&amp;gt;${java.version}&amp;lt;/source&amp;gt;
+        &amp;lt;target&amp;gt;${java.version}&amp;lt;/target&amp;gt;
+        &amp;lt;showDeprecation&amp;gt;true&amp;lt;/showDeprecation&amp;gt;
+        &amp;lt;showWarnings&amp;gt;true&amp;lt;/showWarnings&amp;gt;
+        &amp;lt;fork&amp;gt;true&amp;lt;/fork&amp;gt;
+        &amp;lt;compilerargs&amp;gt;
+            &amp;lt;arg&amp;gt;-Werror&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-Xlint:all&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+            &amp;lt;arg&amp;gt;-J--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED&amp;lt;/arg&amp;gt;
+        &amp;lt;/compilerargs&amp;gt;
+    &amp;lt;/configuration&amp;gt;
+&amp;lt;/plugin&amp;gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;参考：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/rzwitserloot/lombok/issues/985&#34;&gt;https://github.com/rzwitserloot/lombok/issues/985&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</title>
+      <link>https://moyada.github.io/post/mat/</link>
+      <pubDate>Wed, 23 May 2018 10:18:19 +0000</pubDate>
+      <guid>https://moyada.github.io/post/mat/</guid>
+      <description>&lt;p&gt;使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。&lt;/p&gt;
+&lt;p&gt;通过jmap -dump:format=b,file=[file_name]] [pid] 生成&lt;code&gt;hprof&lt;/code&gt;文件&lt;/p&gt;
+&lt;p&gt;在Eclipse Marketplace安装 Memory Analyzer，打开dump文件&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;注意: dump 导出后的内存跟实际监控看到的内存大小不一致的时候, 有可能是使用了&lt;code&gt;堆外内存&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;overview-面板&#34;&gt;Overview 面板&lt;/h2&gt;
+&lt;p&gt;Remainder(剩余) 应用 Heap 可分配的内存, 如果可分配内存很小, 则可以考虑加大或者进行优化&lt;/p&gt;
+&lt;h2 id=&#34;histogram-面板-类-的角度&#34;&gt;Histogram 面板 (类 的角度)&lt;/h2&gt;
+&lt;p&gt;可以查看内存中实例的数量以及占用内存的大小&lt;/p&gt;
+&lt;h2 id=&#34;dominator-tree-面板-对象实例-的角度&#34;&gt;Dominator Tree 面板 (对象实例 的角度)&lt;/h2&gt;
+&lt;p&gt;按照占用内存由大到小的顺序列举了对象列表情况&lt;/p&gt;
+&lt;h2 id=&#34;top-consumers-面板-按类和包进行分组分析大消耗对象&#34;&gt;Top Consumers 面板 (按类和包进行分组分析大消耗对象)&lt;/h2&gt;
+&lt;h2 id=&#34;leak-suspects-面板-内存泄漏分析报表&#34;&gt;Leak Suspects 面板 (内存泄漏分析报表)&lt;/h2&gt;
+&lt;h2 id=&#34;shallow-size-是指对象本身占用内存的大小-不包含对其他对象的引用&#34;&gt;Shallow size 是指对象本身占用内存的大小, 不包含对其他对象的引用&lt;/h2&gt;
+&lt;h2 id=&#34;retained-size-是指-shallow-size--该对象能直接或者间接访问到的对象的-shallow-size-之和也就是指-该对象被-gc-之后所能回收的内存的总和&#34;&gt;Retained size 是指 Shallow size + 该对象能直接或者间接访问到的对象的 Shallow size 之和，也就是指 该对象被 GC 之后所能回收的内存的总和&lt;/h2&gt;
+&lt;h2 id=&#34;list-objects&#34;&gt;List Objects&lt;/h2&gt;
+&lt;h3 id=&#34;with-incoming-references&#34;&gt;with incoming references&lt;/h3&gt;
+&lt;p&gt;查看这个对象持有的外部对象引用&lt;/p&gt;
+&lt;h3 id=&#34;with-outcoming-references&#34;&gt;with outcoming references&lt;/h3&gt;
+&lt;p&gt;查看这个对象被哪些外部对象引用&lt;/p&gt;
+&lt;h2 id=&#34;path-to-gc-roots&#34;&gt;Path To GC Roots&lt;/h2&gt;
+&lt;h3 id=&#34;exclude-weak-references&#34;&gt;exclude weak references&lt;/h3&gt;
+&lt;p&gt;排除 软引用&lt;/p&gt;
+&lt;h3 id=&#34;exclude-soft-references&#34;&gt;exclude soft references&lt;/h3&gt;
+&lt;p&gt;排除 弱引用&lt;/p&gt;
+&lt;h3 id=&#34;exclude-weaksoft-references&#34;&gt;exclude weak/soft references&lt;/h3&gt;
+&lt;p&gt;排除 软／弱引用&lt;/p&gt;
+&lt;h3 id=&#34;exclude-all-phantimweaksoft-etc-references&#34;&gt;exclude all phantim/weak/soft etc. references&lt;/h3&gt;
+&lt;p&gt;查看 强引用&lt;/p&gt;
+&lt;h2 id=&#34;gc-root-unreachable&#34;&gt;GC root Unreachable&lt;/h2&gt;
+&lt;p&gt;没有引用标记, 会被回收, 不会产生 leak, 由于没有 GC 发生所以没有被释放&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考文档:
+
+&lt;a href=&#34;http://www.jianshu.com/p/c8e0f8748ac0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;MAT 使用进阶&lt;/a&gt;
+
+&lt;a href=&#34;https://tech.meituan.com/linux-jvm-memory.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;美团技术  Linux 与 JVM 的内存关系&lt;/a&gt;
+
+&lt;a href=&#34;http://www.javatang.com/archives/2017/11/08/11582145.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Java内存泄漏分析&lt;/a&gt;
+
+&lt;a href=&#34;https://zhuanlan.zhihu.com/p/21741364&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;追踪 Netty 异常占用堆外内存的经验分享&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
 </description>
     </item>
     

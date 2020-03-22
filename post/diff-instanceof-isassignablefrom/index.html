@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeName]、class.isInstance(obj)、class.isAssignableFrom(class)，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。
+  其中 instanceof 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 templateTable.hpp 中发现了 instanceof 方法的定义，从其中 templateTable_x86.cpp、templateTable_arm.cpp 的 instanceof 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/diff-instanceof-isassignablefrom/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/post/diff-instanceof-isassignablefrom/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/post/diff-instanceof-isassignablefrom/">
+  <meta property="og:title" content="instanceOf、isInstance、isAssignableFrom 的区别 | 疯狂的厨子">
+  <meta property="og:description" content="在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeName]、class.isInstance(obj)、class.isAssignableFrom(class)，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。
+  其中 instanceof 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 templateTable.hpp 中发现了 instanceof 方法的定义，从其中 templateTable_x86.cpp、templateTable_arm.cpp 的 instanceof 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2019-05-05T20:23:32&#43;00:00">
+    
+    <meta property="article:modified_time" content="2019-05-05T20:23:32&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://moyada.github.io/post/diff-instanceof-isassignablefrom/"
+  },
+  "headline": "instanceOf、isInstance、isAssignableFrom 的区别",
+  
+  "datePublished": "2019-05-05T20:23:32Z",
+  "dateModified": "2019-05-05T20:23:32Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "薛毅康"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "疯狂的厨子",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeName]、class.isInstance(obj)、class.isAssignableFrom(class)，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。\n  其中 instanceof 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 templateTable.hpp 中发现了 instanceof 方法的定义，从其中 templateTable_x86.cpp、templateTable_arm.cpp 的 instanceof 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>instanceOf、isInstance、isAssignableFrom 的区别 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">instanceOf、isInstance、isAssignableFrom 的区别</a></li>
+      </ul>
+
+      <nav id="TableOfContents"></nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>instanceOf、isInstance、isAssignableFrom 的区别</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-05-05
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <p>在 Java 中，对一个类的子类判断有三种方式，分别是 <code>obj instanceof [TypeName]</code>、<code>class.isInstance(obj)</code>、<code>class.isAssignableFrom(class)</code>，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。</p>
+<ol>
+<li>
+<p>其中 <code>instanceof</code> 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 <code>templateTable.hpp</code> 中发现了 instanceof 方法的定义，从其中 <code>templateTable_x86.cpp</code>、<code>templateTable_arm.cpp</code> 的 <code>instanceof</code> 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。</p>
+</li>
+<li>
+<p><code>isInstance</code> 是 Class 类下的 native 方法，接收参数为对象。分析了在 <code>jni.cpp</code> 中的大体流程，程序先通过 class 获取到 Klass，调用 object 内 klass 的 <code>is_subtype_of</code> 方法，传入方才获取的 Klass，判断二者地址是否相同，是则判定为同一类型，否则再调用 <code>search_secondary_supers</code>，判断父级类型是否存在与传入的 Klass 相匹配。</p>
+</li>
+</ol>
+<pre><code>JNI_QUICK_ENTRY(jboolean, jni_IsInstanceOf(JNIEnv *env, jobject obj, jclass clazz))
+  JNIWrapper(&quot;IsInstanceOf&quot;);
+
+  HOTSPOT_JNI_ISINSTANCEOF_ENTRY(env, obj, clazz);
+
+  jboolean ret = JNI_TRUE;
+  if (obj != NULL) {
+    ret = JNI_FALSE;
+    Klass* k = java_lang_Class::as_Klass(
+      JNIHandles::resolve_non_null(clazz));
+    if (k != NULL) {
+      ret = JNIHandles::resolve_non_null(obj)-&gt;is_a(k) ? JNI_TRUE : JNI_FALSE;
+    }
+  }
+
+  HOTSPOT_JNI_ISINSTANCEOF_RETURN(ret);
+  return ret;
+JNI_END
+
+</code></pre>
+<pre><code>// hotspot/share/oops/oop.inline.hpp
+
+bool oopDesc::is_a(Klass* k) const {
+  return klass()-&gt;is_subtype_of(k);
+}
+</code></pre>
+<pre><code>// hotspot/share/oops/klass.hpp
+
+// subtype check: true if is_subclass_of, or if k is interface and receiver implements it
+bool is_subtype_of(Klass* k) const {
+  juint    off = k-&gt;super_check_offset();
+  Klass* sup = *(Klass**)( (address)this + off );
+  const juint secondary_offset = in_bytes(secondary_super_cache_offset());
+  if (sup == k) {
+    return true;
+  } else if (off != secondary_offset) {
+    return false;
+  } else {
+    return search_secondary_supers(k);
+  }
+}
+
+bool Klass::search_secondary_supers(Klass* k) const {
+  // Put some extra logic here out-of-line, before the search proper.
+  // This cuts down the size of the inline method.
+
+  // This is necessary, since I am never in my own secondary_super list.
+  if (this == k)
+    return true;
+  // Scan the array-of-objects for a match
+  int cnt = secondary_supers()-&gt;length();
+  for (int i = 0; i &lt; cnt; i++) {
+    if (secondary_supers()-&gt;at(i) == k) {
+      ((Klass*)this)-&gt;set_secondary_super_cache(k);
+      return true;
+    }
+  }
+  return false;
+}
+</code></pre>
+<ol start="3">
+<li><code>isAssignableFrom</code> 也是 Class 类下的 native 方法，接收参数为 Class 类。主要逻辑与 <code>isInstance</code> 相同，区别在于当 主体 Class 与 参数 Class 其中一个为原生类型时，则选择使用对象头判断类型是否相等。</li>
+</ol>
+<p><code>isInstance</code> 和 <code>isAssignableFrom</code> 对入参校验上也有区别，isInstance 当对象为空时将会返回 <code>false</code> isAssignableFrom 则会对参数进行非空校验。</p>
+<p><code>isInstance</code> 和 <code>isAssignableFrom</code> 在方法标记上都有 <code>@HotSpotIntrinsicCandidate</code>，会被 JVM 使用更高效的字节码替换，节省了 JNI 调用的开销。</p>
+<pre><code>JNI_QUICK_ENTRY(jboolean, jni_IsAssignableFrom(JNIEnv *env, jclass sub, jclass super))
+  JNIWrapper(&quot;IsSubclassOf&quot;);
+
+  HOTSPOT_JNI_ISASSIGNABLEFROM_ENTRY(env, sub, super);
+
+  oop sub_mirror   = JNIHandles::resolve_non_null(sub);
+  oop super_mirror = JNIHandles::resolve_non_null(super);
+  if (java_lang_Class::is_primitive(sub_mirror) ||
+      java_lang_Class::is_primitive(super_mirror)) {
+    jboolean ret = oopDesc::equals(sub_mirror, super_mirror);
+
+    HOTSPOT_JNI_ISASSIGNABLEFROM_RETURN(ret);
+    return ret;
+  }
+  Klass* sub_klass   = java_lang_Class::as_Klass(sub_mirror);
+  Klass* super_klass = java_lang_Class::as_Klass(super_mirror);
+  assert(sub_klass != NULL &amp;&amp; super_klass != NULL, &quot;invalid arguments to jni_IsAssignableFrom&quot;);
+  jboolean ret = sub_klass-&gt;is_subtype_of(super_klass) ?
+                   JNI_TRUE : JNI_FALSE;
+
+  HOTSPOT_JNI_ISASSIGNABLEFROM_RETURN(ret);
+  return ret;
+JNI_END
+</code></pre>
+<p>总结一下，<code>instanceof</code>、<code>isInstance</code>、<code>isAssignableFrom</code> 其实无太大区别，instanceof 和 isInstance 适用于主体是对象，并且 instanceof 需要在编译期就指定类型，灵活性不如 isInstance。而 isAssignableFrom 是针对两个类的关系校验，在泛型对比上比较适合。</p>
+<blockquote>
+<p>参考: <a href="https://stackoverflow.com/questions/496928/what-is-the-difference-between-instanceof-and-class-isassignablefrom">https://stackoverflow.com/questions/496928/what-is-the-difference-between-instanceof-and-class-isassignablefrom</a></p>
+</blockquote>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+<section id="comments">
+  
+</section>
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/java-serializer/" rel="prev">序列化框架对比</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/feign-eureka-without-springboot/" rel="next">在非 SpringBoot 工程中使用 Feign 整合 Eureka</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

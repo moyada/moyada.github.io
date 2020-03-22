@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。
+它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。
+  声明在方法内时，锁对象由开发者所指定
+  声明在方法上，锁对象则为当前类的实例
+  声明在静态方法上，锁对象就是由类加载器所加载的 Class
+  这里简单记录 synchronized 代码块在虚拟机内部的运转，版本为 OpenJDK11。
+获取同步锁 当线程进入临界区时，会根据是否开启了偏向锁选择进入 ObjectSynchronizer::fast_enter 方法或者 ObjectSynchronizer::slow_enter 方法。">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/java-synchronized/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/post/java-synchronized/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/post/java-synchronized/">
+  <meta property="og:title" content="synchronized 原理总结 | 疯狂的厨子">
+  <meta property="og:description" content="介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。
+它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。
+  声明在方法内时，锁对象由开发者所指定
+  声明在方法上，锁对象则为当前类的实例
+  声明在静态方法上，锁对象就是由类加载器所加载的 Class
+  这里简单记录 synchronized 代码块在虚拟机内部的运转，版本为 OpenJDK11。
+获取同步锁 当线程进入临界区时，会根据是否开启了偏向锁选择进入 ObjectSynchronizer::fast_enter 方法或者 ObjectSynchronizer::slow_enter 方法。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2019-01-13T21:39:24&#43;00:00">
+    
+    <meta property="article:modified_time" content="2019-01-13T21:39:24&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://moyada.github.io/post/java-synchronized/"
+  },
+  "headline": "synchronized 原理总结",
+  
+  "datePublished": "2019-01-13T21:39:24Z",
+  "dateModified": "2019-01-13T21:39:24Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "薛毅康"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "疯狂的厨子",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。\n它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。\n  声明在方法内时，锁对象由开发者所指定\n  声明在方法上，锁对象则为当前类的实例\n  声明在静态方法上，锁对象就是由类加载器所加载的 Class\n  这里简单记录 synchronized 代码块在虚拟机内部的运转，版本为 OpenJDK11。\n获取同步锁 当线程进入临界区时，会根据是否开启了偏向锁选择进入 ObjectSynchronizer::fast_enter 方法或者 ObjectSynchronizer::slow_enter 方法。"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>synchronized 原理总结 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">synchronized 原理总结</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#介绍">介绍</a></li>
+    <li><a href="#获取同步锁">获取同步锁</a>
+      <ul>
+        <li><a href="#objectsynchronizerfast_enter">ObjectSynchronizer::fast_enter</a></li>
+        <li><a href="#objectsynchronizerslow_enter">ObjectSynchronizer::slow_enter</a></li>
+      </ul>
+    </li>
+    <li><a href="#等待与唤醒">等待与唤醒</a>
+      <ul>
+        <li><a href="#wait">wait</a></li>
+        <li><a href="#notifynotifyall">notify/notifyAll</a></li>
+      </ul>
+    </li>
+    <li><a href="#阻塞线程">阻塞线程</a>
+      <ul>
+        <li><a href="#enter">enter</a></li>
+        <li><a href="#exit">exit</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>synchronized 原理总结</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-01-13
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/jvm/">JVM</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <h2 id="介绍">介绍</h2>
+<p>在 Java 中 <code>synchronized</code> 是用于并发环境下使用临界区的原语。</p>
+<p>它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。</p>
+<ul>
+<li>
+<p>声明在方法内时，锁对象由开发者所指定</p>
+</li>
+<li>
+<p>声明在方法上，锁对象则为当前类的实例</p>
+</li>
+<li>
+<p>声明在静态方法上，锁对象就是由类加载器所加载的 Class</p>
+</li>
+</ul>
+<p>这里简单记录 <code>synchronized</code> 代码块在虚拟机内部的运转，版本为 OpenJDK11。</p>
+<h2 id="获取同步锁">获取同步锁</h2>
+<p>当线程进入临界区时，会根据是否开启了偏向锁选择进入 <code>ObjectSynchronizer::fast_enter</code> 方法或者 <code>ObjectSynchronizer::slow_enter</code> 方法。</p>
+<h3 id="objectsynchronizerfast_enter">ObjectSynchronizer::fast_enter</h3>
+<ol>
+<li>
+<p>检查当前 Mark Word 的锁状态是否为偏向锁，否则进入 <code>slow_enter</code>。</p>
+</li>
+<li>
+<p>检查虚拟机当前是否处于安全点，是则先进行检查是否需要撤销偏向锁。</p>
+</li>
+<li>
+<p>检查对象头是否为偏向锁模式，否则使用 CAS 修改 Mark Word 存储的线程 id，并初始化获取锁时间点和年龄。</p>
+</li>
+<li>
+<p>当已经处于偏向锁模式时，并且当前占有锁的时间已过期，则可以使用 CAS 进行锁替换或者更新年龄。</p>
+</li>
+<li>
+<p>当任意 CAS 操作失败时，则表明存在其他线程已对锁状态进行了修改，需要执行 <code>slow_enter</code>。</p>
+</li>
+<li>
+<p>更新对象头信息，检查是否需要撤销偏向锁。</p>
+</li>
+</ol>
+<h3 id="objectsynchronizerslow_enter">ObjectSynchronizer::slow_enter</h3>
+<ol>
+<li>
+<p>判断 Mark Word 的锁状态是否为无锁或偏向锁，是则使用 CAS 修改对象头，成功后对当前 Region 栈锁进行释放。</p>
+</li>
+<li>
+<p>否则判断 Mark Word 的锁状态是否为轻量级锁，并且对对象头的 BasicLock 进行加锁。</p>
+</li>
+<li>
+<p>失败时将修改对象头使其不可重入，并将锁膨胀为重量级锁，修改 Mark Word。</p>
+</li>
+<li>
+<p>通过 <code>ObjectMonitor</code> 管理当前线程，当对象头为轻量级锁时，获取空闲 ObjectMonitor 使用，并配置至对象头内。</p>
+</li>
+</ol>
+<ul>
+<li>ObjectMonitor 的获取方式为依次从 <code>线程空间中查找空闲监视器</code>、<code>全局空间中查找空闲监视器</code>、<code>重新创建监视器</code> 选取尝试。</li>
+</ul>
+<h2 id="等待与唤醒">等待与唤醒</h2>
+<h3 id="wait">wait</h3>
+<p>当处于临界区内的线程由于某种原因选择将自身挂起时，将执行 <code>ObjectSynchronizer::wait</code>。</p>
+<ol>
+<li>
+<p>判断当前 Mark Word 是否为偏向锁，是则对其进行撤销。</p>
+</li>
+<li>
+<p>释放临界区占用锁，获取管理当前线程的的 <code>ObjectMonitor</code>。</p>
+</li>
+<li>
+<p>将线程封装为 <code>ObjectWaiter</code> 加入至 <code>_WaitSet</code> 队尾。</p>
+</li>
+<li>
+<p>设置 LoadLoad 内存屏障，防止重排序问题。</p>
+</li>
+<li>
+<p>判断是否该等待线程是否已经存在，是否重新启动该线程。</p>
+</li>
+<li>
+<p>关闭非运行线程与重入锁的响应。</p>
+</li>
+<li>
+<p>判断线程是否已被中断，是则抛出异常。</p>
+</li>
+</ol>
+<h3 id="notifynotifyall">notify/notifyAll</h3>
+<ol>
+<li>
+<p>检查等待队列 <code>_WaitSet</code>，为空则直接返回。</p>
+</li>
+<li>
+<p>使用 <code>_WaitSetLock</code> 保护操作等待队列不被其他线程干扰。</p>
+</li>
+<li>
+<p>根据策略选择从等待队列中获取元素加入到阻塞队列 <code>_EntryList</code> 或 <code>_cxq</code> 或 直接唤醒。</p>
+</li>
+<li>
+<p>设置被移动线程为可与重入锁响应。</p>
+</li>
+<li>
+<p>释放 <code>_WaitSetLock</code> 锁。</p>
+</li>
+</ol>
+<h2 id="阻塞线程">阻塞线程</h2>
+<h3 id="enter">enter</h3>
+<p>当进入临界区的线程获取锁失败时，将交由锁对象的 <code>objectMonitor</code> 来管理，调用 <code>enter</code> 方法修改该线程状态为阻塞，并封装为 <code>ObjectWaiter</code> 加入到名为 <code>_EntryList</code> 的链表中。</p>
+<h3 id="exit">exit</h3>
+<p>当有线程离开临界区，将会调用 objectMonitor 的 <code>exit</code> 方法，根据 QMode 的不同的选择从 阻塞队列 或 等待队列 中获取 <code>ObjectWaiter</code>，也可能将等待队列的部分或全部加入阻塞队列后从阻塞队列中获取。</p>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+<section id="comments">
+  
+</section>
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/maven-central/" rel="prev">发布 jar 包至 maven 官方中央仓库</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/java-annotation-processor/" rel="next">Java 注解处理器</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

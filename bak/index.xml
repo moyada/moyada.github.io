@@ -5,12 +5,118 @@
     <link>https://moyada.github.io/bak/</link>
       <atom:link href="https://moyada.github.io/bak/index.xml" rel="self" type="application/rss+xml" />
     <description>Baks</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 07 Jul 2018 13:44:21 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Fri, 16 Nov 2018 11:33:50 +0000</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title>Baks</title>
       <link>https://moyada.github.io/bak/</link>
     </image>
+    
+    <item>
+      <title>初识 Docker</title>
+      <link>https://moyada.github.io/bak/docker/</link>
+      <pubDate>Fri, 16 Nov 2018 11:33:50 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/docker/</guid>
+      <description>&lt;p&gt;随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴起，很好的解决了 &lt;code&gt;应用程序&lt;/code&gt; 与 &lt;code&gt;运行环境&lt;/code&gt; 的不一致问题。&lt;/p&gt;
+&lt;p&gt;在 Docker 的管理里，应用程序时以容器的方式运行的，一个容器其实就是一个进程，通过 Namespaces 限制进程所能查看到的信息，并且使用 CGroups 限制进程所能使用的资源，挂载 rootfs 配置容器的可操作的数据，使用指定网络模型进行容器间通信。&lt;/p&gt;
+&lt;p&gt;Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行步骤等一系列正常发布流程，通过 &lt;code&gt;docker build path&lt;/code&gt; 命令将操作打包成一个 Image 镜像 (可在 &lt;code&gt;Dockerfile&lt;/code&gt; 同目录下增加 &lt;code&gt;.dockerignore&lt;/code&gt; 设置排除规则，加快打包速度)，并执行 Dockerfile 的构建命令。&lt;/p&gt;
+&lt;p&gt;镜像构建完毕，便可以使用 &lt;code&gt;docker run&lt;/code&gt; 命令将镜像以 Container 容器的形式构建并启用，执行 DockerFile 配置的运行命令。&lt;/p&gt;
+&lt;p&gt;scratch&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://draveness.me/docker&#34;&gt;https://draveness.me/docker&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>性能分析</title>
+      <link>https://moyada.github.io/bak/performance/</link>
+      <pubDate>Sun, 12 Aug 2018 22:45:39 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/performance/</guid>
+      <description>&lt;h1 id=&#34;cpu相关&#34;&gt;cpu相关&lt;/h1&gt;
+&lt;h2 id=&#34;uptime&#34;&gt;uptime&lt;/h2&gt;
+&lt;p&gt;查看系统平均负载状态，以 cpu 个数为标准，通过 &lt;code&gt;cat /proc/cpuinfo | grep &#39;physical id&#39; | sort | uniq | wc -l&lt;/code&gt; 可获取 cpu 个数，如果负载过高则可根据 cpu 使用率判断是由于存在大量 cpu 调用还是 I/O 中断。&lt;/p&gt;
+&lt;h2 id=&#34;top&#34;&gt;top&lt;/h2&gt;
+&lt;p&gt;查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行排序，H 切换为线程模式，top -Hp &lt;pid&gt; 查看进程内线程情况。&lt;/p&gt;
+&lt;h2 id=&#34;htop&#34;&gt;htop&lt;/h2&gt;
+&lt;p&gt;top的增强版&lt;/p&gt;
+&lt;h2 id=&#34;vmstat&#34;&gt;vmstat&lt;/h2&gt;
+&lt;p&gt;查看服务器的CPU使用率、内存使用、虚拟内存、交换情况、io读写情况。&lt;/p&gt;
+&lt;h2 id=&#34;pidstat&#34;&gt;pidstat&lt;/h2&gt;
+&lt;p&gt;查看进程的上下文切换情况，使用 &lt;code&gt;pidstat -w 1 -p &amp;lt;pid&amp;gt;&lt;/code&gt; 查看进程的每秒钟上下文切换情况。&lt;/p&gt;
+&lt;h2 id=&#34;sar&#34;&gt;sar&lt;/h2&gt;
+&lt;p&gt;查看历史性能指标数据，可采样性能指标，如 &lt;code&gt;sar -u 1 5&lt;/code&gt; 对cpu使用率进行每秒一次采样，共5次。&lt;code&gt;sar -n 5 2&lt;/code&gt; 对网络进行采样。&lt;/p&gt;
+&lt;h2 id=&#34;mpstat&#34;&gt;mpstat&lt;/h2&gt;
+&lt;p&gt;可以针对cpu核心进行性能指标采样。&lt;/p&gt;
+&lt;h2 id=&#34;dstat&#34;&gt;dstat&lt;/h2&gt;
+&lt;p&gt;查看系统资源利用率。&lt;/p&gt;
+&lt;h2 id=&#34;pstack&#34;&gt;pstack&lt;/h2&gt;
+&lt;p&gt;显示进程内的栈跟踪，可以用来查看java的native栈。&lt;/p&gt;
+&lt;h2 id=&#34;perf&#34;&gt;perf&lt;/h2&gt;
+&lt;p&gt;性能瓶颈剖析工具&lt;/p&gt;
+&lt;h2 id=&#34;cat-procinterrupts&#34;&gt;cat /proc/interrupts&lt;/h2&gt;
+&lt;p&gt;查看系统的中断状态&lt;/p&gt;
+&lt;h2 id=&#34;cat-procstat&#34;&gt;cat /proc/stat&lt;/h2&gt;
+&lt;p&gt;查看系统的cpu状态，可用&lt;code&gt;cat /proc/stat | grep ctxt &amp;amp;&amp;amp; sleep 30 &amp;amp;&amp;amp; cat /proc/stat | grep ctxt&lt;/code&gt;查看每秒上下文切换&lt;/p&gt;
+&lt;h2 id=&#34;cat-procpidstat--cat-procpidtasktidstat&#34;&gt;cat /proc/&lt;pid&gt;/stat | cat /proc/&lt;pid&gt;/task/&lt;tid&gt;/stat&lt;/h2&gt;
+&lt;p&gt;查看进程或线程的cpu状态&lt;/p&gt;
+&lt;h2 id=&#34;dmesg&#34;&gt;dmesg&lt;/h2&gt;
+&lt;p&gt;查看进程活动状态&lt;/p&gt;
+&lt;h2 id=&#34;systemtap&#34;&gt;systemtap&lt;/h2&gt;
+&lt;h2 id=&#34;gdb&#34;&gt;gdb&lt;/h2&gt;
+&lt;h1 id=&#34;进程&#34;&gt;进程&lt;/h1&gt;
+&lt;h2 id=&#34;pidstat-1&#34;&gt;pidstat&lt;/h2&gt;
+&lt;p&gt;查看进程的 cpu、内存、I/O、上下文切换等性能信息。&lt;/p&gt;
+&lt;h2 id=&#34;jstack&#34;&gt;jstack&lt;/h2&gt;
+&lt;p&gt;对top获取的线程进行 printf &amp;lsquo;%x\n&amp;rsquo; &lt;tid&gt; 转换为16进制，再通过 jstack &lt;pid&gt; | grep -A 10 &lt;Xtid&gt; 找出线程信息。&lt;/p&gt;
+&lt;h1 id=&#34;内存相关&#34;&gt;内存相关&lt;/h1&gt;
+&lt;h2 id=&#34;pmap&#34;&gt;pmap&lt;/h2&gt;
+&lt;h1 id=&#34;io相关&#34;&gt;io相关&lt;/h1&gt;
+&lt;h2 id=&#34;btrace&#34;&gt;btrace&lt;/h2&gt;
+&lt;h2 id=&#34;iotop&#34;&gt;iotop&lt;/h2&gt;
+&lt;p&gt;监控磁盘读写状态&lt;/p&gt;
+&lt;h2 id=&#34;iostat&#34;&gt;iostat&lt;/h2&gt;
+&lt;p&gt;查看到系统磁盘io状态信息&lt;/p&gt;
+&lt;h1 id=&#34;网络相关&#34;&gt;网络相关&lt;/h1&gt;
+&lt;h2 id=&#34;iptraf&#34;&gt;iptraf&lt;/h2&gt;
+&lt;p&gt;流量监控监控工具&lt;/p&gt;
+&lt;h2 id=&#34;nload&#34;&gt;nload&lt;/h2&gt;
+&lt;p&gt;查看总流量状态&lt;/p&gt;
+&lt;h2 id=&#34;ifstat&#34;&gt;ifstat&lt;/h2&gt;
+&lt;p&gt;查看网卡流量状态&lt;/p&gt;
+&lt;h2 id=&#34;iftop&#34;&gt;iftop&lt;/h2&gt;
+&lt;p&gt;监控网卡的实时流量&lt;/p&gt;
+&lt;h2 id=&#34;nmap&#34;&gt;nmap&lt;/h2&gt;
+&lt;p&gt;网络扫描和主机检测的工具&lt;/p&gt;
+&lt;h2 id=&#34;netstat&#34;&gt;netstat&lt;/h2&gt;
+&lt;p&gt;查看系统的网络状态信息&lt;/p&gt;
+&lt;h2 id=&#34;vnstat&#34;&gt;vnstat&lt;/h2&gt;
+&lt;p&gt;VPS流量查看/监测工具，vnstat -u -i &amp;lt;mac_name&amp;gt;&lt;/p&gt;
+&lt;h2 id=&#34;lsof&#34;&gt;lsof&lt;/h2&gt;
+&lt;p&gt;检测开放端口 lspof -i:&lt;port&gt;&lt;/p&gt;
+&lt;h2 id=&#34;telnet&#34;&gt;telnet&lt;/h2&gt;
+&lt;p&gt;检测端口是否开放&lt;/p&gt;
+&lt;h2 id=&#34;netcat&#34;&gt;netcat&lt;/h2&gt;
+&lt;p&gt;检测端口是否开放工具
+&lt;code&gt;nc -vv 192.168.42.128 1521&lt;/code&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>上下文切换</title>
+      <link>https://moyada.github.io/bak/multi-thread/</link>
+      <pubDate>Sat, 14 Jul 2018 17:12:06 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/multi-thread/</guid>
+      <description>&lt;p&gt;发生上下文切换的原因有很多，比如 &lt;code&gt;时间片耗尽&lt;/code&gt; &lt;code&gt;任务抢占&lt;/code&gt; &lt;code&gt;主动挂起&lt;/code&gt; &lt;code&gt;硬件中断&lt;/code&gt; &lt;code&gt;IO阻塞&lt;/code&gt; &lt;code&gt;锁机制&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;在CPU对进程、线程进行上下文切换时，系统需要将当前寄存器内数据保存，也就是所谓的保存现场，当再次获取时间片运行时进行置换。&lt;/p&gt;
+&lt;p&gt;这种开销需要操作系统进行资源管理和线程协调，当大频率发生上下文切换时，会造成很大的性能损耗。&lt;/p&gt;
+&lt;p&gt;并且，并发环境下的程序处理是十分复杂，当处于共享资源时，需要考虑线程的执行顺序和数据的一致性。&lt;/p&gt;
+&lt;p&gt;所以，在设计程序时，需要考虑合理的并发数设置，不使cpu大部分时间空闲，也不能产生大量上下文切换。&lt;/p&gt;
+&lt;p&gt;设置线程数公式为 (&lt;code&gt;线程等待时间&lt;/code&gt; / &lt;code&gt;cpu执行线程时间 &lt;/code&gt;+ 1) * &lt;code&gt;cpu核心数目&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;如果是高并发程序和执行时间长的计算密集程序，应尽量使得并发数和cpu核心数一致。&lt;/p&gt;
+&lt;p&gt;如果是IO密集型程序，cpu执行时间短，则可以加大并发数设置。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>CAP定理和BASE理论</title>
@@ -50,6 +156,1282 @@
 &lt;p&gt;&lt;a href=&#34;https://www.cnblogs.com/nucdy/p/7483108.html&#34;&gt;https://www.cnblogs.com/nucdy/p/7483108.html&lt;/a&gt;
 &lt;a href=&#34;http://xinklabi.iteye.com/blog/2341034&#34;&gt;http://xinklabi.iteye.com/blog/2341034&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>服务器安全</title>
+      <link>https://moyada.github.io/bak/service-safety/</link>
+      <pubDate>Wed, 23 May 2018 03:46:06 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/service-safety/</guid>
+      <description>&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;服务器开放端口限制，可增加端口转发，防止ip暴露。例如只开放80端口，全部输入escape&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;生产机不能主动连接外网，作为生产机，开放22+key pair，并对端口严密监控&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;开发人员用VPN/SSH Tunnel 访问生产机&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重要服务器单独部署&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DDoS流量清洗，防C段攻击，使用稳定版本linux，注意&lt;code&gt;kernel&lt;/code&gt;、&lt;code&gt;openssl&lt;/code&gt;的0day漏洞&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;端口监控，异常流量，异常访问&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;服务器进行权限划分，细分权限，增强内网安放&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;把密码放生产机本地，除了root，一概不准读&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;密码应该放到Vault里管理&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;设置HttpOnly&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>linux资源查看</title>
+      <link>https://moyada.github.io/bak/linux-cpu/</link>
+      <pubDate>Tue, 22 Aug 2017 23:47:36 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/linux-cpu/</guid>
+      <description>&lt;h1 id=&#34;cpu&#34;&gt;cpu&lt;/h1&gt;
+&lt;h2 id=&#34;top&#34;&gt;top&lt;/h2&gt;
+&lt;p&gt;是基本的系统监控命令，可以查看到当前系统的总cpu，内存，负载情况，以及各个进程的情况。
+在多核cpu的系统中可以按&lt;code&gt;1&lt;/code&gt;切换每个逻辑cpu的情况。&lt;/p&gt;
+&lt;h2 id=&#34;vmstat&#34;&gt;vmstat&lt;/h2&gt;
+&lt;p&gt;是一种低开销的系统性能观察方式，并且还能够查看到cpu队列(r)、io阻塞(b)、中断被处理数目(in)、上下文切换数目(cs)&lt;/p&gt;
+&lt;h2 id=&#34;dstat&#34;&gt;dstat&lt;/h2&gt;
+&lt;p&gt;dstat是实时地监控所有系统资源
+常见选项
+-l ：显示负载统计量
+-m ：显示内存使用率（包括used，buffer，cache，free值）
+-r ：显示I/O统计
+-s ：显示交换分区使用情况
+-t ：将当前时间显示在第一行
+–fs ：显示文件系统统计数据（包括文件总数量和inodes值）
+–nocolor ：不显示颜色（有时候有用）
+–socket ：显示网络统计数据
+–tcp ：显示常用的TCP统计
+–udp ：显示监听的UDP接口及其当前用量的一些动态数据
+–output file [-cdn]：输出监控情况为文件保存，可用-cdn设置保存csv&lt;/p&gt;
+&lt;p&gt;常见插件
+-–disk-util ：显示某一时间磁盘的忙碌状况
+-–freespace ：显示当前磁盘空间使用率
+-–proc-count ：显示正在运行的程序数量
+-–top-bio ：指出块I/O最大的进程
+-–top-cpu ：图形化显示CPU占用最大的进程
+-–top-io ：显示正常I/O最大的进程
+-–top-mem ：显示占用最多内存的进程&lt;/p&gt;
+&lt;h2 id=&#34;iostatmpstatsar&#34;&gt;iostat、mpstat、sar&lt;/h2&gt;
+&lt;p&gt;使用 yum install sysstat 安装就会有这些功能&lt;/p&gt;
+&lt;p&gt;iostat是监控物理设备的 I/O 负载情况&lt;/p&gt;
+&lt;p&gt;常见用法
+iostat -d -k 1	          #查看TPS和吞吐量信息(磁盘读写速度单位为KB)
+iostat -d -m 1            #查看TPS和吞吐量信息(磁盘读写速度单位为MB)
+iostat -d -x -k 1	      #查看设备使用率（%util）、响应时间（await） iostat -c 1 10 #查看cpu状态&lt;/p&gt;
+&lt;p&gt;mpstat是实时系统监控工具，并且可以查看多核心cpu中每个计算核心的统计数
+常见用法
+mpstat -P ALL 1			  #查看整体cpu与各个cpu的使用情况&lt;/p&gt;
+&lt;p&gt;sar是对系统的活动进行监控报告，包括文件读写、系统调用、磁盘I/O、CPU效率、内存使用、进程活动、IPC
+常见选项
+-A：所有报告的总和&lt;/p&gt;
+&lt;p&gt;-u：输出CPU使用情况的统计信息&lt;/p&gt;
+&lt;p&gt;-v：输出inode、文件和其他内核表的统计信息&lt;/p&gt;
+&lt;p&gt;-d：输出每一个块设备的活动信息&lt;/p&gt;
+&lt;p&gt;-r：输出内存和交换空间的统计信息&lt;/p&gt;
+&lt;p&gt;-b：显示I/O和传送速率的统计信息&lt;/p&gt;
+&lt;p&gt;-a：文件读写情况&lt;/p&gt;
+&lt;p&gt;-c：输出进程统计信息，每秒创建的进程数&lt;/p&gt;
+&lt;p&gt;-R：输出内存页面的统计信息&lt;/p&gt;
+&lt;p&gt;-y：终端设备活动情况&lt;/p&gt;
+&lt;p&gt;-w：输出系统交换活动信息&lt;/p&gt;
+&lt;p&gt;-o file:将命令结果以二进制格式存放在文件中，file 是文件名&lt;/p&gt;
+&lt;p&gt;常见用法
+sar -uq					#查看CPU使用情况
+sar -brw				#查看内存使用情况
+sar -bud				#查看I/O使用情况&lt;/p&gt;
+&lt;h1 id=&#34;内存&#34;&gt;内存&lt;/h1&gt;
+&lt;h2 id=&#34;pmap&#34;&gt;pmap&lt;/h2&gt;
+&lt;p&gt;用于显示一个或多个进程的内存状态，需要带上进程端口号&lt;/p&gt;
+&lt;h1 id=&#34;流量&#34;&gt;流量&lt;/h1&gt;
+&lt;h2 id=&#34;nicstat&#34;&gt;nicstat&lt;/h2&gt;
+&lt;p&gt;监控网卡及网络流量的工具&lt;/p&gt;
+&lt;h2 id=&#34;netstate&#34;&gt;netstate&lt;/h2&gt;
+&lt;p&gt;用于显示各种网络相关信息&lt;/p&gt;
+&lt;p&gt;常见参数
+-a (all)显示所有选项，默认不显示LISTEN相关
+-t (tcp)仅显示tcp相关选项
+-u (udp)仅显示udp相关选项
+-n 拒绝显示别名，能显示数字的全部转化成数字。
+-l 仅列出有在 Listen (监听) 的服務状态&lt;/p&gt;
+&lt;p&gt;-p 显示建立相关链接的程序名
+-r 显示路由信息，路由表
+-e 显示扩展信息，例如uid等
+-s 按各个协议进行统计
+-c 每隔一个固定时间，执行该netstat命令。&lt;/p&gt;
+&lt;h2 id=&#34;ifstat&#34;&gt;ifstat&lt;/h2&gt;
+&lt;p&gt;是一个统计网络接口活动状态的工具&lt;/p&gt;
+&lt;h2 id=&#34;iftop&#34;&gt;iftop&lt;/h2&gt;
+&lt;h2 id=&#34;nmap&#34;&gt;nmap&lt;/h2&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Lua学习笔记</title>
+      <link>https://moyada.github.io/bak/lua/</link>
+      <pubDate>Tue, 28 Mar 2017 15:51:07 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/lua/</guid>
+      <description>&lt;h1 id=&#34;注释&#34;&gt;注释&lt;/h1&gt;
+&lt;p&gt; 两个减号是单行注释:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;-- 注释内容
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt; 多行注释:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;--[[ 
+注释内容
+注释内容
+--]]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;数据类型&#34;&gt;数据类型&lt;/h1&gt;
+&lt;p&gt;Lua是动态类型语言，变量不要类型定义,只需要为变量赋值。值可以存储在变量中，作为参数传递或结果返回。&lt;/p&gt;
+&lt;h2 id=&#34;nil&#34;&gt;nil&lt;/h2&gt;
+&lt;p&gt;这个最简单，只有值nil属于该类，表示一个无效值（在条件表达式中相当于false）。&lt;/p&gt;
+&lt;h2 id=&#34;boolean&#34;&gt;boolean&lt;/h2&gt;
+&lt;p&gt;包含两个值：false和true。&lt;/p&gt;
+&lt;h2 id=&#34;number&#34;&gt;number&lt;/h2&gt;
+&lt;p&gt;表示双精度类型的实浮点数&lt;/p&gt;
+&lt;h2 id=&#34;string&#34;&gt;string&lt;/h2&gt;
+&lt;p&gt;字符串由一对双引号或单引号或[[和]]间的一串字符来表示&lt;/p&gt;
+&lt;h2 id=&#34;function&#34;&gt;function&lt;/h2&gt;
+&lt;p&gt;由 C 或 Lua 编写的函数&lt;/p&gt;
+&lt;h2 id=&#34;userdata&#34;&gt;userdata&lt;/h2&gt;
+&lt;p&gt;表示任意存储在变量中的C数据结构&lt;/p&gt;
+&lt;h2 id=&#34;thread&#34;&gt;thread&lt;/h2&gt;
+&lt;p&gt;表示执行的独立线路，用于执行协同程序&lt;/p&gt;
+&lt;h2 id=&#34;table&#34;&gt;table&lt;/h2&gt;
+&lt;p&gt;Lua 中的表（table）其实是一个&amp;quot;关联数组&amp;rdquo;（associative arrays），数组的索引可以是数字或者是字符串。在 Lua 里，table 的创建是通过&amp;quot;构造表达式&amp;quot;来完成，最简单构造表达式是{}，用来创建一个空表。
+对 table 的索引使用方括号 []。Lua 也提供了 . 操作。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;t[i]
+t.i                 -- 当索引为字符串类型时的一种简化写法
+gettable_event(t,i) -- 采用索引访问本质上是一个类似这样的函数调用
+
+site[&amp;quot;key&amp;quot;] = &amp;quot;www.w3cschool.cc&amp;quot;
+print(site[&amp;quot;key&amp;quot;])
+print(site.key)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;变量&#34;&gt;变量&lt;/h1&gt;
+&lt;p&gt;Lua 变量有三种类型：全局变量、局部变量、表中的域。Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量。&lt;/p&gt;
+&lt;h1 id=&#34;赋值&#34;&gt;赋值&lt;/h1&gt;
+&lt;h2 id=&#34;多个变量赋值&#34;&gt;多个变量赋值&lt;/h2&gt;
+&lt;p&gt;在对多个变量同时赋值，变量列表和值列表的各个元素用逗号分开，赋值语句右边的值会依次赋给左边的变量。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;a, b = 10, 20
+&lt;/code&gt;&lt;/pre&gt;
+&lt;br/&gt;
+遇到赋值语句Lua会先计算右边所有的值然后再执行赋值操作，所以我们可以这样进行交换变量的值：
+```
+x, y = y, x                     -- swap &#39;x&#39; for &#39;y&#39;
+a[i], a[j] = a[j], a[i]         -- swap &#39;a[i]&#39; for &#39;a[j]&#39;
+```
+&lt;br/&gt;
+当变量个数和值的个数不一致时，Lua会一直以变量个数为基础采取以下策略：
+a. 变量个数 &gt; 值的个数             按变量个数补足nil
+b. 变量个数 &lt; 值的个数             多余的值会被忽略
+```
+a, b, c = 0, 1
+print(a,b,c)             --&gt; 0   1   nil
+&lt;p&gt;a, b = a+1, b+1, b+2     &amp;ndash; value of b+2 is ignored
+print(a,b)               &amp;ndash;&amp;gt; 1   2&lt;/p&gt;
+&lt;p&gt;a, b, c = 0
+print(a,b,c)             &amp;ndash;&amp;gt; 0   nil   nil&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# 循环
+
+## while
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;while(condition)
+do
+statements
+end&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+## for
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;for var=exp1,exp2,exp3 do&lt;br&gt;
+&amp;lt;执行体&amp;gt;&lt;br&gt;
+end&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;exp1为循环初始值。
+exp2为循环中止条件。
+exp3为步长递增，如果不指定则默认为1。
+三个表达式在循环开始前一次性求值，以后不再进行求值。例如这些表达式都为函数的情况。
+
+Lua有种类似java中的foreach语句，泛型for循环通过一个迭代器函数来遍历所有值。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;for i,v in ipairs(a) &amp;ndash; i为元素的下表,v为元素的值,ipairs是Lua提供的一个迭代器函数，用来迭代数组。
+do print(v)
+end&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+## repeat...until 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;repeat
+statements
+until( condition )&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;在条件进行判断前循环体都会执行一次。
+如果条件判断语句（condition）为 false，循环会重新开始执行，直到条件判断语句（condition）为 true 才会停止执行。
+
+# 流程控制
+
+## if
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;if(布尔表达式)
+then
+&amp;ndash;[ 在布尔表达式为 true 时执行的语句 &amp;ndash;]
+end&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Lua认为false和nil为假，true 和非nil为真。要注意的是Lua中 0 为 true。
+
+## if...else
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;if(布尔表达式)
+then
+&amp;ndash;[ 布尔表达式为 true 时执行该语句块 &amp;ndash;]
+else
+&amp;ndash;[ 布尔表达式为 false 时执行该语句块 &amp;ndash;]
+end&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+## if...elseif...else
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;if( 布尔表达式 1)
+then
+&amp;ndash;[ 在布尔表达式 1 为 true 时执行该语句块 &amp;ndash;]&lt;/p&gt;
+&lt;p&gt;elseif( 布尔表达式 2)
+then
+&amp;ndash;[ 在布尔表达式 2 为 true 时执行该语句块 &amp;ndash;]&lt;/p&gt;
+&lt;p&gt;elseif( 布尔表达式 3)
+then
+&amp;ndash;[ 在布尔表达式 3 为 true 时执行该语句块 &amp;ndash;]
+else
+&amp;ndash;[ 如果以上布尔表达式都不为 true 则执行该语句块 &amp;ndash;]
+end&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+# 函数
+Lua 编程语言函数定义格式如下：
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;optional_function_scope function function_name( argument1, argument2, argument3&amp;hellip;, argumentn)
+function_body
+return result_params_comma_separated
+end&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;* optional_function_scope: 该参数是可选的制定函数是全局函数还是局部函数，未设置该参数默认为全局函数，如果你需要设置函数为局部函数需要使用关键字 local。
+
+
+* argument1, argument2, argument3..., argumentn:
+函数参数，多个参数以逗号隔开，函数也可以不带参数。
+
+* result_params_comma_separated:
+函数返回值，Lua语言函数可以返回多个值，每个值以逗号隔开。
+
+
+## 可变参数
+Lua函数可以接受可变数目的参数，和C语言类似在函数参数列表中使用三点（...) 表示函数有可变的参数。
+Lua将函数的参数放在一个叫arg的表中，#arg 表示传入参数的个数。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;function average(&amp;hellip;)
+result = 0
+local arg={&amp;hellip;}
+for i,v in ipairs(arg) do
+result = result + v
+end
+print(&amp;ldquo;总共传入 &amp;quot; .. #arg .. &amp;quot; 个数&amp;rdquo;)
+return result/#arg
+end&lt;/p&gt;
+&lt;p&gt;print(&amp;ldquo;平均值为&amp;rdquo;,average(10,5,3,4,5,6))&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+# 字符串操作
+* ..
+连接两个字符串
+
+* ＃
+一元运算符，返回字符串或表的长度。
+
+# 模块
+模块是由变量、函数等已知元素组成的 table，类似java的类。
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&amp;ndash; 文件名为 module.lua
+&amp;ndash; 定义一个名为 module 的模块
+module = {}&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 定义一个常量
+module.constant = &amp;ldquo;这是一个常量&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 定义一个函数
+function module.func1()
+io.write(&amp;ldquo;这是一个公有函数！\n&amp;rdquo;)
+end&lt;/p&gt;
+&lt;p&gt;local function func2()
+print(&amp;ldquo;这是一个私有函数！&amp;quot;)
+end&lt;/p&gt;
+&lt;p&gt;function module.func3()
+func2()
+end&lt;/p&gt;
+&lt;p&gt;return module&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+&amp;lt;br/&amp;gt;
+Lua提供了一个名为require的函数用来加载模块:
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;require(&amp;ldquo;&amp;lt;模块名&amp;gt;&amp;rdquo;)
+或者
+require &amp;ldquo;&amp;lt;模块名&amp;gt;&amp;rdquo;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;还给加载的模块定义一个别名变量，方便调用: local m = require(&amp;quot;module&amp;quot;)
+
+## 加载机制
+对于自定义的模块，模块文件不是放在哪个文件目录都行，函数 require 有它自己的文件路径加载策略，它会尝试从 Lua 文件或 C 程序库中加载模块。
+当 Lua 启动后，会以环境变量 LUA_PATH 的值来初始环境变量用户加载模块。
+
+
+
+
+
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>数据库设计</title>
+      <link>https://moyada.github.io/bak/database-design/</link>
+      <pubDate>Thu, 16 Mar 2017 18:16:35 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/database-design/</guid>
+      <description>&lt;h1 id=&#34;分表方法&#34;&gt;分表方法&lt;/h1&gt;
+&lt;p&gt;在数据库表使用过程中，为了减小数据库服务器的负担、缩短查询时间，常常会考虑做分表设计。分表分两种，一种是纵向分表（将本来可以在同一个表的内容，人为划分存储在为多个不同结构的表）和横向分表（把大的表结构，横向切割为同样结构的不同表）。&lt;/p&gt;
+&lt;p&gt;其中，纵向分表常见的方式有根据活跃度分表、根据重要性分表等。其主要解决问题如下：&lt;/p&gt;
+&lt;p&gt;表与表之间资源争用问题；
+锁争用机率小；
+实现核心与非核心的分级存储，如UDB登陆库拆分成一级二级三级库；
+解决了数据库同步压力问题。
+横向分表是指根据某些特定的规则来划分大数据量表，如根据时间分表。其主要解决问题如下：&lt;/p&gt;
+&lt;p&gt;单表过大造成的性能问题；
+单表过大造成的单服务器空间问题。&lt;/p&gt;
+&lt;h1 id=&#34;设计&#34;&gt;设计&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;使用明确、统一的标明和列名，例如 School, SchoolCourse, CourceID。&lt;/li&gt;
+&lt;li&gt;数据表名使用单数而不是复数，例如 StudentCourse，而不是StudentCourses。&lt;/li&gt;
+&lt;li&gt;数据表名不要使用空格。&lt;/li&gt;
+&lt;li&gt;数据表名不要使用不必要的前缀或者后缀，例如使用School，而不是TblSchool，或者SchoolTable等等。&lt;/li&gt;
+&lt;li&gt;数据库中的密码要加密，到应用中再解密。 （其实就是散列存储、单向加密）&lt;/li&gt;
+&lt;li&gt;使用整数作为ID字段，也许现在没有这个必要，但是将来需要，例如关联表，索引等等。&lt;/li&gt;
+&lt;li&gt;使用整数字段做索引，否则会带来很大的性能问题 。&lt;/li&gt;
+&lt;li&gt;使用 bit 作为布尔字段，使用整数或者varcha是浪费。同时，这类字段应该以“Is”开头。&lt;/li&gt;
+&lt;li&gt;要经过认证才能访问数据库，不要给每一个用户管理员权限。&lt;/li&gt;
+&lt;li&gt;尽量避免使用“select *”，而使用“select [required_column_list]”以获得更好的性能。&lt;/li&gt;
+&lt;li&gt;假如程序代码比较复杂，使用ORM框架，例如hibernate，iBatis。ORM框架的性能问题可以通过详细的配置去解决。&lt;/li&gt;
+&lt;li&gt;分割不常使用的数据表到不同的物理存储以获得更好的性能。&lt;/li&gt;
+&lt;li&gt;对于关键数据库，使用安全备份系统，例如集群，同步等等。&lt;/li&gt;
+&lt;li&gt;使用外键，非空等限制来保证数据的完整性，不要把所有的东西都扔给程序。&lt;/li&gt;
+&lt;li&gt;缺乏数据库文档是致命的。你应该为你的数据库设计写文档，包括触发器、存储过程和其他脚本。&lt;/li&gt;
+&lt;li&gt;对于经常使用的查询和大型数据表，要使用索引。数据分析工具可以帮助你决定如何建立索引。&lt;/li&gt;
+&lt;li&gt;数据库服务器和网页服务器应该放在不同的机器上。这回提高安全性，并减轻CPU压力。&lt;/li&gt;
+&lt;li&gt;Image和blob字段不应该定义在常用的数据表中，否则会影响性能。&lt;/li&gt;
+&lt;li&gt;范式（Normalization）要按照要求使用以提高性能。Normalization做的不够会导致数据冗余，而过度Normalization 会导致太多的join和数据表，这两种情况都会影响性能。&lt;/li&gt;
+&lt;li&gt;多花点时间在数据库设计上，否则你将来会付出加倍的时间来偿还。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;索引&#34;&gt;索引&lt;/h1&gt;
+&lt;p&gt;少建索引或不建索引。这个问题最突出，建议建表时 DBA 可以一起协助把关。
+索引滥用。滥用索引将导致写请求变慢，拖慢整体数据库的响应速度（5.5 以下的 mysql 只能用到一个索引)。
+从不考虑联合索引。实际上联合索引的效率往往要比单列索引的效率更高。
+非最优列选择。低选择性的字段不适合建单列索引，如 status 类型的字段。&lt;/p&gt;
+&lt;h1 id=&#34;优化&#34;&gt;优化&lt;/h1&gt;
+&lt;p&gt;字段类型转换导致不用索引，如字符串类型的不用引号，数字类型的用引号等，这有可能会用不到索引导致全表扫描；
+mysql 不支持函数转换，所以字段前面不能加函数，否则这将用不到索引；
+不要在字段前面加减运算；
+字符串比较长的可以考虑索引一部份减少索引文件大小，提高写入效率；
+like % 在前面用不到索引；
+根据联合索引的第二个及以后的字段单独查询用不到索引；
+不要使用 select *；
+排序请尽量使用升序 ;
+or 的查询尽量用 union 代替 （Innodb）；
+复合索引高选择性的字段排在前面；
+order by / group by 字段包括在索引当中减少排序，效率会更高。
+除了上述索引使用规则外，SQL 编写时还需要特别注意一下几点：&lt;/p&gt;
+&lt;p&gt;尽量规避大事务的 SQL，大事务的 SQL 会影响数据库的并发性能及主从同步；
+分页语句 limit 的问题；
+删除表所有记录请用 truncate，不要用 delete；
+不让 mysql 干多余的事情，如计算；
+输写 SQL 带字段，以防止后面表变更带来的问题，性能也是比较优的 ( 涉及到数据字典解析，请自行查询资料)；
+在 Innodb上用 select count(*)，因为 Innodb 会存储统计信息；
+慎用 Oder by rand()。&lt;/p&gt;
+&lt;h1 id=&#34;分析诊断工具&#34;&gt;分析诊断工具&lt;/h1&gt;
+&lt;p&gt;mysqldumpslow
+mysql profile
+mysql explain&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>scala学习笔记</title>
+      <link>https://moyada.github.io/bak/scala/</link>
+      <pubDate>Thu, 02 Mar 2017 09:33:13 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/scala/</guid>
+      <description>&lt;h1 id=&#34;数据类型&#34;&gt;数据类型&lt;/h1&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;数据类型&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Byte&lt;/td&gt;
+&lt;td&gt;8位有符号补码整数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Short&lt;/td&gt;
+&lt;td&gt;16位有符号补码整数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Int&lt;/td&gt;
+&lt;td&gt;32位有符号补码整数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Long&lt;/td&gt;
+&lt;td&gt;64位有符号补码整数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Float&lt;/td&gt;
+&lt;td&gt;32位IEEE754单精度浮点数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Double&lt;/td&gt;
+&lt;td&gt;64位IEEE754单精度浮点数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Char&lt;/td&gt;
+&lt;td&gt;16位无符号Unicode字符, 区间值为 U+0000 到 U+FFFF&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;String&lt;/td&gt;
+&lt;td&gt;字符序列&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Boolean&lt;/td&gt;
+&lt;td&gt;true或false&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Unit&lt;/td&gt;
+&lt;td&gt;表示无值，和其他语言中void等同。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Null&lt;/td&gt;
+&lt;td&gt;null 或空引用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Nothing&lt;/td&gt;
+&lt;td&gt;Nothing类型在Scala的类层级的最低端；它是任何其他类型的子类型。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Any&lt;/td&gt;
+&lt;td&gt;Any是所有其他类的超类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;AnyRef&lt;/td&gt;
+&lt;td&gt;AnyRef类是Scala里所有引用类(reference class)的基类&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;scala中变量类型可由编译器的类型推断来确定，也可以显示声明数据类型，如下形式即可&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;val str : String = null
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在scala中有一种特殊的数据类型Unit，代表任意类型，也等价于Java中的void，以如下形式声明&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;var any = ()
+any = 1
+any = &amp;quot;any&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;var与val的区别&#34;&gt;var与val的区别&lt;/h1&gt;
+&lt;p&gt;var用作声明可变变量，val用作声明不可变变量&lt;/p&gt;
+&lt;h1 id=&#34;for-循环&#34;&gt;for 循环&lt;/h1&gt;
+&lt;pre&gt;&lt;code&gt;for( var x &amp;lt;- Range ){
+   statement(s);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Range 可以是一个数字区间表示 i to j ，或者 i until j。左箭头 &amp;lt;- 用于为变量 x 赋值。
+i to j　的循环区间为[i,j]，而i until j 的循环区间为[i,j)。&lt;/p&gt;
+&lt;p&gt;嵌套循环在 for 循环 中可以使用分号 (;) 来设置多个区间，它将迭代给定区间所有的可能值。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;for( var x &amp;lt;- Range; var y &amp;lt;- Range ){
+   statement(s);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;循环集合&#34;&gt;循环集合&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;for( var x &amp;lt;- List ){
+   statement(s);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;循环过滤&#34;&gt;循环过滤&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;for( var x &amp;lt;- List
+      if condition1; if condition2...) {
+	statement(s);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;存储返回值变量&#34;&gt;存储返回值变量&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt; var retVal = for{ a &amp;lt;- numList 
+                        if a != 3; if a &amp;lt; 8
+                      }yield a
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;break语句&#34;&gt;break语句&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;// 导入以下包
+import scala.util.control._
+
+// 创建 Breaks 对象
+val loop = new Breaks;
+
+// 在 breakable 中循环
+loop.breakable{
+    // 循环
+    for(...){
+       ....
+       // 循环中断
+       loop.break;
+   }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;函数&#34;&gt;函数&lt;/h1&gt;
+&lt;p&gt;函数定义格式如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;def functionName ([参数列表]) : [return type] = {
+   function body
+   return [expr]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;方法定义由一个def 关键字开始，紧接着是可选的参数列表，一个冒号&amp;rdquo;：&amp;rdquo; 和方法的返回类型，一个等于号&amp;quot;=&amp;rdquo;，最后是方法的主体。&lt;/p&gt;
+&lt;h2 id=&#34;可变参数-函数的最后一个参数可以是重复的参数类型后面以设置&#34;&gt;可变参数: 函数的最后一个参数可以是重复的，参数类型后面以*设置&lt;/h2&gt;
+&lt;h2 id=&#34;默认参数值-参数后跟-参数值-可以设置默认参数值&#34;&gt;默认参数值: 参数后跟 =参数值 可以设置默认参数值&lt;/h2&gt;
+&lt;p&gt;Scala的解释器在解析函数参数(function arguments)时有两种方式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;传值调用（call-by-value）：先计算参数表达式的值，再应用到函数内部&lt;/li&gt;
+&lt;li&gt;传名调用（call-by-name）：将未计算的参数表达式直接应用到函数内部
+在进入函数内部前，传值调用方式就已经将参数表达式的值计算完毕，而传名调用是在函数内部进行参数表达式的值计算的。
+这就造成了一种现象，每次使用传名调用时，解释器都会计算一次表达式的值。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;object Test {
+   def main(args: Array[String]) {
+        delayed(time());
+   }
+
+   def time() = {
+      println(&amp;quot;获取时间，单位为纳秒&amp;quot;)
+      System.nanoTime
+   }
+   def delayed( t: =&amp;gt; Long ) = {
+      println(&amp;quot;在 delayed 方法内&amp;quot;)
+      println(&amp;quot;参数： &amp;quot; + t)
+      t
+   }
+}
+
+\\ 输出 
+\\ 在 delayed 方法内
+\\ 获取时间，单位为纳秒
+\\ 参数： 241550840475831
+\\ 获取时间，单位为纳秒
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;高阶函数&#34;&gt;高阶函数&lt;/h2&gt;
+&lt;p&gt;高阶函数可以使用其他函数作为参数，或者使用函数作为输出结果。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;object Test {
+   def main(args: Array[String]) {
+
+      println( apply( layout, 10) )
+
+   }
+   // 函数 f 和 值 v 作为参数，而函数 f 又调用了参数 v
+   def apply(f: Int =&amp;gt; String, v: Int) = f(v)
+
+   def layout[A](x: A) = &amp;quot;[&amp;quot; + x.toString() + &amp;quot;]&amp;quot;  
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;匿名函数&#34;&gt;匿名函数&lt;/h2&gt;
+&lt;p&gt;定义匿名函数的语法很简单，箭头左边是参数列表，右边是函数体。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;def add2 = new Function1[Int,Int]{  
+	def apply(x:Int):Int = x+1;  
+// 简写：
+var inc = (x:Int) =&amp;gt; x+1
+} 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;不给匿名函数设置参数则参数列表为()&lt;/p&gt;
+&lt;h2 id=&#34;偏应用函数&#34;&gt;偏应用函数&lt;/h2&gt;
+&lt;p&gt;使用偏应用函数绑定第一个 date 参数，第二个参数使用下划线(_)替换缺失的参数列表，并把这个新的函数值的索引的赋给变量。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;def main(args: Array[String]) {
+  val date = new Date
+  val logWithDateBound = log(date, _ : String)
+
+  logWithDateBound(&amp;quot;message1&amp;quot; )
+  Thread.sleep(1000)
+  logWithDateBound(&amp;quot;message2&amp;quot; )
+  Thread.sleep(1000)
+  logWithDateBound(&amp;quot;message3&amp;quot; )
+}
+
+def log(date: Date, message: String)  = {
+ println(date + &amp;quot;----&amp;quot; + message)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;函数柯里化currying&#34;&gt;函数柯里化(Currying)&lt;/h2&gt;
+&lt;p&gt;柯里化(Currying)指的是将原来接受两个参数的函数变成新的接受一个参数的函数的过程。新的函数返回一个以原有第二个参数为参数的函数。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// 接收一个x为参数，返回一个匿名函数，该匿名函数的定义是：接收一个Int型参数y，函数体为x+y。
+def add(x:Int)=(y:Int)=&amp;gt;x+y
+
+// 接收两个个String型参数s1, s2，返回一个匿名函数，函数体为s1 + s2。
+def strcat(s1: String)(s2: String) = {
+  s1 + s2
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;类和对象&#34;&gt;类和对象&lt;/h1&gt;
+&lt;p&gt;类(class)是抽象的，不占用内存，而对象(object)是具体的，占用存储空间。&lt;/p&gt;
+&lt;h2 id=&#34;继承&#34;&gt;继承&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;重写一个非抽象方法必须使用override修饰符。&lt;/li&gt;
+&lt;li&gt;只有主构造函数才可以往父类的构造函数里写参数。&lt;/li&gt;
+&lt;li&gt;在子类中重写父类的抽象方法时，你不需要使用override关键字。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;单例对象&#34;&gt;单例对象&lt;/h2&gt;
+&lt;p&gt;使用单例模式时，除了定义的类之外，还要定义一个同名的 object 对象，它和类的区别是，object对象不能带参数。&lt;/p&gt;
+&lt;h1 id=&#34;trait特征&#34;&gt;Trait(特征)&lt;/h1&gt;
+&lt;p&gt;类似于Java的抽象类，除了定义未实现的方法外，还可以定义属性和方法的实现，
+并且可以多继承，使用的关键字是 trait。&lt;/p&gt;
+&lt;h2 id=&#34;特征构造顺序&#34;&gt;特征构造顺序&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;调用超类的构造器；&lt;/li&gt;
+&lt;li&gt;特征构造器在超类构造器之后、类构造器之前执行；&lt;/li&gt;
+&lt;li&gt;特质由左到右被构造；&lt;/li&gt;
+&lt;li&gt;每个特征当中，父特质先被构造；&lt;/li&gt;
+&lt;li&gt;如果多个特征共有一个父特质，父特质不会被重复构造&lt;/li&gt;
+&lt;li&gt;所有特征被构造完毕，子类被构造。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;模式匹配&#34;&gt;模式匹配&lt;/h1&gt;
+&lt;pre&gt;&lt;code&gt;x match {
+      case 1 =&amp;gt; &amp;quot;one&amp;quot;
+      case 2 =&amp;gt; &amp;quot;two&amp;quot;
+      case y: Int =&amp;gt; &amp;quot;int&amp;quot;
+      case _ =&amp;gt; &amp;quot;many&amp;quot;
+   }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;match 对应 Java 里的 switch，但是写在选择器表达式之后。即： 选择器 match {备选项}。
+只要发现有一个匹配的case，剩下的case不会继续匹配。&lt;/p&gt;
+&lt;h2 id=&#34;样例类&#34;&gt;样例类&lt;/h2&gt;
+&lt;p&gt;使用了case关键字的类定义就是就是样例类(case classes)，样例类是种特殊的类，经过优化以用于模式匹配。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;object Test {
+   def main(args: Array[String]) {
+   	val alice = new Person(&amp;quot;Alice&amp;quot;, 25)
+	val bob = new Person(&amp;quot;Bob&amp;quot;, 32)
+   	val charlie = new Person(&amp;quot;Charlie&amp;quot;, 32)
+   
+    for (person &amp;lt;- List(alice, bob, charlie)) {
+    	person match {
+            case Person(&amp;quot;Alice&amp;quot;, 25) =&amp;gt; println(&amp;quot;Hi Alice!&amp;quot;)
+            case Person(&amp;quot;Bob&amp;quot;, 32) =&amp;gt; println(&amp;quot;Hi Bob!&amp;quot;)
+            case Person(name, age) =&amp;gt;
+               println(&amp;quot;Age: &amp;quot; + age + &amp;quot; year, name: &amp;quot; + name + &amp;quot;?&amp;quot;)
+         }
+      }
+   }
+   // 样例类
+   case class Person(name: String, age: Int)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在声明样例类时，下面的过程自动发生了：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;构造器的每个参数都成为val，除非显式被声明为var，但是并不推荐这么做；&lt;/li&gt;
+&lt;li&gt;在伴生对象中提供了apply方法，所以可以不使用new关键字就可构建对象；&lt;/li&gt;
+&lt;li&gt;提供unapply方法使模式匹配可以工作；&lt;/li&gt;
+&lt;li&gt;生成toString、equals、hashCode和copy方法，除非显示给出这些方法的定义。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;文件-io&#34;&gt;文件 I/O&lt;/h1&gt;
+&lt;p&gt;Scala 进行文件写操作，直接用的都是 java中 的 I/O 类 （java.io.File)：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;val writer = new PrintWriter(new File(&amp;quot;test.txt&amp;quot; ))
+
+writer.write(&amp;quot;菜鸟教程&amp;quot;)
+writer.close()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;从屏幕上读取用户输入&#34;&gt;从屏幕上读取用户输入&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;val line = Console.readLine
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;从文件上读取内容&#34;&gt;从文件上读取内容&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Source.fromFile(&amp;quot;test.txt&amp;quot; ).foreach{ 
+	print 
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;异常处理&#34;&gt;异常处理&lt;/h1&gt;
+&lt;h2 id=&#34;捕获异常&#34;&gt;捕获异常&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;try {
+ val f = new FileReader(&amp;quot;input.txt&amp;quot;)
+} catch {
+ case ex: FileNotFoundException =&amp;gt; {
+    println(&amp;quot;Missing file exception&amp;quot;)
+ }
+ case ex: IOException =&amp;gt; {
+    println(&amp;quot;IO Exception&amp;quot;)
+ }
+} finally {
+ println(&amp;quot;Exiting finally...&amp;quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;抛出异常&#34;&gt;抛出异常&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;throw new IllegalArgumentException
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;提取器extractor&#34;&gt;提取器(Extractor)&lt;/h1&gt;
+&lt;p&gt;提取器是从传递给它的对象中提取出构造该对象的参数。&lt;/p&gt;
+&lt;p&gt;Scala 提取器是一个带有unapply方法的对象。unapply方法算是apply方法的反向操作：unapply接受一个对象，然后从对象中提取值，提取的值通常是用来构造该对象的值。&lt;/p&gt;
+&lt;h2 id=&#34;提取器使用模式匹配&#34;&gt;提取器使用模式匹配&lt;/h2&gt;
+&lt;p&gt;在我们实例化一个类的时，可以带上0个或者多个的参数，编译器在实例化的时会调用 apply 方法。我们可以在类和对象中都定义 apply 方法。
+就像我们之前提到过的，unapply 用于提取我们指定查找的值，它与 apply 的操作相反。 当我们在提取器对象中使用 match 语句是，unapply 将自动执行。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>收藏</title>
+      <link>https://moyada.github.io/bak/collection/</link>
+      <pubDate>Tue, 21 Feb 2017 23:06:33 +0000</pubDate>
+      <guid>https://moyada.github.io/bak/collection/</guid>
+      <description>&lt;h2 id=&#34;博客&#34;&gt;博客&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://bestcbooks.com&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;计算机书籍控&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://udn.yyuap.com/general.php?mod=index&amp;amp;op=document#serverApp&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;开源文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://blog.didispace.com&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;程序猿DD - Spring Boot教程与Spring Cloud教程&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://blog.phpgao.com/vpses.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;老高的技术博客&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://jm.taobao.org/categories/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;阿里中间件团队博客&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://www.cnblogs.com/xing901022/p/4704319.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ELK 大数据&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://cxytiandi.com&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;猿天地&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://www.hollischuang.com/archives/1001&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Java工程师成神之路&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/dengsilinming/article/list/1&#34;&gt;http://blog.csdn.net/dengsilinming/article/list/1&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;分布式&#34;&gt;分布式&lt;/h1&gt;
+&lt;h2 id=&#34;hystrix&#34;&gt;Hystrix&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://my.oschina.net/yangshaokai/blog/674685&#34;&gt;https://my.oschina.net/yangshaokai/blog/674685&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;spring-cloud与dubbo&#34;&gt;Spring Cloud与Dubbo&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/kobejayandy/article/details/52078275&#34;&gt;http://blog.csdn.net/kobejayandy/article/details/52078275&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;zabbix&#34;&gt;Zabbix&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/19973178&#34;&gt;https://www.zhihu.com/question/19973178&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;微服务&#34;&gt;微服务&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.ibm.com/developerworks/cn/java/j-cn-java-and-microservice-1st/index.html?cm_mmc=dwchina-_-homepage-_-social-_-weibo&#34;&gt;https://www.ibm.com/developerworks/cn/java/j-cn-java-and-microservice-1st/index.html?cm_mmc=dwchina-_-homepage-_-social-_-weibo&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;redis分布式锁&#34;&gt;redis分布式锁&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/0201zcr/p/5942748.html&#34;&gt;http://www.cnblogs.com/0201zcr/p/5942748.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;zkclientcurator使用&#34;&gt;zkclient,curator使用&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blueyan.iteye.com/blog/2298276&#34;&gt;http://blueyan.iteye.com/blog/2298276&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;最终一致性&#34;&gt;最终一致性&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/xiaoqiangxx/article/details/7566654&#34;&gt;http://blog.csdn.net/xiaoqiangxx/article/details/7566654&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;日志分析&#34;&gt;日志分析&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/changdazhong/article/details/52536186&#34;&gt;http://blog.csdn.net/changdazhong/article/details/52536186&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/cnbird2008/article/details/39901087&#34;&gt;http://blog.csdn.net/cnbird2008/article/details/39901087&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/smartloli/p/4615908.html&#34;&gt;http://www.cnblogs.com/smartloli/p/4615908.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzIzMzEzODYwOA==&amp;amp;mid=2665283950&amp;amp;idx=1&amp;amp;sn=9005fcaf85f8d4673c62f4067bf3d0ca&amp;amp;scene=0#wechat_redirect&#34;&gt;http://mp.weixin.qq.com/s?__biz=MzIzMzEzODYwOA==&amp;amp;mid=2665283950&amp;amp;idx=1&amp;amp;sn=9005fcaf85f8d4673c62f4067bf3d0ca&amp;amp;scene=0#wechat_redirect&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.elain.org/2016/02/15/ELK&#34;&gt;http://www.elain.org/2016/02/15/ELK&lt;/a&gt;实战一:架构的选择/?hmsr=toutiao.io&amp;amp;utm_medium=toutiao.io&amp;amp;utm_source=toutiao.io&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.elain.org/2015/12/17/EFK&#34;&gt;http://www.elain.org/2015/12/17/EFK&lt;/a&gt;日志收集丢失率测试报告/&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.icyfire.me/2014/11/13/logstash-es-kibana.html&#34;&gt;http://www.icyfire.me/2014/11/13/logstash-es-kibana.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.magicmanufactory.com/efk&#34;&gt;http://blog.magicmanufactory.com/efk&lt;/a&gt;框架搭建/&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;kafka&#34;&gt;Kafka&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;amp;mid=2247483898&amp;amp;idx=1&amp;amp;sn=e5abc4cd7ae3650efc920498483d479b&amp;amp;chksm=ec2c4b4adb5bc25c774b900d579ea9cf9ea3bc04d5c0df517fe2c775b85b406dd1a2efd82a39&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0217hWKtP4AK21NuFM5DnAvr#rd&#34;&gt;http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;amp;mid=2247483898&amp;amp;idx=1&amp;amp;sn=e5abc4cd7ae3650efc920498483d479b&amp;amp;chksm=ec2c4b4adb5bc25c774b900d579ea9cf9ea3bc04d5c0df517fe2c775b85b406dd1a2efd82a39&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0217hWKtP4AK21NuFM5DnAvr#rd&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;kafka-设计与原理详解&#34;&gt;Kafka 设计与原理详解&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/suifeng3051/article/details/48053965&#34;&gt;http://blog.csdn.net/suifeng3051/article/details/48053965&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;分布式系统事务一致性解决方案&#34;&gt;分布式系统事务一致性解决方案&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/cn/articles/solution-of-distributed-system-transaction-consistency&#34;&gt;http://www.infoq.com/cn/articles/solution-of-distributed-system-transaction-consistency&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;同程旅游redis缓存系统&#34;&gt;同程旅游Redis缓存系统&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/136648&#34;&gt;http://geek.csdn.net/news/detail/136648&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;spring-cloud&#34;&gt;Spring Cloud&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.didispace.com/springcloud1/&#34;&gt;http://blog.didispace.com/springcloud1/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;分布式事务&#34;&gt;分布式事务&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/bluishglc/article/details/7612811&#34;&gt;http://blog.csdn.net/bluishglc/article/details/7612811&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;容器&#34;&gt;容器&lt;/h1&gt;
+&lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/haiyan_qi/article/details/52777298&#34;&gt;http://blog.csdn.net/haiyan_qi/article/details/52777298&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/131711&#34;&gt;http://geek.csdn.net/news/detail/131711&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;架构&#34;&gt;架构&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://mp.weixin.qq.com/s/zsbCnXioxTA1F5cIs_2Ytg&#34;&gt;http://mp.weixin.qq.com/s/zsbCnXioxTA1F5cIs_2Ytg&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://bigbully.github.io/Dapper-translation&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Dapper，大规模分布式系统的跟踪系统&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzIyNjE4NDcyMA==&amp;amp;mid=2247484013&amp;amp;idx=1&amp;amp;sn=dd96e2ec4e995844dbe65cf4c923f961&amp;amp;chksm=e8751912df02900409dc01efdc41bc96bb9b456042b59736c8c21de20ea980e24a0eaa344b6e&amp;amp;mpshare=1&amp;amp;scene=1&amp;amp;srcid=0227wo5zhY8PP2qnllpDq3A6#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SOA 设计的 9 大原则&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;amp;mid=2247483824&amp;amp;idx=1&amp;amp;sn=4c4aa8647d8deac858fc084db9f64bfa&amp;amp;chksm=ec2c4b00db5bc2165d2ce4132214bbae5ac570f3173a038ce463569fb58344e94b178dfe36eb&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0116XqNFW9Vy8aQPEBCrSuqX#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;荔枝FM异地多活IDC机房架构&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://tech.meituan.com/mq-design.html?hmsr=toutiao.io&amp;amp;utm_medium=toutiao.io&amp;amp;utm_source=toutiao.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;消息队列设计精要&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;amp;mid=2247483797&amp;amp;idx=1&amp;amp;sn=108bc92611366079f689310373de3c7e&amp;amp;chksm=ec2c4b25db5bc233de4a51461567a961a5b6e865ca3e75079cd85ecfeba2ce9d3778a1907b5b&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0113Okn3umkwlUjE99SKRTfY#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;消息队列&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzIyNjE4NDcyMA==&amp;amp;mid=2247483958&amp;amp;idx=1&amp;amp;sn=852fad32176db697b9730c1e3d03feb8&amp;amp;chksm=e8751949df02905f07380c1927af0e06fe95efd48c32dc7d62468b3cf302b79035cd7657d12f&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0120zbgRno9kc7p25bvkuAh0#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;各种大型网站技术架构&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MjM5OTA1MDUyMA==&amp;amp;mid=2655437766&amp;amp;idx=1&amp;amp;sn=3371a38c59b6eefaa0cd909408d7953b&amp;amp;chksm=bd730fb18a0486a702e83a949acb829729e364cc045f9aee6d51ab9e64aae4995b856f8f2dd9&amp;amp;mpshare=1&amp;amp;scene=22&amp;amp;srcid=0206s8122MIPPwiBQndsfQo0#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;支付宝钱包&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzIyNjE4NDcyMA==&amp;amp;mid=2247483998&amp;amp;idx=1&amp;amp;sn=c93261b74bb82d46bac49074fdbb7686&amp;amp;chksm=e8751921df02903750d5be6697bf74aa782d0d7ec199b56207db118687ab36c455c02341852a&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0217qgnHdCsGcBasEBpXYnXN#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;唯品会&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;amp;mid=2247483895&amp;amp;idx=1&amp;amp;sn=0eaa312f6dee151fba10598052e197fe&amp;amp;chksm=ec2c4b47db5bc2517305bf88f2c83254830a6eddaccd81639234413ff6ea147f2449fccaad56&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0214ymM2mMPWI1RYcwqMcafE#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;京东、宅急送&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://www.ityouknow.com/%e6%9e%b6%e6%9e%84/2017/01/10/%e4%bb%8e%e9%9b%b6%e5%88%b0%e7%99%be%e4%ba%bf%e4%ba%92%e8%81%94%e7%bd%91%e9%87%91%e8%9e%8d%e6%9e%b6%e6%9e%84%e5%8f%91%e5%b1%95%e5%8f%b2.html?hmsr=toutiao.io&amp;amp;utm_medium=toutiao.io&amp;amp;utm_source=toutiao.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;金融架构&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;amp;mid=2247483948&amp;amp;idx=1&amp;amp;sn=7a9d2095c1031186b48d72e2ed84401f&amp;amp;chksm=ec2c489cdb5bc18acc74b138017b8ec001a4941f57e794abb17676d530caf6977dbb2b04ec69&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0304n33JjVWCL8SACm5WQqOc#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;支付系统架构&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://blog.jobbole.com/83459/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;亿级用户下的新浪微博平台架构&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzI4OTU3ODk3NQ==&amp;amp;mid=2247483882&amp;amp;idx=1&amp;amp;sn=a40e61dd96361d46a6c33524e1859248&amp;amp;chksm=ec2c4b5adb5bc24cc2685bf8159f0e14e1f6b4b9f4b2c144fd1b44186ba2096ff392e53c8191&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0209mOFMd3gYi2UZ9pkOhfXs#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;去哪儿网支付系统&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://zhuanlan.zhihu.com/p/24714711&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;MTDDL——美团点评分布式数据访问层中间件&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzIyNjE4NDcyMA==&amp;amp;mid=2247484003&amp;amp;idx=1&amp;amp;sn=8fe3144cd63a63aa7c68fc6ca08be180&amp;amp;chksm=e875191cdf02900a7556f958df4de45436818cc8015fe7870ef25408d92ab8ea677067d5d9a0&amp;amp;mpshare=1&amp;amp;scene=23&amp;amp;srcid=0219ygyQaZz0saQMj5kfBBSV#rd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ELK 日志分析系统&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://blog.jobbole.com/108036/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Google 是如何做负载均衡&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://www.cnblogs.com/chowmin/articles/4629220.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;搜索引擎选择： Elasticsearch与Solr&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://blog.csdn.net/suifeng3051/article/details/23739295&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Memcache,Redis,MongoDB（数据缓存系统）方案对比与分析&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;http://tech.meituan.com/mq-design.html?hmsr=toutiao.io&amp;amp;utm_medium=toutiao.io&amp;amp;utm_source=toutiao.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;消息队列设计精要&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://zhuanlan.zhihu.com/p/25958589&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;游戏架构&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;算法&#34;&gt;算法&lt;/h1&gt;
+&lt;h2 id=&#34;snowflake&#34;&gt;Snowflake&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.lanindex.com/twitter-snowflake&#34;&gt;http://www.lanindex.com/twitter-snowflake&lt;/a&gt;，64位自增id算法详解/&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;tf-idf&#34;&gt;TF-IDF&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/ywl925/archive/2013/08/26/3275878.html&#34;&gt;http://www.cnblogs.com/ywl925/archive/2013/08/26/3275878.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;mesicpu缓存一致性协议&#34;&gt;MESI－CPU缓存一致性协议&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/realxie/article/details/7317630&#34;&gt;http://blog.csdn.net/realxie/article/details/7317630&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/cqu20093154/article/details/46909903&#34;&gt;http://blog.csdn.net/cqu20093154/article/details/46909903&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/MESI_protocol&#34;&gt;https://en.wikipedia.org/wiki/MESI_protocol&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;pagerank&#34;&gt;PageRank&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/hguisu/article/details/7996185&#34;&gt;http://blog.csdn.net/hguisu/article/details/7996185&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://segmentfault.com/a/1190000000711128&#34;&gt;https://segmentfault.com/a/1190000000711128&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;crc16-三种算法及c实现&#34;&gt;CRC16 三种算法及c实现&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/Msisiterc/archive/2011/12/20/2294910.html&#34;&gt;http://www.cnblogs.com/Msisiterc/archive/2011/12/20/2294910.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;大数据&#34;&gt;大数据&lt;/h1&gt;
+&lt;h2 id=&#34;大数据实时处理实战&#34;&gt;大数据实时处理实战&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/163702&#34;&gt;http://geek.csdn.net/news/detail/163702&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;beam&#34;&gt;Beam&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/23618169&#34;&gt;https://zhuanlan.zhihu.com/p/23618169&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;mahout&#34;&gt;Mahout&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.ibm.com/developerworks/cn/java/j-mahout/index.html&#34;&gt;https://www.ibm.com/developerworks/cn/java/j-mahout/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.open-open.com/lib/view/open1383390452040.html&#34;&gt;http://www.open-open.com/lib/view/open1383390452040.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://hadoop.readthedocs.io/en/latest/Hadoop-Mahout.html&#34;&gt;http://hadoop.readthedocs.io/en/latest/Hadoop-Mahout.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/zhoubl668/article/details/13297663&#34;&gt;http://blog.csdn.net/zhoubl668/article/details/13297663&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;azkaban&#34;&gt;Azkaban&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://oschina.net/p/azkaban&#34;&gt;https://oschina.net/p/azkaban&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://azkaban.github.io/&#34;&gt;https://azkaban.github.io/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/fbiswt/p/3318876.html&#34;&gt;http://www.cnblogs.com/fbiswt/p/3318876.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;机器学习&#34;&gt;机器学习&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://it.sohu.com/20161221/n476512671.shtml&#34;&gt;http://it.sohu.com/20161221/n476512671.shtml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/BaiHuaXiu123/article/category/6477383&#34;&gt;http://blog.csdn.net/BaiHuaXiu123/article/category/6477383&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;keras中文文档&#34;&gt;Keras中文文档&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://keras-cn.readthedocs.io/en/latest/#theanotensorflow&#34;&gt;http://keras-cn.readthedocs.io/en/latest/#theanotensorflow&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;tensorflow&#34;&gt;TensorFlow&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://tensorfly.cn&#34;&gt;http://tensorfly.cn&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/matrix_space/article/details/54286086&#34;&gt;http://blog.csdn.net/matrix_space/article/details/54286086&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/159031&#34;&gt;http://geek.csdn.net/news/detail/159031&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://mp.weixin.qq.com/s/w7sVasusVUntfNXbUaTltg&#34;&gt;http://mp.weixin.qq.com/s/w7sVasusVUntfNXbUaTltg&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.jobbole.com/110558/&#34;&gt;http://blog.jobbole.com/110558/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;deeplearning4jdl4j&#34;&gt;Deeplearning4j(DL4J)&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://deeplearning4j.org/cn/&#34;&gt;https://deeplearning4j.org/cn/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.oschina.net/p/deeplearning4j&#34;&gt;http://www.oschina.net/p/deeplearning4j&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;自动图像补全&#34;&gt;自动图像补全&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://mp.weixin.qq.com/s/oWUDqhhi2B4mjqZpe0_oaQ&#34;&gt;https://mp.weixin.qq.com/s/oWUDqhhi2B4mjqZpe0_oaQ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;部署&#34;&gt;部署&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/134150&#34;&gt;http://geek.csdn.net/news/detail/134150&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;linux&#34;&gt;Linux&lt;/h1&gt;
+&lt;h2 id=&#34;vi与vim区别&#34;&gt;VI与VIM区别&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/carolzhang8406/article/details/6117593&#34;&gt;http://blog.csdn.net/carolzhang8406/article/details/6117593&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;epoll&#34;&gt;epoll&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.163.com/huchengsz@126/blog/static/73483745201181824629285/&#34;&gt;http://blog.163.com/huchengsz@126/blog/static/73483745201181824629285/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/xiajun07061225/article/details/9250579&#34;&gt;http://blog.csdn.net/xiajun07061225/article/details/9250579&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://my.oschina.net/dclink/blog/287198&#34;&gt;https://my.oschina.net/dclink/blog/287198&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/sparkliang/article/details/4770655&#34;&gt;http://blog.csdn.net/sparkliang/article/details/4770655&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/venow/archive/2012/11/30/2790031.html&#34;&gt;http://www.cnblogs.com/venow/archive/2012/11/30/2790031.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/ljx0305/article/details/4065058&#34;&gt;http://blog.csdn.net/ljx0305/article/details/4065058&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/Anker/p/3265058.html&#34;&gt;http://www.cnblogs.com/Anker/p/3265058.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;网络io之阻塞非阻塞同步异步&#34;&gt;网络IO之阻塞、非阻塞、同步、异步&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/Anker/p/3254269.html&#34;&gt;http://www.cnblogs.com/Anker/p/3254269.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;linux-44-之后-tcp-三路握手的新流程&#34;&gt;Linux 4.4 之后 TCP 三路握手的新流程&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/25313903&#34;&gt;https://zhuanlan.zhihu.com/p/25313903&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;learn&#34;&gt;Learn&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://roclinux.cn/?page_id=3759&#34;&gt;http://roclinux.cn/?page_id=3759&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/peida/archive/2012/12/05/2803591.html&#34;&gt;http://www.cnblogs.com/peida/archive/2012/12/05/2803591.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://codingstandards.iteye.com/blog/786653&#34;&gt;http://codingstandards.iteye.com/blog/786653&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;iptables&#34;&gt;iptables&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/JemBai/archive/2009/03/19/1416364.html&#34;&gt;http://www.cnblogs.com/JemBai/archive/2009/03/19/1416364.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;依赖管理&#34;&gt;依赖管理&lt;/h1&gt;
+&lt;h2 id=&#34;maven&#34;&gt;maven&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/sin90lzc/article/details/7543262&#34;&gt;http://blog.csdn.net/sin90lzc/article/details/7543262&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;mysql&#34;&gt;MySQL&lt;/h1&gt;
+&lt;h2 id=&#34;mvcc&#34;&gt;MVCC&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/chen77716/article/details/6742128&#34;&gt;http://blog.csdn.net/chen77716/article/details/6742128&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/chenpingzhao/p/5065316.html&#34;&gt;http://www.cnblogs.com/chenpingzhao/p/5065316.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;redoundo&#34;&gt;Redo、Undo&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/liuhao/p/3714012.html&#34;&gt;http://www.cnblogs.com/liuhao/p/3714012.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/chenlvzhou/article/details/40537839&#34;&gt;http://blog.csdn.net/chenlvzhou/article/details/40537839&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;innodb锁机制&#34;&gt;Innodb锁机制&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.chinaunix.net/uid-24111901-id-2627857.html&#34;&gt;http://blog.chinaunix.net/uid-24111901-id-2627857.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;java&#34;&gt;JAVA&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://docs.oracle.com/javase/tutorial/essential/io/index.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;IO Tutorials&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://www.ibm.com/developerworks/cn/java/j-cn-java-and-microservice-1st/index.html?cm_mmc=dwchina-_-homepage-_-social-_-weibo&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Java 和微服务&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;java-内存分配和回收机制&#34;&gt;Java 内存分配和回收机制&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/initphp/article/details/30487407&#34;&gt;http://blog.csdn.net/initphp/article/details/30487407&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;面向gc的java编程&#34;&gt;面向GC的Java编程&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.hesey.net/2014/05/gc-oriented-java-programming.html&#34;&gt;http://blog.hesey.net/2014/05/gc-oriented-java-programming.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;jersey开发restful服务&#34;&gt;Jersey开发RESTful服务&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.jdon.com/soa/jersey.html&#34;&gt;http://www.jdon.com/soa/jersey.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;atomic&#34;&gt;Atomic&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ifeve.com/java-atomic/&#34;&gt;http://ifeve.com/java-atomic/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;netty-mina&#34;&gt;Netty-Mina&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ifeve.com/netty-mina-in-depth-1/&#34;&gt;http://ifeve.com/netty-mina-in-depth-1/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;disruptor&#34;&gt;Disruptor&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ifeve.com/disruptor/&#34;&gt;http://ifeve.com/disruptor/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://ifeve.com/disruptor-getting-started/&#34;&gt;http://ifeve.com/disruptor-getting-started/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;深入浅出mybatis-configuration&#34;&gt;深入浅出MyBatis-Configuration&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/hupanfeng/article/details/9080545&#34;&gt;http://blog.csdn.net/hupanfeng/article/details/9080545&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;spring监听器&#34;&gt;spring监听器&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/blueboz/article/details/49949573&#34;&gt;http://blog.csdn.net/blueboz/article/details/49949573&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://my.oschina.net/huangcongcong/blog/527779&#34;&gt;https://my.oschina.net/huangcongcong/blog/527779&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/sd0902/article/details/8394082&#34;&gt;http://blog.csdn.net/sd0902/article/details/8394082&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;bio--nio--aio&#34;&gt;BIO | NIO | AIO&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://my.oschina.net/bluesky0leon/blog/132361&#34;&gt;https://my.oschina.net/bluesky0leon/blog/132361&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/liuj2511981/article/details/8658440&#34;&gt;http://blog.csdn.net/liuj2511981/article/details/8658440&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.programering.com/a/MTO3IzMwATk.html&#34;&gt;http://www.programering.com/a/MTO3IzMwATk.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;im4java&#34;&gt;Im4java&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.open-open.com/lib/view/open1378730603412.html&#34;&gt;http://www.open-open.com/lib/view/open1378730603412.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://windows9834.blog.163.com/blog/static/273450042013030115742860/&#34;&gt;http://windows9834.blog.163.com/blog/static/273450042013030115742860/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;锁&#34;&gt;锁&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/cn/articles/java-memory-model-5&#34;&gt;http://www.infoq.com/cn/articles/java-memory-model-5&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;drools&#34;&gt;Drools&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/quzishen/article/details/6163012/&#34;&gt;http://blog.csdn.net/quzishen/article/details/6163012/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://dengkane.iteye.com/blog/2208953&#34;&gt;http://dengkane.iteye.com/blog/2208953&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;jvm&#34;&gt;JVM&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/131976&#34;&gt;http://geek.csdn.net/news/detail/131976&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.importnew.com/22240.html#comment-541402&#34;&gt;http://www.importnew.com/22240.html#comment-541402&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/qq_35101189/article/details/55657798&#34;&gt;http://blog.csdn.net/qq_35101189/article/details/55657798&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/renfufei/article/details/56678064&#34;&gt;http://blog.csdn.net/renfufei/article/details/56678064&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;java8&#34;&gt;java8&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.ibm.com/developerworks/cn/java/j-lo-jdk8newfeature/index.html&#34;&gt;https://www.ibm.com/developerworks/cn/java/j-lo-jdk8newfeature/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;io&#34;&gt;IO&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://it.deepinmind.com/java/2014/02/13/Java8-features-new-new-io.html&#34;&gt;http://it.deepinmind.com/java/2014/02/13/Java8-features-new-new-io.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;stream&#34;&gt;Stream&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/youzhouliu/article/details/51820088&#34;&gt;http://blog.csdn.net/youzhouliu/article/details/51820088&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/cn/articles/java8-new-features-new-stream-api&#34;&gt;http://www.infoq.com/cn/articles/java8-new-features-new-stream-api&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;hashmap&#34;&gt;HashMap&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/huaizuo/p/5371099.html&#34;&gt;http://www.cnblogs.com/huaizuo/p/5371099.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://yq.aliyun.com/articles/36781&#34;&gt;https://yq.aliyun.com/articles/36781&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;spring-boot参考指南&#34;&gt;Spring Boot参考指南&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.gitbook.com/book/qbgbook/spring-boot-reference-guide-zh/details&#34;&gt;https://www.gitbook.com/book/qbgbook/spring-boot-reference-guide-zh/details&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;spring-boot-入门&#34;&gt;Spring Boot 入门&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/isea533/article/details/50278205&#34;&gt;http://blog.csdn.net/isea533/article/details/50278205&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;spring-4&#34;&gt;Spring 4&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/cn/articles/spring-4-java-8&#34;&gt;http://www.infoq.com/cn/articles/spring-4-java-8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.techempower.com/blog/2013/03/26/everything-about-java-8/&#34;&gt;https://www.techempower.com/blog/2013/03/26/everything-about-java-8/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/dm_vincent/article/category/2648241&#34;&gt;http://blog.csdn.net/dm_vincent/article/category/2648241&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.oschina.net/translate/everything-about-java-8&#34;&gt;http://www.oschina.net/translate/everything-about-java-8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.ibm.com/developerworks/cn/java/j-lo-jdk8newfeature/index.html&#34;&gt;http://www.ibm.com/developerworks/cn/java/j-lo-jdk8newfeature/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://winterbe.com/posts/2015/03/25/java8-examples-string-number-math-files/&#34;&gt;http://winterbe.com/posts/2015/03/25/java8-examples-string-number-math-files/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://eherrera.net/ocpj8-notes/09-java-file-io-(NIO.2)&#34;&gt;http://eherrera.net/ocpj8-notes/09-java-file-io-(NIO.2)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://ifeve.com/java-8-features-tutorial/&#34;&gt;http://ifeve.com/java-8-features-tutorial/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;cas&#34;&gt;CAS&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.hesey.net/2011/09/resolve-aba-by-atomicstampedreference.html&#34;&gt;http://blog.hesey.net/2011/09/resolve-aba-by-atomicstampedreference.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://ifeve.com/atomic-operation/&#34;&gt;http://ifeve.com/atomic-operation/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.ibm.com/developerworks/cn/java/j-jtp11234/&#34;&gt;https://www.ibm.com/developerworks/cn/java/j-jtp11234/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.ibm.com/developerworks/cn/java/j-jtp04186/&#34;&gt;https://www.ibm.com/developerworks/cn/java/j-jtp04186/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://zl198751.iteye.com/blog/1848575&#34;&gt;http://zl198751.iteye.com/blog/1848575&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;python&#34;&gt;Python&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://opensourcehacker.com/2015/05/02/pycharm-vs-sublime-text/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;PyCharm vs. Sublime Text&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;python守护进程demo&#34;&gt;python守护进程demo&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.phpgao.com/pythond.html&#34;&gt;https://blog.phpgao.com/pythond.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;python-tutorial&#34;&gt;Python Tutorial&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.pythondoc.com&#34;&gt;http://www.pythondoc.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.runoob.com/python3/python3-basic-syntax.html&#34;&gt;http://www.runoob.com/python3/python3-basic-syntax.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431658624177ea4f8fcb06bc4d0e8aab2fd7aa65dd95000&#34;&gt;http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431658624177ea4f8fcb06bc4d0e8aab2fd7aa65dd95000&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;爬虫&#34;&gt;爬虫&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/21377121&#34;&gt;https://zhuanlan.zhihu.com/p/21377121&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://xlzd.me/tag/crawler/2/&#34;&gt;https://xlzd.me/tag/crawler/2/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;文本挖掘&#34;&gt;文本挖掘&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/129348&#34;&gt;http://geek.csdn.net/news/detail/129348&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;配置编译环境&#34;&gt;配置编译环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/22704462&#34;&gt;https://zhuanlan.zhihu.com/p/22704462&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;pip&#34;&gt;pip&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.163.com/yang_jianli/blog/static/161990006201162152724339/&#34;&gt;http://blog.163.com/yang_jianli/blog/static/161990006201162152724339/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;nginx--gunicorn--django&#34;&gt;Nginx + Gunicorn + Django&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.isaced.com/post-248.html&#34;&gt;http://www.isaced.com/post-248.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;mysql-1&#34;&gt;MySQL&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001391435131816c6a377e100ec4d43b3fc9145f3bb8056000&#34;&gt;http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/001391435131816c6a377e100ec4d43b3fc9145f3bb8056000&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;调试&#34;&gt;调试&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/21572891&#34;&gt;https://www.zhihu.com/question/21572891&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;html&#34;&gt;HTML&lt;/h1&gt;
+&lt;h2 id=&#34;websocket&#34;&gt;WebSocket&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/20215561&#34;&gt;https://www.zhihu.com/question/20215561&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;css-selectors-level-4&#34;&gt;CSS Selectors Level 4&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/127566&#34;&gt;http://geek.csdn.net/news/detail/127566&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;其他&#34;&gt;其他&lt;/h1&gt;
+&lt;h2 id=&#34;devops&#34;&gt;DevOps&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/cn/articles/devops-not-legend&#34;&gt;http://www.infoq.com/cn/articles/devops-not-legend&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;sre之道&#34;&gt;SRE之道&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://yq.aliyun.com/articles/70525&#34;&gt;https://yq.aliyun.com/articles/70525&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;技术领域&#34;&gt;技术领域&lt;/h2&gt;
+&lt;p&gt;** &lt;a href=&#34;http://geek.csdn.net/news/detail/134070&#34;&gt;http://geek.csdn.net/news/detail/134070&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;https-与-http2-协议分析&#34;&gt;HTTPS 与 HTTP2 协议分析&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://geek.csdn.net/news/detail/188003&#34;&gt;http://geek.csdn.net/news/detail/188003&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;reactor和proactor模式&#34;&gt;Reactor和Proactor模式&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/caiwenfeng_for_23/article/details/8458299&#34;&gt;http://blog.csdn.net/caiwenfeng_for_23/article/details/8458299&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.blogjava.net/DLevin/archive/2015/09/02/427045.html&#34;&gt;http://www.blogjava.net/DLevin/archive/2015/09/02/427045.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.jobbole.com/59676/&#34;&gt;http://blog.jobbole.com/59676/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;管道模型pipeline&#34;&gt;管道模型(Pipeline)&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/yanghua_kobe/article/details/7561016&#34;&gt;http://blog.csdn.net/yanghua_kobe/article/details/7561016&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;半包粘包&#34;&gt;半包、粘包&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/jiangtong/archive/2012/03/22/2411985.html&#34;&gt;http://www.cnblogs.com/jiangtong/archive/2012/03/22/2411985.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.itstack.org/?post=12&#34;&gt;http://www.itstack.org/?post=12&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;sftp和ftp-区别工作原理等&#34;&gt;Sftp和ftp 区别、工作原理等&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/cuker919/article/details/6403925&#34;&gt;http://blog.csdn.net/cuker919/article/details/6403925&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;双向数据绑定&#34;&gt;双向数据绑定&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://segmentfault.com/q/1010000002511449/a-1020000002514653&#34;&gt;https://segmentfault.com/q/1010000002511449/a-1020000002514653&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;json-web-token&#34;&gt;JSON Web Token&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.leapoahead.com/2015/09/06/understanding-jwt/&#34;&gt;http://blog.leapoahead.com/2015/09/06/understanding-jwt/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://segmentfault.com/a/1190000005047525?utm_source=tuicool&amp;amp;utm_medium=referral&#34;&gt;https://segmentfault.com/a/1190000005047525?utm_source=tuicool&amp;amp;utm_medium=referral&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;oauth-20&#34;&gt;OAuth 2.0&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html&#34;&gt;http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;restful-api-设计&#34;&gt;RESTful API 设计&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.ruanyifeng.com/blog/2014/05/restful_api.html&#34;&gt;http://www.ruanyifeng.com/blog/2014/05/restful_api.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;微服务的技术架构术语定义&#34;&gt;微服务的技术架构术语定义&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MjM5MjEwNTEzOQ==&amp;amp;amp;mid=401500724&amp;amp;amp;idx=1&amp;amp;amp;sn=4e42fa2ffcd5732ae044fe6a387a1cc3&#34;&gt;http://mp.weixin.qq.com/s?__biz=MjM5MjEwNTEzOQ==&amp;amp;amp;mid=401500724&amp;amp;amp;idx=1&amp;amp;amp;sn=4e42fa2ffcd5732ae044fe6a387a1cc3&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     

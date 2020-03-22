@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Spring | 疯狂的厨子</title>
+    <link>https://moyada.github.io/categories/spring/</link>
+      <atom:link href="https://moyada.github.io/categories/spring/index.xml" rel="self" type="application/rss+xml" />
+    <description>Spring</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 23 Feb 2019 20:31:04 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
+      <title>Spring</title>
+      <link>https://moyada.github.io/categories/spring/</link>
+    </image>
+    
+    <item>
+      <title>Spring 自定义配置加载</title>
+      <link>https://moyada.github.io/post/spring-configure/</link>
+      <pubDate>Sat, 23 Feb 2019 20:31:04 +0000</pubDate>
+      <guid>https://moyada.github.io/post/spring-configure/</guid>
+      <description>&lt;p&gt;Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spring 中的。&lt;/p&gt;
+&lt;h2 id=&#34;1-xml-配置&#34;&gt;1. xml 配置&lt;/h2&gt;
+&lt;p&gt;这是早期 Spring 提供的配置方式，需要与 &lt;code&gt;xsd&lt;/code&gt; 文件配合使用。&lt;/p&gt;
+&lt;p&gt;文件的解析是需要通过实现 &lt;code&gt;org.springframework.beans.factory.xml.NamespaceHandlerSupport&lt;/code&gt; 提供解析器，在 &lt;code&gt;init&lt;/code&gt; 方法中调用 &lt;code&gt;registerBeanDefinitionParser&lt;/code&gt; 将 xsd元素名称 与 元素解析器 进行绑定。&lt;/p&gt;
+&lt;p&gt;对于 xsd元素 所绑定的解析器是 &lt;code&gt;org.springframework.beans.factory.xml.BeanDefinitionParser&lt;/code&gt;，实现元素到 &lt;code&gt;BeanDefinition&lt;/code&gt; 的转换，并交由 Spring 容器进行实例注册。&lt;/p&gt;
+&lt;p&gt;最后需要将完成的解析器与 xsd文件 通过 &lt;code&gt;META-INF/spring.handlers&lt;/code&gt; 和 &lt;code&gt;META-INF/spring.schemas&lt;/code&gt; 进行映射，在 spring.schemas 中以 &lt;code&gt;命名空间地址 = xsd文件路径&lt;/code&gt; 的形式配置，在 spring.handlers 中以 &lt;code&gt;命名空间地址 = 解析器类全路径&lt;/code&gt; 的形式配置。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由于 yml 配置的便捷性导致了 xml 配置方式在开发中逐渐被替换。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;2-yml-配置&#34;&gt;2. yml 配置&lt;/h2&gt;
+&lt;p&gt;跟随 spring-boot 一起出现的配置模式，相较于 xml 显得尤其简便。同时也舍弃了 xml 的解析器，使用等同于 &lt;code&gt;@Conditional&lt;/code&gt; 的注册 Configuration 在 Spring 的生命周期进行容器管理。&lt;/p&gt;
+&lt;h3 id=&#34;enable-注解&#34;&gt;Enable 注解&lt;/h3&gt;
+&lt;p&gt;这种方式主要是提供注解使用，并在注解内配置 &lt;code&gt;@Import&lt;/code&gt; 显式的注册 Configuration。&lt;/p&gt;
+&lt;p&gt;例如 &lt;code&gt;@EnableAspectJAutoProxy&lt;/code&gt;, &lt;code&gt;@EnableScheduling&lt;/code&gt;, &lt;code&gt;@EnableMBeanExport&lt;/code&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;自动装配&#34;&gt;自动装配&lt;/h3&gt;
+&lt;p&gt;通过创建 &lt;code&gt;META-INF/spring.factories&lt;/code&gt; 文件，配置需要装配的 Configuration 即可。其原理是使用了 &lt;code&gt;@EnableAutoConfiguration&lt;/code&gt; 注解，通过注册的 &lt;code&gt;AutoConfigurationImportSelector&lt;/code&gt; 扫描所有依赖 jar 包内的 &lt;code&gt;META-INF/spring.factories&lt;/code&gt;，将配置的 Configuration 进行注册。与显式注解形式配置有所不同，这种方式配置的 Configuration 还可以使用 &lt;code&gt;@AutoConfigureAfter&lt;/code&gt; 和 &lt;code&gt;@AutoConfigureBefore&lt;/code&gt; 控制执行顺序。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这种是最为常见的使用方式，一般还需构建 &lt;code&gt;spring-boot-starter&lt;/code&gt; 提供使用，具体使用见
+&lt;a href=&#34;https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;官方文档&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;动态注册配置&#34;&gt;动态注册配置&lt;/h3&gt;
+&lt;p&gt;结合了 &lt;code&gt;Enable 注解&lt;/code&gt; 和 &lt;code&gt;自动装配&lt;/code&gt; 的方式，能够更加灵活的配置 Configuration。实现方式为提供 Enable注解，并且在注解内配置 @Import &lt;code&gt;ImportSelector&lt;/code&gt;，通过 ImportSelector 返回 Configuration 列表提供给 Spring 注册，可以根据条件控制返回的 Configuration，又或是提供类似 自动装配 的功能。&lt;/p&gt;
+&lt;p&gt;例如 &lt;code&gt;@EnableAutoConfiguration&lt;/code&gt;, &lt;code&gt;@EnableAsync&lt;/code&gt;, &lt;code&gt;@EnableCaching&lt;/code&gt;。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>通过 CROS 协议解决跨域问题</title>
+      <link>https://moyada.github.io/post/cros/</link>
+      <pubDate>Sun, 23 Jul 2017 21:21:48 +0000</pubDate>
+      <guid>https://moyada.github.io/post/cros/</guid>
+      <description>&lt;p&gt;在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请求的话可以利用 Json 来解决。&lt;/p&gt;
+&lt;p&gt;对于非 GET 请求的话就可以采用 &lt;code&gt;CORS&lt;/code&gt; 协议来解决了。CORS 是一个W3C标准，全称是&amp;quot;跨域资源共享&amp;rdquo;（Cross-origin resource sharing）。
+它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而解决了只能同源使用的限制，具体详解参考
+&lt;a href=&#34;http://www.ruanyifeng.com/blog/2016/04/cors.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;跨域资源共享 CORS 详解&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;如果你需要信息的绝对安全，不要依赖 CORS 当中的权限制度，应当使用更多其它的措施来保障，比如 OAuth2。&lt;/p&gt;
+&lt;p&gt;对于 Java 服务器的话，常用的解决方案就是自定义个 Filter 来添加相应头。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;@Component
+public class CorsFilter implements Filter {
+	private static final Logger logger = LoggerFactory.getLogger(CorsFilter.class);
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        String origin = (String) servletRequest.getRemoteHost()+&amp;quot;:&amp;quot;+servletRequest.getRemotePort();
+        logger.info(&amp;quot;orgin: {} request cors resource.&amp;quot;, origin);
+        response.setHeader(&amp;quot;Access-Control-Allow-Origin&amp;quot;, &amp;quot;*&amp;quot;);
+        response.setHeader(&amp;quot;Access-Control-Allow-Methods&amp;quot;, &amp;quot;POST, GET, OPTIONS, DELETE&amp;quot;);
+        response.setHeader(&amp;quot;Access-Control-Max-Age&amp;quot;, &amp;quot;3600&amp;quot;);
+        response.setHeader(&amp;quot;Access-Control-Allow-Headers&amp;quot;, &amp;quot;x-requested-with,Authorization&amp;quot;);
+        response.setHeader(&amp;quot;Access-Control-Allow-Credentials&amp;quot;,&amp;quot;true&amp;quot;);
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OPTIONS 是预请求必须允许。
+Authorization 是做了 OAuth2 登录响应所必须的。
+预请求在实际请求之前发出的请求，为了保证实际请求能够完成的权限请求，通过预请求的响应将能够确定实际请求是否的完成。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// 预请求
+OPTIONS /cors HTTP/1.1
+Origin: http://api.alice.com
+// 实际请求类型
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: X-Custom-Header
+Host: api.bob.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+
+
+// 预请求响应
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: X-Custom-Header
+Access-Control-Allow-Credentials（可选）- 表示是否允许cookies
+Access-Control-Max-Age（可选） – 以秒为单位的缓存时间，允许时应当尽可能缓存。
+Content-Type: text/html; charset=utf-8
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;filter&amp;gt; 
+	&amp;lt;filter-name&amp;gt;cors&amp;lt;/filter-name&amp;gt; 
+	&amp;lt;filter-class&amp;gt;CorsFilter&amp;lt;/filter-class&amp;gt; 
+&amp;lt;/filter&amp;gt;
+
+&amp;lt;filter-mapping&amp;gt;
+	&amp;lt;filter-name&amp;gt;cors&amp;lt;/filter-name&amp;gt;
+	&amp;lt;url-pattern&amp;gt;/api/*&amp;lt;/url-pattern&amp;gt;
+&amp;lt;/filter-mapping&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在 Spring 中提供了更为简单便捷的方法。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;使用 &lt;code&gt;@CrossOrigin&lt;/code&gt; 注解来设置跨域访问所允许的域名&lt;/li&gt;
+&lt;li&gt;继承 &lt;code&gt;WebMvcConfigurerAdapter&lt;/code&gt; 设置跨域相关配置&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;@Component
+public class CorsConfigurerAdapter extends WebMvcConfigurerAdapter {
+
+	@Override public void addCorsMappings(CorsRegistry registry) {
+	 registry.addMapping(&amp;quot;/api/*&amp;quot;).allowedOrigins(&amp;quot;*&amp;quot;); 
+	 } 
+ }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;详细参考
+&lt;a href=&#34;http://spring.io/guides/gs/rest-service-cors&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Spring官方文档&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

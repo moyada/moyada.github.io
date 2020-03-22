@@ -236,7 +236,7 @@
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2018-07-15T12:06:05&#43;00:00">
+    <meta property="og:updated_time" content="2019-09-08T19:57:23&#43;00:00">
   
 
   
@@ -511,13 +511,13 @@
   <div class="media-body">
 
     <h3 class="article-title mb-0 mt-0">
-      <a href="/post/jvm-gc/" >Java GC过程</a>
+      <a href="/post/middleware-competition-5/" >第五届中间件性能挑战赛</a>
     </h3>
 
     
     <div class="article-style">
-      由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。
-Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
+      今年参与了阿里巴巴举办的 中间件性能挑战赛，并且有幸进入到了复赛，虽然后期由于其他原因没法专心参与，不过通过这次比赛也让我在技术上收获了不少，这边小小的做下本次比赛的总结。
+初赛：《自适应负载均衡的设  ...
     </div>
     
 
@@ -540,7 +540,7 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
     
       
     
-    2018-07-15
+    2019-09-08
   </span>
   
 
@@ -549,7 +549,7 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    3 分钟阅读时长
   </span>
   
 
@@ -576,8 +576,886 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
 
     
   
+    
+      
+
+
+
+
+
+
+
+
+
+
+
 
   
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/shenandoah-gc/" >Shenandoah GC 介绍</a>
+    </h3>
+
+    
+    <div class="article-style">
+      介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时为了使大容量内存应用在垃圾回收时只进行短暂的应用暂停，使用 -XX:&#43;UseShe  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-08-04
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/jvm/">JVM</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/zgc/" >ZGC 介绍</a>
+    </h3>
+
+    
+    <div class="article-style">
+      什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-06-28
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/jvm/">JVM</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/feign-eureka-without-springboot/" >在非 SpringBoot 工程中使用 Feign 整合 Eureka</a>
+    </h3>
+
+    
+    <div class="article-style">
+      背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 @EnableDiscoveryClient 和 @EnableFeignClients 即可获取服务  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-05-18
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/diff-instanceof-isassignablefrom/" >instanceOf、isInstance、isAssignableFrom 的区别</a>
+    </h3>
+
+    
+    <div class="article-style">
+      在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeName]、class.isInstance(obj)、class.isAssignableFrom(c  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-05-05
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/java-serializer/" >序列化框架对比</a>
+    </h3>
+
+    
+    <div class="article-style">
+      背景 最近接到一个需求，涉及到大流量的数据传输，那么就不可避免序列化，正巧我也有想法对最近主流的序列化框架做一次对比。
+参数对比的序列化的框架如下，将对 序列化数据字节大小、序列化\反序列化平均耗时、  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-05-03
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/prometheus-grafana/" >使用 Prometheus &#43; Grafana 搭建监控系统</a>
+    </h3>
+
+    
+    <div class="article-style">
+      前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负载问题时通过监控便能够查看系统状态快照，还能够通过监控系统开发其他效能组件，进一步提高系统的可用性。
+监控应用程序 通常情况下，要想获得应  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-03-23
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="">运维</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/spring-configure/" >Spring 自定义配置加载</a>
+    </h3>
+
+    
+    <div class="article-style">
+      Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spri  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-02-23
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/spring/">Spring</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/java-annotation-processor/" >Java 注解处理器</a>
+    </h3>
+
+    
+    <div class="article-style">
+      工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。
+  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-01-15
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+  
+
+
+<div class="media stream-item">
+  <div class="media-body">
+
+    <h3 class="article-title mb-0 mt-0">
+      <a href="/post/java-synchronized/" >synchronized 原理总结</a>
+    </h3>
+
+    
+    <div class="article-style">
+      介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。
+它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。
+  声明在方法内  ...
+    </div>
+    
+
+    <div class="stream-meta article-metadata">
+
+      
+
+      
+        
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2019-01-13
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/jvm/">JVM</a></span>
+  
+
+</div>
+
+      
+    </div>
+
+    
+
+  </div>
+  <div class="ml-3">
+    
+    
+  </div>
+</div>
+
+    
+  
+
+  
+<nav>
+  <ul class="pagination justify-content-center">
+    
+    
+    <li class="page-item"><a class="page-link" href="/post/page/2/">&raquo;</a></li>
+    
+  </ul>
+</nav>
+
 
 
 </div>

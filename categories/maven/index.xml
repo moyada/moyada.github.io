@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Maven | 疯狂的厨子</title>
+    <link>https://moyada.github.io/categories/maven/</link>
+      <atom:link href="https://moyada.github.io/categories/maven/index.xml" rel="self" type="application/rss+xml" />
+    <description>Maven</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Wed, 02 Jan 2019 16:03:12 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
+      <title>Maven</title>
+      <link>https://moyada.github.io/categories/maven/</link>
+    </image>
+    
+    <item>
+      <title>发布 jar 包至 maven 官方中央仓库</title>
+      <link>https://moyada.github.io/post/maven-central/</link>
+      <pubDate>Wed, 02 Jan 2019 16:03:12 +0000</pubDate>
+      <guid>https://moyada.github.io/post/maven-central/</guid>
+      <description>&lt;p&gt;当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://central.sonatype.org/pages/ossrh-guide.html&#34;&gt;https://central.sonatype.org/pages/ossrh-guide.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;创建发布需求&#34;&gt;创建发布需求&lt;/h2&gt;
+&lt;p&gt;在创建问题时需要注意，如果 &lt;code&gt;groupId&lt;/code&gt; 选择的是私有域名时，那么管理员会要求验证域名的归属，而对于 &lt;code&gt;github&lt;/code&gt; 的子域名则无需验证。&lt;/p&gt;
+&lt;p&gt;接下来管理员会要求你进行第一次的发布操作，在发布前你需要使用 &lt;code&gt;gpg&lt;/code&gt; 创建你的秘钥。&lt;/p&gt;
+&lt;h2 id=&#34;创建秘钥&#34;&gt;创建秘钥&lt;/h2&gt;
+&lt;p&gt;Mac 下可以通过 &lt;code&gt;brew&lt;/code&gt; 下载安装，使用命令 &lt;code&gt;gpg --gen-key&lt;/code&gt; 生成，完成后通过 &lt;code&gt;gpg --list-keys&lt;/code&gt; 即可查看已创建秘钥。&lt;/p&gt;
+&lt;p&gt;接下来需要将秘钥发布到远程服务器上，如 &lt;code&gt;gpg --keyserver hkp://keyserver.ubuntu.com:11371 --send-keys &amp;lt;sec_key&amp;gt;&lt;/code&gt;，发布后可以使用 &lt;code&gt;gpg --keyserver hkp://keyserver.ubuntu.com:11371 --recv-keys &amp;lt;sec_key&amp;gt;&lt;/code&gt; 进行验证。&lt;/p&gt;
+&lt;h2 id=&#34;发布项目&#34;&gt;发布项目&lt;/h2&gt;
+&lt;p&gt;发布完成后就可以进行项目的配置了，注意 &lt;code&gt;&amp;lt;gpg.executable&amp;gt;gpg&amp;lt;/gpg.executable&amp;gt;&lt;/code&gt; 这项配置填写的是你实际操作秘钥的程序。&lt;/p&gt;
+&lt;p&gt;发布时需要验证秘钥的密码，可以选择添加参数 &lt;code&gt;-Dgpg.passphrase&lt;/code&gt; 或者验证时手动输入。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果发生错误提示 &lt;code&gt;gpg: signing failed: Inappropriate ioctl for device&lt;/code&gt; 是由于 gpg 无法在当前终端弹出密码输入页面，执行 &lt;code&gt;export GPG_TTY=$(tty)&lt;/code&gt; 以支持弹窗。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果进行本地安装则可以使用 &lt;code&gt;Dgpg.skip&lt;/code&gt; 参数或在 &lt;code&gt;maven-gpg-plugin&lt;/code&gt; 插件下增加配置 &lt;code&gt;&amp;lt;configuration&amp;gt;&amp;lt;skip&amp;gt;true&amp;lt;/skip&amp;gt;&amp;lt;/configuration&amp;gt;&lt;/code&gt; 跳过验证步骤。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;验证发布&#34;&gt;验证发布&lt;/h2&gt;
+&lt;p&gt;发布成功后还需要回到需求问题下回复管理员，待管理员回复后一会可在中央仓库查看到自己的项目了。&lt;/p&gt;
+&lt;p&gt;后续版本的发布则直接进行发布就可以了。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Maven 基本操作</title>
+      <link>https://moyada.github.io/post/maven/</link>
+      <pubDate>Fri, 31 Mar 2017 01:42:17 +0000</pubDate>
+      <guid>https://moyada.github.io/post/maven/</guid>
+      <description>&lt;h2 id=&#34;pom配置文件&#34;&gt;pom配置文件&lt;/h2&gt;
+&lt;h3 id=&#34;命令&#34;&gt;命令&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;mvn clean: 清除target目录&lt;/li&gt;
+&lt;li&gt;mvn compile: 编译主程序&lt;/li&gt;
+&lt;li&gt;mvn test-compile: 编译测试程序&lt;/li&gt;
+&lt;li&gt;mvn test: 执行测试&lt;/li&gt;
+&lt;li&gt;mvn package: 打包项目输出到target目录下&lt;/li&gt;
+&lt;li&gt;mvn install: 安装项目到本地仓库
+安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar&lt;/li&gt;
+&lt;li&gt;mvn deploy: 将打包好的包上传到远程仓库,&lt;code&gt;[-N]&lt;/code&gt;跳过子模块&lt;/li&gt;
+&lt;li&gt;mvn site: 生成站点&lt;/li&gt;
+&lt;li&gt;mvn dependency: 操作依赖
+获取远端依赖: mvn dependency:resolve
+获取单个远端依赖: mvn dependency:get -Dartifact=&lt;code&gt;&amp;lt;groupId&amp;gt;:&amp;lt;artifactId&amp;gt;:&amp;lt;version&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;跳过测试用例 -Dmaven.test.skip=true&lt;/p&gt;
+&lt;h3 id=&#34;依赖&#34;&gt;依赖&lt;/h3&gt;
+&lt;h4 id=&#34;坐标&#34;&gt;坐标&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;groupid&amp;gt;&lt;/code&gt; 项目坐标: 一般为公司域名倒写+项目名&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;artifactId&amp;gt;&lt;/code&gt; 模块坐标: 项目子模块名&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;version&amp;gt;&lt;/code&gt; 版本: 带SNAPSHOT表示为一个不稳定的版本，REALEASE表示为一个正式的版本&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;依赖的范围&#34;&gt;依赖的范围&lt;/h4&gt;
+&lt;p&gt;依赖的范围可以通过&lt;code&gt;&amp;lt;scope&amp;gt;&lt;/code&gt;标签来指定&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;compile: 主程序范围的依赖，对主程序有效，对测试程序有效，参与打包&lt;/li&gt;
+&lt;li&gt;test: 测试范围的依赖，只对测试程序有效，不参与打包，比如junit&lt;/li&gt;
+&lt;li&gt;provided: 不参与打包，只在开发阶段有效，比如servlet-api.jar&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;依赖的排除&#34;&gt;依赖的排除&lt;/h4&gt;
+&lt;p&gt;对于不需要的传递性依赖，可以通过&lt;code&gt;&amp;lt;exclusions&amp;gt;&lt;/code&gt;标签来排除依赖引用&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
+	...
+	&amp;lt;exclusions&amp;gt;
+		&amp;lt;exclusion&amp;gt;
+			&amp;lt;groupid&amp;gt;com.xxx&amp;lt;/groupid&amp;gt;
+			&amp;lt;artifactid&amp;gt;xxxx&amp;lt;/artifactid&amp;gt;
+		&amp;lt;/exclusion&amp;gt;
+	&amp;lt;/exclusions&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;版本号管理&#34;&gt;版本号管理&lt;/h4&gt;
+&lt;p&gt;对于多个同版本号的依赖可以通过&lt;code&gt;&amp;lt;properties&amp;gt;&lt;/code&gt;配置来统一管理，在&lt;code&gt;&amp;lt;version&amp;gt;&lt;/code&gt;以${标签名}引用&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;properties&amp;gt;
+	&amp;lt;com.spring.version&amp;gt;4.3.0-REALEASE&amp;lt;/com.spring.version&amp;gt;
+&amp;lt;/properties&amp;gt;
+...
+&amp;lt;version&amp;gt;${com.spring.version}&amp;lt;/version&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;另外，还可以通过&lt;code&gt;&amp;lt;properties&amp;gt;&lt;/code&gt;配置项目默认配置&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!-- 配置项目字符集配置 --&amp;gt;
+&amp;lt;properties&amp;gt;
+	&amp;lt;project.build.sourceEncoding&amp;gt;UTF-8&amp;lt;/project.build.sourceEncoding&amp;gt;
+&amp;lt;/properties&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;继承&#34;&gt;继承&lt;/h3&gt;
+&lt;p&gt;继承功能可以统一管理各个模块工程中对依赖的版本，配置继承后要先安装父工程&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!-- 子工程中声明父工程 --&amp;gt;
+&amp;lt;parent&amp;gt;
+   &amp;lt;groupid&amp;gt;com.xxx&amp;lt;/groupid&amp;gt;
+   &amp;lt;artifactId&amp;gt;xxxx&amp;lt;/artifactId&amp;gt;
+   &amp;lt;version&amp;gt;0.0.1-SNAPSHOT&amp;lt;/version&amp;gt;
+   &amp;lt;!-- 以当前工程的pom.xml为基准的父工程pom.xml路径 --&amp;gt;
+   &amp;lt;relativePath&amp;gt;../xxxx/pom.xml&amp;lt;/relativePath&amp;gt;
+&amp;lt;/parent&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!-- 父工程依赖管理 --&amp;gt;
+&amp;lt;dependencyManagement&amp;gt;
+  &amp;lt;dependencies&amp;gt;
+    &amp;lt;dependency&amp;gt;
+      ...
+    &amp;lt;/dependency&amp;gt;
+  &amp;lt;/dependencies&amp;gt;
+&amp;lt;/dependencyManagement&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;聚合&#34;&gt;聚合&lt;/h3&gt;
+&lt;p&gt;聚合用于统一安装子工程模块，在父工程的pom.xml文件中配置&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;modules&amp;gt;
+  &amp;lt;!-- 指定子工程的相对路径 --&amp;gt;
+  &amp;lt;module&amp;gt;../xxx&amp;lt;/module&amp;gt;
+&amp;lt;/modules&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;构建&#34;&gt;构建&lt;/h3&gt;
+&lt;p&gt;maven通过命令mvn package 可以将项目打包，对于多模块的项目，
+可以使用mvn package -pl 子项目名 -am 或 mvn package &amp;ndash;projects 子项目名 &amp;ndash;also-make
+将父项目和子项目一起进行打包同时构建所需依赖&lt;/p&gt;
+&lt;p&gt;maven 还可以使用org.codehaus.cargo这个插件直接将项目打包部署到远程服务器上&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!-- 配置构建过程 --&amp;gt;
+&amp;lt;build&amp;gt;
+  &amp;lt;finalName&amp;gt;工程名&amp;lt;/finalName&amp;gt;
+  &amp;lt;!-- 插件 --&amp;gt;
+  &amp;lt;plugins&amp;gt;
+    &amp;lt;plugin&amp;gt;
+      &amp;lt;!-- cargo是启动/停止/配置servlet容器插件 --&amp;gt;
+      &amp;lt;groupid&amp;gt;org.codehaus.cargo&amp;lt;/groupid&amp;gt;
+      &amp;lt;artifactId&amp;gt;cargo-maven2-plugin&amp;lt;/artifactId&amp;gt;
+      &amp;lt;version&amp;gt;1.2.3&amp;lt;/version&amp;gt;
+      &amp;lt;configuration&amp;gt;  
+        &amp;lt;container&amp;gt;  
+            &amp;lt;containerId&amp;gt;tomcat7x&amp;lt;/containerId&amp;gt;  
+            &amp;lt;home&amp;gt;/usr/local/devtools/apache-tomcat-7.0.55&amp;lt;/home&amp;gt;  
+        &amp;lt;/container&amp;gt;  
+        &amp;lt;configuration&amp;gt;  
+            &amp;lt;type&amp;gt;existing&amp;lt;/type&amp;gt;  
+            &amp;lt;home&amp;gt;/usr/local/devtools/apache-tomcat-7.0.55&amp;lt;/home&amp;gt;  
+            &amp;lt;properties&amp;gt;  
+                &amp;lt;!-- 更改监听端口 --&amp;gt;  
+                &amp;lt;cargo.servlet.port&amp;gt;8088&amp;lt;/cargo.servlet.port&amp;gt;  
+            &amp;lt;/properties&amp;gt;  
+        &amp;lt;/configuration&amp;gt; 
+      &amp;lt;/configuration&amp;gt;
+      &amp;lt;!-- 配置声明周期阶段 --&amp;gt;
+      &amp;lt;executions&amp;gt;  
+        &amp;lt;execution&amp;gt;  
+            &amp;lt;id&amp;gt;cargo-run&amp;lt;/id&amp;gt;  
+            &amp;lt;!-- 声明周期的阶段 --&amp;gt;
+            &amp;lt;phase&amp;gt;install&amp;lt;/phase&amp;gt;
+            &amp;lt;!-- 插件的目标 --&amp;gt;
+            &amp;lt;goals&amp;gt;  
+                &amp;lt;goal&amp;gt;run&amp;lt;/goal&amp;gt;  
+            &amp;lt;/goals&amp;gt;
+        &amp;lt;/execution&amp;gt;  
+        &amp;lt;execution&amp;gt;  
+            &amp;lt;id&amp;gt;clean-deployer&amp;lt;/id&amp;gt;  
+            &amp;lt;!-- 声明周期的阶段 --&amp;gt;
+            &amp;lt;phase&amp;gt;deploy&amp;lt;/phase&amp;gt;
+            &amp;lt;!-- 插件的目标 --&amp;gt;
+            &amp;lt;goals&amp;gt;  
+                &amp;lt;goal&amp;gt;deployer-undeploy&amp;lt;/goal&amp;gt;  
+            &amp;lt;/goals&amp;gt;  
+        &amp;lt;/execution&amp;gt;    
+      &amp;lt;/executions&amp;gt;  
+    &amp;lt;/plugin&amp;gt;
+  &amp;lt;/plugins&amp;gt;
+&amp;lt;/build&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Goals&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:start&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Start a container.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:run&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Start a container and wait for the user to press CTRL + C to stop.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:stop&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Stop a container.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:restart&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Stop and start again a container. If the container was not running before calling cargo:restart, it will simply be started.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:configure&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Create the configuration for a local container, without starting it. Note that the cargo:start and cargo:run goals will also install the container automatically (but will not call cargo:install).&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:package&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Package the local container.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:daemon-start&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Start a container via the daemon.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:daemon-stop&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Stop a container via the daemon.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:deployer-deploy (aliased to cargo:deploy)&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Deploy a deployable to a running container.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:deployer-undeploy(aliased to cargo:undeploy)&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Undeploy a deployable from a running container.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:deployer-start&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Start a deployable already installed in a running container.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:deployer-stop&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Stop a deployed deployable without undeploying it.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:deployer-redeploy(aliased to cargo:redeploy)&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Undeploy and deploy again a deployable. If the deployable was not deployed before calling cargo:deployer-redeploy (or its alias cargo:redeploy) it will simply be deployed.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:uberwar&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Stop a deployed deployable without undeploying it.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:deployer-stop&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Merge several WAR files into one.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:install&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Installs a container distribution on the file system. Note that the cargo:start goal will also install the container automatically (but will not call cargo:install).&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cargo:help&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Get help (list of available goals, available options, etc.).&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;仓库&#34;&gt;仓库&lt;/h2&gt;
+&lt;h3 id=&#34;本地仓库&#34;&gt;本地仓库&lt;/h3&gt;
+&lt;h3 id=&#34;远程仓库&#34;&gt;远程仓库&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;私服: 搭建在局域网环境中，为局域网范围内的所有Maven工程服务&lt;/li&gt;
+&lt;li&gt;中央仓库: 架设在Internet上，为全世界所有Maven工程服务&lt;/li&gt;
+&lt;li&gt;中央仓库镜像: 架设在各大洲，为中央仓库分担流量。减轻中央仓库的压力，同时更快的响应用户请求&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;settingxml配置文件&#34;&gt;setting.xml配置文件&lt;/h2&gt;
+&lt;h3 id=&#34;配置maven的本地仓库目录&#34;&gt;配置maven的本地仓库目录&lt;/h3&gt;
+&lt;p&gt;localRepository标签&lt;/p&gt;
+&lt;h3 id=&#34;设置默认jdk版本&#34;&gt;设置默认jdk版本&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;profiles&amp;gt;
+    &amp;lt;profile&amp;gt;
+      &amp;lt;id&amp;gt;jdk-1.8&amp;lt;/id&amp;gt;
+      &amp;lt;activation&amp;gt;
+        &amp;lt;activeByDefault&amp;gt;true&amp;lt;/activeByDefault&amp;gt;
+        &amp;lt;jdk&amp;gt;1.8&amp;lt;/jdk&amp;gt;
+      &amp;lt;/activation&amp;gt;
+      &amp;lt;properties&amp;gt;
+        &amp;lt;maven.compiler.source&amp;gt;1.8&amp;lt;/maven.compiler.source&amp;gt;
+        &amp;lt;maven.compiler.target&amp;gt;1.8&amp;lt;/maven.compiler.target&amp;gt;
+        &amp;lt;maven.compiler.compilerVersion&amp;gt;1.8&amp;lt;/maven.compiler.compilerVersion&amp;gt;
+      &amp;lt;/properties&amp;gt;
+    &amp;lt;/profile&amp;gt;
+&amp;lt;/profiles&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

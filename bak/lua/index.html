@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="注释  两个减号是单行注释:
+-- 注释内容   多行注释:
+--[[ 注释内容 注释内容 --]]  数据类型 Lua是动态类型语言，变量不要类型定义,只需要为变量赋值。值可以存储在变量中，作为参数传递或结果返回。
+nil 这个最简单，只有值nil属于该类，表示一个无效值（在条件表达式中相当于false）。
+boolean 包含两个值：false和true。
+number 表示双精度类型的实浮点数
+string 字符串由一对双引号或单引号或[[和]]间的一串字符来表示
+function 由 C 或 Lua 编写的函数
+userdata 表示任意存储在变量中的C数据结构">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/lua/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/bak/lua/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/bak/lua/">
+  <meta property="og:title" content="Lua学习笔记 | 疯狂的厨子">
+  <meta property="og:description" content="注释  两个减号是单行注释:
+-- 注释内容   多行注释:
+--[[ 注释内容 注释内容 --]]  数据类型 Lua是动态类型语言，变量不要类型定义,只需要为变量赋值。值可以存储在变量中，作为参数传递或结果返回。
+nil 这个最简单，只有值nil属于该类，表示一个无效值（在条件表达式中相当于false）。
+boolean 包含两个值：false和true。
+number 表示双精度类型的实浮点数
+string 字符串由一对双引号或单引号或[[和]]间的一串字符来表示
+function 由 C 或 Lua 编写的函数
+userdata 表示任意存储在变量中的C数据结构"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2017-03-28T15:51:07&#43;00:00">
+    
+    <meta property="article:modified_time" content="2017-03-28T15:51:07&#43;00:00">
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Lua学习笔记 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">Lua学习笔记</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#nil">nil</a></li>
+    <li><a href="#boolean">boolean</a></li>
+    <li><a href="#number">number</a></li>
+    <li><a href="#string">string</a></li>
+    <li><a href="#function">function</a></li>
+    <li><a href="#userdata">userdata</a></li>
+    <li><a href="#thread">thread</a></li>
+    <li><a href="#table">table</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#多个变量赋值">多个变量赋值</a></li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Lua学习笔记</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2017-03-28
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <h1 id="注释">注释</h1>
+<p> 两个减号是单行注释:</p>
+<pre><code>-- 注释内容
+</code></pre>
+<p> 多行注释:</p>
+<pre><code>--[[ 
+注释内容
+注释内容
+--]]
+</code></pre>
+<h1 id="数据类型">数据类型</h1>
+<p>Lua是动态类型语言，变量不要类型定义,只需要为变量赋值。值可以存储在变量中，作为参数传递或结果返回。</p>
+<h2 id="nil">nil</h2>
+<p>这个最简单，只有值nil属于该类，表示一个无效值（在条件表达式中相当于false）。</p>
+<h2 id="boolean">boolean</h2>
+<p>包含两个值：false和true。</p>
+<h2 id="number">number</h2>
+<p>表示双精度类型的实浮点数</p>
+<h2 id="string">string</h2>
+<p>字符串由一对双引号或单引号或[[和]]间的一串字符来表示</p>
+<h2 id="function">function</h2>
+<p>由 C 或 Lua 编写的函数</p>
+<h2 id="userdata">userdata</h2>
+<p>表示任意存储在变量中的C数据结构</p>
+<h2 id="thread">thread</h2>
+<p>表示执行的独立线路，用于执行协同程序</p>
+<h2 id="table">table</h2>
+<p>Lua 中的表（table）其实是一个&quot;关联数组&rdquo;（associative arrays），数组的索引可以是数字或者是字符串。在 Lua 里，table 的创建是通过&quot;构造表达式&quot;来完成，最简单构造表达式是{}，用来创建一个空表。
+对 table 的索引使用方括号 []。Lua 也提供了 . 操作。</p>
+<pre><code>t[i]
+t.i                 -- 当索引为字符串类型时的一种简化写法
+gettable_event(t,i) -- 采用索引访问本质上是一个类似这样的函数调用
+
+site[&quot;key&quot;] = &quot;www.w3cschool.cc&quot;
+print(site[&quot;key&quot;])
+print(site.key)
+</code></pre>
+<h1 id="变量">变量</h1>
+<p>Lua 变量有三种类型：全局变量、局部变量、表中的域。Lua 中的变量全是全局变量，那怕是语句块或是函数里，除非用 local 显式声明为局部变量。</p>
+<h1 id="赋值">赋值</h1>
+<h2 id="多个变量赋值">多个变量赋值</h2>
+<p>在对多个变量同时赋值，变量列表和值列表的各个元素用逗号分开，赋值语句右边的值会依次赋给左边的变量。</p>
+<pre><code>a, b = 10, 20
+</code></pre>
+<br/>
+遇到赋值语句Lua会先计算右边所有的值然后再执行赋值操作，所以我们可以这样进行交换变量的值：
+```
+x, y = y, x                     -- swap 'x' for 'y'
+a[i], a[j] = a[j], a[i]         -- swap 'a[i]' for 'a[j]'
+```
+<br/>
+当变量个数和值的个数不一致时，Lua会一直以变量个数为基础采取以下策略：
+a. 变量个数 > 值的个数             按变量个数补足nil
+b. 变量个数 < 值的个数             多余的值会被忽略
+```
+a, b, c = 0, 1
+print(a,b,c)             --> 0   1   nil
+<p>a, b = a+1, b+1, b+2     &ndash; value of b+2 is ignored
+print(a,b)               &ndash;&gt; 1   2</p>
+<p>a, b, c = 0
+print(a,b,c)             &ndash;&gt; 0   nil   nil</p>
+<pre><code># 循环
+
+## while
+</code></pre>
+<p>while(condition)
+do
+statements
+end</p>
+<pre><code>
+## for
+</code></pre>
+<p>for var=exp1,exp2,exp3 do<br>
+&lt;执行体&gt;<br>
+end</p>
+<pre><code>exp1为循环初始值。
+exp2为循环中止条件。
+exp3为步长递增，如果不指定则默认为1。
+三个表达式在循环开始前一次性求值，以后不再进行求值。例如这些表达式都为函数的情况。
+
+Lua有种类似java中的foreach语句，泛型for循环通过一个迭代器函数来遍历所有值。
+</code></pre>
+<p>for i,v in ipairs(a) &ndash; i为元素的下表,v为元素的值,ipairs是Lua提供的一个迭代器函数，用来迭代数组。
+do print(v)
+end</p>
+<pre><code>
+## repeat...until 
+</code></pre>
+<p>repeat
+statements
+until( condition )</p>
+<pre><code>在条件进行判断前循环体都会执行一次。
+如果条件判断语句（condition）为 false，循环会重新开始执行，直到条件判断语句（condition）为 true 才会停止执行。
+
+# 流程控制
+
+## if
+</code></pre>
+<p>if(布尔表达式)
+then
+&ndash;[ 在布尔表达式为 true 时执行的语句 &ndash;]
+end</p>
+<pre><code>Lua认为false和nil为假，true 和非nil为真。要注意的是Lua中 0 为 true。
+
+## if...else
+</code></pre>
+<p>if(布尔表达式)
+then
+&ndash;[ 布尔表达式为 true 时执行该语句块 &ndash;]
+else
+&ndash;[ 布尔表达式为 false 时执行该语句块 &ndash;]
+end</p>
+<pre><code>
+## if...elseif...else
+</code></pre>
+<p>if( 布尔表达式 1)
+then
+&ndash;[ 在布尔表达式 1 为 true 时执行该语句块 &ndash;]</p>
+<p>elseif( 布尔表达式 2)
+then
+&ndash;[ 在布尔表达式 2 为 true 时执行该语句块 &ndash;]</p>
+<p>elseif( 布尔表达式 3)
+then
+&ndash;[ 在布尔表达式 3 为 true 时执行该语句块 &ndash;]
+else
+&ndash;[ 如果以上布尔表达式都不为 true 则执行该语句块 &ndash;]
+end</p>
+<pre><code>
+# 函数
+Lua 编程语言函数定义格式如下：
+</code></pre>
+<p>optional_function_scope function function_name( argument1, argument2, argument3&hellip;, argumentn)
+function_body
+return result_params_comma_separated
+end</p>
+<pre><code>* optional_function_scope: 该参数是可选的制定函数是全局函数还是局部函数，未设置该参数默认为全局函数，如果你需要设置函数为局部函数需要使用关键字 local。
+
+
+* argument1, argument2, argument3..., argumentn:
+函数参数，多个参数以逗号隔开，函数也可以不带参数。
+
+* result_params_comma_separated:
+函数返回值，Lua语言函数可以返回多个值，每个值以逗号隔开。
+
+
+## 可变参数
+Lua函数可以接受可变数目的参数，和C语言类似在函数参数列表中使用三点（...) 表示函数有可变的参数。
+Lua将函数的参数放在一个叫arg的表中，#arg 表示传入参数的个数。
+</code></pre>
+<p>function average(&hellip;)
+result = 0
+local arg={&hellip;}
+for i,v in ipairs(arg) do
+result = result + v
+end
+print(&ldquo;总共传入 &quot; .. #arg .. &quot; 个数&rdquo;)
+return result/#arg
+end</p>
+<p>print(&ldquo;平均值为&rdquo;,average(10,5,3,4,5,6))</p>
+<pre><code>
+# 字符串操作
+* ..
+连接两个字符串
+
+* ＃
+一元运算符，返回字符串或表的长度。
+
+# 模块
+模块是由变量、函数等已知元素组成的 table，类似java的类。
+</code></pre>
+<p>&ndash; 文件名为 module.lua
+&ndash; 定义一个名为 module 的模块
+module = {}</p>
+<p>&ndash; 定义一个常量
+module.constant = &ldquo;这是一个常量&rdquo;</p>
+<p>&ndash; 定义一个函数
+function module.func1()
+io.write(&ldquo;这是一个公有函数！\n&rdquo;)
+end</p>
+<p>local function func2()
+print(&ldquo;这是一个私有函数！&quot;)
+end</p>
+<p>function module.func3()
+func2()
+end</p>
+<p>return module</p>
+<pre><code>
+&lt;br/&gt;
+Lua提供了一个名为require的函数用来加载模块:
+</code></pre>
+<p>require(&ldquo;&lt;模块名&gt;&rdquo;)
+或者
+require &ldquo;&lt;模块名&gt;&rdquo;</p>
+<pre><code>还给加载的模块定义一个别名变量，方便调用: local m = require(&quot;module&quot;)
+
+## 加载机制
+对于自定义的模块，模块文件不是放在哪个文件目录都行，函数 require 有它自己的文件路径加载策略，它会尝试从 Lua 文件或 C 程序库中加载模块。
+当 Lua 启动后，会以环境变量 LUA_PATH 的值来初始环境变量用户加载模块。
+
+
+
+
+
+</code></pre>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/bak/database-design/" rel="prev">数据库设计</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/bak/linux-cpu/" rel="next">linux资源查看</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

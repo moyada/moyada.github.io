@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩短查询时间，常常会考虑做分表设计。分表分两种，一种是纵向分表（将本来可以在同一个表的内容，人为划分存储在为多个不同结构的表）和横向分表（把大的表结构，横向切割为同样结构的不同表）。
+其中，纵向分表常见的方式有根据活跃度分表、根据重要性分表等。其主要解决问题如下：
+表与表之间资源争用问题； 锁争用机率小； 实现核心与非核心的分级存储，如UDB登陆库拆分成一级二级三级库； 解决了数据库同步压力问题。 横向分表是指根据某些特定的规则来划分大数据量表，如根据时间分表。其主要解决问题如下：
+单表过大造成的性能问题； 单表过大造成的单服务器空间问题。
+设计  使用明确、统一的标明和列名，例如 School, SchoolCourse, CourceID。 数据表名使用单数而不是复数，例如 StudentCourse，而不是StudentCourses。 数据表名不要使用空格。 数据表名不要使用不必要的前缀或者后缀，例如使用School，而不是TblSchool，或者SchoolTable等等。 数据库中的密码要加密，到应用中再解密。 （其实就是散列存储、单向加密） 使用整数作为ID字段，也许现在没有这个必要，但是将来需要，例如关联表，索引等等。 使用整数字段做索引，否则会带来很大的性能问题 。 使用 bit 作为布尔字段，使用整数或者varcha是浪费。同时，这类字段应该以“Is”开头。 要经过认证才能访问数据库，不要给每一个用户管理员权限。 尽量避免使用“select *”，而使用“select [required_column_list]”以获得更好的性能。 假如程序代码比较复杂，使用ORM框架，例如hibernate，iBatis。ORM框架的性能问题可以通过详细的配置去解决。 分割不常使用的数据表到不同的物理存储以获得更好的性能。 对于关键数据库，使用安全备份系统，例如集群，同步等等。 使用外键，非空等限制来保证数据的完整性，不要把所有的东西都扔给程序。 缺乏数据库文档是致命的。你应该为你的数据库设计写文档，包括触发器、存储过程和其他脚本。 对于经常使用的查询和大型数据表，要使用索引。数据分析工具可以帮助你决定如何建立索引。 数据库服务器和网页服务器应该放在不同的机器上。这回提高安全性，并减轻CPU压力。 Image和blob字段不应该定义在常用的数据表中，否则会影响性能。 范式（Normalization）要按照要求使用以提高性能。Normalization做的不够会导致数据冗余，而过度Normalization 会导致太多的join和数据表，这两种情况都会影响性能。 多花点时间在数据库设计上，否则你将来会付出加倍的时间来偿还。  索引 少建索引或不建索引。这个问题最突出，建议建表时 DBA 可以一起协助把关。 索引滥用。滥用索引将导致写请求变慢，拖慢整体数据库的响应速度（5.">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/database-design/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/bak/database-design/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/bak/database-design/">
+  <meta property="og:title" content="数据库设计 | 疯狂的厨子">
+  <meta property="og:description" content="分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩短查询时间，常常会考虑做分表设计。分表分两种，一种是纵向分表（将本来可以在同一个表的内容，人为划分存储在为多个不同结构的表）和横向分表（把大的表结构，横向切割为同样结构的不同表）。
+其中，纵向分表常见的方式有根据活跃度分表、根据重要性分表等。其主要解决问题如下：
+表与表之间资源争用问题； 锁争用机率小； 实现核心与非核心的分级存储，如UDB登陆库拆分成一级二级三级库； 解决了数据库同步压力问题。 横向分表是指根据某些特定的规则来划分大数据量表，如根据时间分表。其主要解决问题如下：
+单表过大造成的性能问题； 单表过大造成的单服务器空间问题。
+设计  使用明确、统一的标明和列名，例如 School, SchoolCourse, CourceID。 数据表名使用单数而不是复数，例如 StudentCourse，而不是StudentCourses。 数据表名不要使用空格。 数据表名不要使用不必要的前缀或者后缀，例如使用School，而不是TblSchool，或者SchoolTable等等。 数据库中的密码要加密，到应用中再解密。 （其实就是散列存储、单向加密） 使用整数作为ID字段，也许现在没有这个必要，但是将来需要，例如关联表，索引等等。 使用整数字段做索引，否则会带来很大的性能问题 。 使用 bit 作为布尔字段，使用整数或者varcha是浪费。同时，这类字段应该以“Is”开头。 要经过认证才能访问数据库，不要给每一个用户管理员权限。 尽量避免使用“select *”，而使用“select [required_column_list]”以获得更好的性能。 假如程序代码比较复杂，使用ORM框架，例如hibernate，iBatis。ORM框架的性能问题可以通过详细的配置去解决。 分割不常使用的数据表到不同的物理存储以获得更好的性能。 对于关键数据库，使用安全备份系统，例如集群，同步等等。 使用外键，非空等限制来保证数据的完整性，不要把所有的东西都扔给程序。 缺乏数据库文档是致命的。你应该为你的数据库设计写文档，包括触发器、存储过程和其他脚本。 对于经常使用的查询和大型数据表，要使用索引。数据分析工具可以帮助你决定如何建立索引。 数据库服务器和网页服务器应该放在不同的机器上。这回提高安全性，并减轻CPU压力。 Image和blob字段不应该定义在常用的数据表中，否则会影响性能。 范式（Normalization）要按照要求使用以提高性能。Normalization做的不够会导致数据冗余，而过度Normalization 会导致太多的join和数据表，这两种情况都会影响性能。 多花点时间在数据库设计上，否则你将来会付出加倍的时间来偿还。  索引 少建索引或不建索引。这个问题最突出，建议建表时 DBA 可以一起协助把关。 索引滥用。滥用索引将导致写请求变慢，拖慢整体数据库的响应速度（5."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2017-03-16T18:16:35&#43;00:00">
+    
+    <meta property="article:modified_time" content="2017-03-16T18:16:35&#43;00:00">
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>数据库设计 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">数据库设计</a></li>
+      </ul>
+
+      <nav id="TableOfContents"></nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>数据库设计</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2017-03-16
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <h1 id="分表方法">分表方法</h1>
+<p>在数据库表使用过程中，为了减小数据库服务器的负担、缩短查询时间，常常会考虑做分表设计。分表分两种，一种是纵向分表（将本来可以在同一个表的内容，人为划分存储在为多个不同结构的表）和横向分表（把大的表结构，横向切割为同样结构的不同表）。</p>
+<p>其中，纵向分表常见的方式有根据活跃度分表、根据重要性分表等。其主要解决问题如下：</p>
+<p>表与表之间资源争用问题；
+锁争用机率小；
+实现核心与非核心的分级存储，如UDB登陆库拆分成一级二级三级库；
+解决了数据库同步压力问题。
+横向分表是指根据某些特定的规则来划分大数据量表，如根据时间分表。其主要解决问题如下：</p>
+<p>单表过大造成的性能问题；
+单表过大造成的单服务器空间问题。</p>
+<h1 id="设计">设计</h1>
+<ol>
+<li>使用明确、统一的标明和列名，例如 School, SchoolCourse, CourceID。</li>
+<li>数据表名使用单数而不是复数，例如 StudentCourse，而不是StudentCourses。</li>
+<li>数据表名不要使用空格。</li>
+<li>数据表名不要使用不必要的前缀或者后缀，例如使用School，而不是TblSchool，或者SchoolTable等等。</li>
+<li>数据库中的密码要加密，到应用中再解密。 （其实就是散列存储、单向加密）</li>
+<li>使用整数作为ID字段，也许现在没有这个必要，但是将来需要，例如关联表，索引等等。</li>
+<li>使用整数字段做索引，否则会带来很大的性能问题 。</li>
+<li>使用 bit 作为布尔字段，使用整数或者varcha是浪费。同时，这类字段应该以“Is”开头。</li>
+<li>要经过认证才能访问数据库，不要给每一个用户管理员权限。</li>
+<li>尽量避免使用“select *”，而使用“select [required_column_list]”以获得更好的性能。</li>
+<li>假如程序代码比较复杂，使用ORM框架，例如hibernate，iBatis。ORM框架的性能问题可以通过详细的配置去解决。</li>
+<li>分割不常使用的数据表到不同的物理存储以获得更好的性能。</li>
+<li>对于关键数据库，使用安全备份系统，例如集群，同步等等。</li>
+<li>使用外键，非空等限制来保证数据的完整性，不要把所有的东西都扔给程序。</li>
+<li>缺乏数据库文档是致命的。你应该为你的数据库设计写文档，包括触发器、存储过程和其他脚本。</li>
+<li>对于经常使用的查询和大型数据表，要使用索引。数据分析工具可以帮助你决定如何建立索引。</li>
+<li>数据库服务器和网页服务器应该放在不同的机器上。这回提高安全性，并减轻CPU压力。</li>
+<li>Image和blob字段不应该定义在常用的数据表中，否则会影响性能。</li>
+<li>范式（Normalization）要按照要求使用以提高性能。Normalization做的不够会导致数据冗余，而过度Normalization 会导致太多的join和数据表，这两种情况都会影响性能。</li>
+<li>多花点时间在数据库设计上，否则你将来会付出加倍的时间来偿还。</li>
+</ol>
+<h1 id="索引">索引</h1>
+<p>少建索引或不建索引。这个问题最突出，建议建表时 DBA 可以一起协助把关。
+索引滥用。滥用索引将导致写请求变慢，拖慢整体数据库的响应速度（5.5 以下的 mysql 只能用到一个索引)。
+从不考虑联合索引。实际上联合索引的效率往往要比单列索引的效率更高。
+非最优列选择。低选择性的字段不适合建单列索引，如 status 类型的字段。</p>
+<h1 id="优化">优化</h1>
+<p>字段类型转换导致不用索引，如字符串类型的不用引号，数字类型的用引号等，这有可能会用不到索引导致全表扫描；
+mysql 不支持函数转换，所以字段前面不能加函数，否则这将用不到索引；
+不要在字段前面加减运算；
+字符串比较长的可以考虑索引一部份减少索引文件大小，提高写入效率；
+like % 在前面用不到索引；
+根据联合索引的第二个及以后的字段单独查询用不到索引；
+不要使用 select *；
+排序请尽量使用升序 ;
+or 的查询尽量用 union 代替 （Innodb）；
+复合索引高选择性的字段排在前面；
+order by / group by 字段包括在索引当中减少排序，效率会更高。
+除了上述索引使用规则外，SQL 编写时还需要特别注意一下几点：</p>
+<p>尽量规避大事务的 SQL，大事务的 SQL 会影响数据库的并发性能及主从同步；
+分页语句 limit 的问题；
+删除表所有记录请用 truncate，不要用 delete；
+不让 mysql 干多余的事情，如计算；
+输写 SQL 带字段，以防止后面表变更带来的问题，性能也是比较优的 ( 涉及到数据字典解析，请自行查询资料)；
+在 Innodb上用 select count(*)，因为 Innodb 会存储统计信息；
+慎用 Oder by rand()。</p>
+<h1 id="分析诊断工具">分析诊断工具</h1>
+<p>mysqldumpslow
+mysql profile
+mysql explain</p>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/bak/scala/" rel="prev">scala学习笔记</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/bak/lua/" rel="next">Lua学习笔记</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

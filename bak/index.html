@@ -236,7 +236,7 @@
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2018-07-07T13:44:21&#43;00:00">
+    <meta property="og:updated_time" content="2018-11-16T11:33:50&#43;00:00">
   
 
   
@@ -486,6 +486,52 @@
     
     
     <div>
+      <h2><a href="/bak/docker/" >初识 Docker</a></h2>
+      <div class="article-style">
+        
+          随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴起，很好的解决了 应用程序 与 运行环境 的不一致问题。
+在 Docker 的管理里，应用程序时以容器的方式运行的，一个容器其实就是一个进程，通过 Namespaces 限制进程所能查看到的信息，并且使用 CGroups 限制进程所能使用的资源，挂载 rootfs 配置容器的可操作的数据，使用指定网络模型进行容器间通信。
+Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行步骤等一系列正常发布流程，通过 docker build path 命令将操作打包成一个 Image 镜像 (可在 Dockerfile 同目录下增加 .
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/bak/performance/" >性能分析</a></h2>
+      <div class="article-style">
+        
+          cpu相关 uptime 查看系统平均负载状态，以 cpu 个数为标准，通过 cat /proc/cpuinfo | grep 'physical id' | sort | uniq | wc -l 可获取 cpu 个数，如果负载过高则可根据 cpu 使用率判断是由于存在大量 cpu 调用还是 I/O 中断。
+top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行排序，H 切换为线程模式，top -Hp  查看进程内线程情况。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/bak/multi-thread/" >上下文切换</a></h2>
+      <div class="article-style">
+        
+          发生上下文切换的原因有很多，比如 时间片耗尽 任务抢占 主动挂起 硬件中断 IO阻塞 锁机制
+在CPU对进程、线程进行上下文切换时，系统需要将当前寄存器内数据保存，也就是所谓的保存现场，当再次获取时间片运行时进行置换。
+这种开销需要操作系统进行资源管理和线程协调，当大频率发生上下文切换时，会造成很大的性能损耗。
+并且，并发环境下的程序处理是十分复杂，当处于共享资源时，需要考虑线程的执行顺序和数据的一致性。
+所以，在设计程序时，需要考虑合理的并发数设置，不使cpu大部分时间空闲，也不能产生大量上下文切换。
+设置线程数公式为 (线程等待时间 / cpu执行线程时间 + 1) * cpu核心数目
+如果是高并发程序和执行时间长的计算密集程序，应尽量使得并发数和cpu核心数一致。
+如果是IO密集型程序，cpu执行时间短，则可以加大并发数设置。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
       <h2><a href="/bak/cap-base/" >CAP定理和BASE理论</a></h2>
       <div class="article-style">
         
@@ -495,6 +541,100 @@ CAP 定理 CAP 定理是分布式计算领域公认的理论，所关心的是�
 一致性 (Consistence) 要求各节点之间读取的数据一致，必须保证 client 能够查看到所写的数据变化，即 读己之所写。
  由于节点之间数据同步存在时差，并不强要求同一时刻数据的 强一致性，但需保证 最终一致性。
  可用性 (Availability) 即为非故障节点能够返回合理的数据，不能是错误或者超时。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/bak/service-safety/" >服务器安全</a></h2>
+      <div class="article-style">
+        
+          服务器开放端口限制，可增加端口转发，防止ip暴露。例如只开放80端口，全部输入escape
+  生产机不能主动连接外网，作为生产机，开放22+key pair，并对端口严密监控
+  开发人员用VPN/SSH Tunnel 访问生产机
+  重要服务器单独部署
+  DDoS流量清洗，防C段攻击，使用稳定版本linux，注意kernel、openssl的0day漏洞
+  端口监控，异常流量，异常访问
+  服务器进行权限划分，细分权限，增强内网安放
+  把密码放生产机本地，除了root，一概不准读
+  密码应该放到Vault里管理
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/bak/linux-cpu/" >linux资源查看</a></h2>
+      <div class="article-style">
+        
+          cpu top 是基本的系统监控命令，可以查看到当前系统的总cpu，内存，负载情况，以及各个进程的情况。 在多核cpu的系统中可以按1切换每个逻辑cpu的情况。
+vmstat 是一种低开销的系统性能观察方式，并且还能够查看到cpu队列(r)、io阻塞(b)、中断被处理数目(in)、上下文切换数目(cs)
+dstat dstat是实时地监控所有系统资源 常见选项 -l ：显示负载统计量 -m ：显示内存使用率（包括used，buffer，cache，free值） -r ：显示I/O统计 -s ：显示交换分区使用情况 -t ：将当前时间显示在第一行 –fs ：显示文件系统统计数据（包括文件总数量和inodes值） –nocolor ：不显示颜色（有时候有用） –socket ：显示网络统计数据 –tcp ：显示常用的TCP统计 –udp ：显示监听的UDP接口及其当前用量的一些动态数据 –output file [-cdn]：输出监控情况为文件保存，可用-cdn设置保存csv
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/bak/lua/" >Lua学习笔记</a></h2>
+      <div class="article-style">
+        
+          注释  两个减号是单行注释:
+-- 注释内容   多行注释:
+--[[ 注释内容 注释内容 --]]  数据类型 Lua是动态类型语言，变量不要类型定义,只需要为变量赋值。值可以存储在变量中，作为参数传递或结果返回。
+nil 这个最简单，只有值nil属于该类，表示一个无效值（在条件表达式中相当于false）。
+boolean 包含两个值：false和true。
+number 表示双精度类型的实浮点数
+string 字符串由一对双引号或单引号或[[和]]间的一串字符来表示
+function 由 C 或 Lua 编写的函数
+userdata 表示任意存储在变量中的C数据结构
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/bak/database-design/" >数据库设计</a></h2>
+      <div class="article-style">
+        
+          分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩短查询时间，常常会考虑做分表设计。分表分两种，一种是纵向分表（将本来可以在同一个表的内容，人为划分存储在为多个不同结构的表）和横向分表（把大的表结构，横向切割为同样结构的不同表）。
+其中，纵向分表常见的方式有根据活跃度分表、根据重要性分表等。其主要解决问题如下：
+表与表之间资源争用问题； 锁争用机率小； 实现核心与非核心的分级存储，如UDB登陆库拆分成一级二级三级库； 解决了数据库同步压力问题。 横向分表是指根据某些特定的规则来划分大数据量表，如根据时间分表。其主要解决问题如下：
+单表过大造成的性能问题； 单表过大造成的单服务器空间问题。
+设计  使用明确、统一的标明和列名，例如 School, SchoolCourse, CourceID。 数据表名使用单数而不是复数，例如 StudentCourse，而不是StudentCourses。 数据表名不要使用空格。 数据表名不要使用不必要的前缀或者后缀，例如使用School，而不是TblSchool，或者SchoolTable等等。 数据库中的密码要加密，到应用中再解密。 （其实就是散列存储、单向加密） 使用整数作为ID字段，也许现在没有这个必要，但是将来需要，例如关联表，索引等等。 使用整数字段做索引，否则会带来很大的性能问题 。 使用 bit 作为布尔字段，使用整数或者varcha是浪费。同时，这类字段应该以“Is”开头。 要经过认证才能访问数据库，不要给每一个用户管理员权限。 尽量避免使用“select *”，而使用“select [required_column_list]”以获得更好的性能。 假如程序代码比较复杂，使用ORM框架，例如hibernate，iBatis。ORM框架的性能问题可以通过详细的配置去解决。 分割不常使用的数据表到不同的物理存储以获得更好的性能。 对于关键数据库，使用安全备份系统，例如集群，同步等等。 使用外键，非空等限制来保证数据的完整性，不要把所有的东西都扔给程序。 缺乏数据库文档是致命的。你应该为你的数据库设计写文档，包括触发器、存储过程和其他脚本。 对于经常使用的查询和大型数据表，要使用索引。数据分析工具可以帮助你决定如何建立索引。 数据库服务器和网页服务器应该放在不同的机器上。这回提高安全性，并减轻CPU压力。 Image和blob字段不应该定义在常用的数据表中，否则会影响性能。 范式（Normalization）要按照要求使用以提高性能。Normalization做的不够会导致数据冗余，而过度Normalization 会导致太多的join和数据表，这两种情况都会影响性能。 多花点时间在数据库设计上，否则你将来会付出加倍的时间来偿还。  索引 少建索引或不建索引。这个问题最突出，建议建表时 DBA 可以一起协助把关。 索引滥用。滥用索引将导致写请求变慢，拖慢整体数据库的响应速度（5.
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/bak/scala/" >scala学习笔记</a></h2>
+      <div class="article-style">
+        
+          数据类型    数据类型 描述     Byte 8位有符号补码整数   Short 16位有符号补码整数   Int 32位有符号补码整数   Long 64位有符号补码整数   Float 32位IEEE754单精度浮点数   Double 64位IEEE754单精度浮点数   Char 16位无符号Unicode字符, 区间值为 U+0000 到 U+FFFF   String 字符序列   Boolean true或false   Unit 表示无值，和其他语言中void等同。   Null null 或空引用   Nothing Nothing类型在Scala的类层级的最低端；它是任何其他类型的子类型。   Any Any是所有其他类的超类   AnyRef AnyRef类是Scala里所有引用类(reference class)的基类    scala中变量类型可由编译器的类型推断来确定，也可以显示声明数据类型，如下形式即可
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/bak/collection/" >收藏</a></h2>
+      <div class="article-style">
+        
+          博客   计算机书籍控  开源文档  程序猿DD - Spring Boot教程与Spring Cloud教程  老高的技术博客  阿里中间件团队博客  ELK 大数据  猿天地  Java工程师成神之路 http://blog.csdn.net/dengsilinming/article/list/1   分布式 Hystrix  https://my.oschina.net/yangshaokai/blog/674685  Spring Cloud与Dubbo  http://blog.
         
       </div>
     </div>

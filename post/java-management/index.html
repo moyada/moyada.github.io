@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="JMX 的全称为 Java Management Extensions，是一种监控、管理正在运行的 Java 应用程序的机制，并且支持开发人员自定义 MBean 监视器。
+常用 MXBean 通过查询 java.lang.management.PlatformManagedObject 的继承接口能够得知当前 JDK 版本提供的所有 MXBean。
+   类名 功能     java.lang.management.CompilationMXBean 编译器的管理接口   java.">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/java-management/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/post/java-management/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/post/java-management/">
+  <meta property="og:title" content="JMX 简介 | 疯狂的厨子">
+  <meta property="og:description" content="JMX 的全称为 Java Management Extensions，是一种监控、管理正在运行的 Java 应用程序的机制，并且支持开发人员自定义 MBean 监视器。
+常用 MXBean 通过查询 java.lang.management.PlatformManagedObject 的继承接口能够得知当前 JDK 版本提供的所有 MXBean。
+   类名 功能     java.lang.management.CompilationMXBean 编译器的管理接口   java."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2018-12-16T14:11:44&#43;00:00">
+    
+    <meta property="article:modified_time" content="2018-12-16T14:11:44&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://moyada.github.io/post/java-management/"
+  },
+  "headline": "JMX 简介",
+  
+  "datePublished": "2018-12-16T14:11:44Z",
+  "dateModified": "2018-12-16T14:11:44Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "薛毅康"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "疯狂的厨子",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "JMX 的全称为 Java Management Extensions，是一种监控、管理正在运行的 Java 应用程序的机制，并且支持开发人员自定义 MBean 监视器。\n常用 MXBean 通过查询 java.lang.management.PlatformManagedObject 的继承接口能够得知当前 JDK 版本提供的所有 MXBean。\n   类名 功能     java.lang.management.CompilationMXBean 编译器的管理接口   java."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>JMX 简介 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">JMX 简介</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#常用-mxbean">常用 MXBean</a></li>
+    <li><a href="#管理方式">管理方式</a>
+      <ul>
+        <li><a href="#本地">本地</a></li>
+        <li><a href="#远程">远程</a></li>
+        <li><a href="#代理">代理</a></li>
+      </ul>
+    </li>
+    <li><a href="#注册方式">注册方式</a>
+      <ul>
+        <li><a href="#自定义-mbean">自定义 MBean</a></li>
+        <li><a href="#注册">注册</a></li>
+        <li><a href="#开放端口">开放端口</a></li>
+        <li><a href="#安全">安全</a></li>
+        <li><a href="#监听">监听</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>JMX 简介</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2018-12-16
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    3 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/jvm/">JVM</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <p>JMX 的全称为 Java Management Extensions，是一种监控、管理正在运行的 Java 应用程序的机制，并且支持开发人员自定义 MBean 监视器。</p>
+<h2 id="常用-mxbean">常用 MXBean</h2>
+<p>通过查询 <code>java.lang.management.PlatformManagedObject</code> 的继承接口能够得知当前 JDK 版本提供的所有 MXBean。</p>
+<table>
+<thead>
+<tr>
+<th>类名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>java.lang.management.CompilationMXBean</td>
+<td>编译器的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.ClassLoadingMXBean</td>
+<td>类加载模块的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.BufferPoolMXBean</td>
+<td>堆外内存和映射内存的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.MemoryManagerMXBean</td>
+<td>内存管理器的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.MemoryMXBean</td>
+<td>虚拟机的内存系统的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.MemoryPoolMXBean</td>
+<td>内存池的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.OperatingSystemMXBean</td>
+<td>操作系统的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.GarbageCollectorMXBean</td>
+<td>垃圾回收的管理接口，继承至 <code>MemoryManagerMXBean</code></td>
+</tr>
+<tr>
+<td>java.lang.management.RuntimeMXBean</td>
+<td>虚拟机的运行时系统的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.ThreadMXBean</td>
+<td>线程的管理接口</td>
+</tr>
+<tr>
+<td>java.lang.management.PlatformLoggingMXBean</td>
+<td>日志模块的管理接口</td>
+</tr>
+<tr>
+<td>javax.management.DynamicMBean</td>
+<td>扩展管理接口，用于自定义管理器</td>
+</tr>
+</tbody>
+</table>
+<p>在 <code>com.sun.management</code> 包下，还提供了部分 MXBean 的扩展接口，对原来管理器的功能进行了增强。</p>
+<h2 id="管理方式">管理方式</h2>
+<p>监视器的获取方式分为 <code>本地</code>、<code>远程</code>、<code>代理</code>，通常情况下使用远程方式进行管理。</p>
+<h3 id="本地">本地</h3>
+<p>对于运行在本机的程序直接使用 <code>java.lang.ManagementFactory</code> 的静态方法便可以获取。</p>
+<h3 id="远程">远程</h3>
+<p>远程模式可以通过建立与其他虚拟机的连接后对其进行操作。</p>
+<ol>
+<li>建立连接</li>
+</ol>
+<pre><code>String url = &quot;service:jmx:rmi:///jndi/rmi://&quot; + host + &quot;:&quot;+ port + &quot;/&quot; + extend;
+JMXServiceURL serviceURL = new JMXServiceURL(url);
+JMXConnector conn = JMXConnectorFactory.connect(serviceURL);
+MBeanServerConnection connection;
+try {
+    connection = conn.getMBeanServerConnection();
+} catch(IOException e) {
+	e.printStackTrace();
+}
+</code></pre>
+<ol start="2">
+<li>监听管理</li>
+</ol>
+<pre><code>MemoryMXBean memBean = ManagementFactory.getPlatformMXBean(connection, MemoryMXBean.class);
+</code></pre>
+<h3 id="代理">代理</h3>
+<p>由于 Mbean 在注册的时候有 ObjectName 的存在，对于自定义 MBean 则必须使用此方式指定 ObjectName 方可获取。</p>
+<pre><code>MemoryMXBean memBean = ManagementFactory.newPlatformMXBeanProxy(connection, ManagementFactory.MEMORY_MXBEAN_NAME, MemoryMXBean.class);
+
+// 指定 MBean 的特定属性值
+ObjectName objectName = new ObjectName(&quot;domain:type=name&quot;);
+// 对应 getUser 或者 setUser 操作
+connection.setAttribute(objectName, new Attribute(&quot;User&quot;,&quot;remote&quot;));
+DynamicMBean dynamicMBean = MBeanServerInvocationHandler.newProxyInstance(connection, objectName, DynamicMBean.class, true);
+</code></pre>
+<h2 id="注册方式">注册方式</h2>
+<h3 id="自定义-mbean">自定义 MBean</h3>
+<p>Java 规范对注册的 MBean 的命名有严格的规范，要求必须是以 MBean 结尾的接口 (MXBean 也行，不过为了与 JDK 的区分，一般使用 MBean)。</p>
+<p>注册的方法也是有标准的，以 <code>set</code> 或 <code>get</code> 开头并且参数规范的方法将会被隐藏，对于参数只支持 基本类型、数组、void。隐藏的方法可以通过 <code>属性</code> 来访问，属性将由 JDK 解析方法名生成。</p>
+<p>为了方便 <code>ManagementFactory</code> 调用，可以使用提供的 <code>DynamicMBean</code> 接口进行实现，或者使用更简便的 <code>com.sun.jmx.mbeanserver.StandardMBeanSupport</code> 进行构建。</p>
+<h3 id="注册">注册</h3>
+<p>MBean 的注册管理是通过 <code>javax.management.MBeanServer</code> 来进行的，并且指定名称 <code>javax.management.ObjectName</code>。</p>
+<pre><code>StandardMBeanSupport mbean = new StandardMBeanSupport(new Object(), Interface.class);
+MBeanServer beanServer = ManagementFactory.getPlatformMBeanServer();
+
+try {
+    final ObjectName objectName;
+    try {
+        objectName = ObjectName.getInstance(&quot;domain:type=name&quot;);
+    } catch (MalformedObjectNameException e) {
+        e.printStackTrace();
+        return;
+    }
+
+    // 跳过 ManagementPermission 的权限校验
+    AccessController.doPrivileged(new PrivilegedExceptionAction&lt;Void&gt;() {
+        public Void run() throws MBeanRegistrationException, NotCompliantMBeanException {
+            try {
+                if (beanServer.isRegistered(objectName)) {
+                    beanServer.unregisterMBean(objectName); 
+                }
+                beanServer.registerMBean(mbean, objectName);
+                return null;
+            } catch (InstanceAlreadyExistsException | InstanceNotFoundException var2) {
+                return null;
+            }
+        }
+    });
+} catch (PrivilegedActionException e) {
+    e.printStackTrace();
+}
+
+</code></pre>
+<h3 id="开放端口">开放端口</h3>
+<p>当需要通过远程进行 Java 应用管理时，就需要通过提供端口以供访问了，通过先前的 MBeanServer 构建 JMX 连接。</p>
+<pre><code>try {
+    LocateRegistry.createRegistry(port);
+} catch (RemoteException e) {
+    return;
+}
+
+try {
+    JMXServiceURL url = new JMXServiceURL(&quot;service:jmx:rmi:///jndi/rmi://127.0.0.1:&quot; + port + &quot;/&quot; + extend);
+    JMXConnectorServer cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, beanServer);
+    cs.start();
+} catch (IOException e) {
+    e.printStackTrace();
+}
+</code></pre>
+<h3 id="安全">安全</h3>
+<p>对远程开放端口可设置 SSL、权限校验，只需对 JMXConnectorServer 增加配置选项即可</p>
+<pre><code>Map&lt;String, Object&gt; env = new HashMap&lt;String, Object&gt;();
+// 对 env 增加配置
+...
+
+JMXConnectorServer cs = JMXConnectorServerFactory.newJMXConnectorServer(url, env, mbs);
+cs.start(); 
+</code></pre>
+<h4 id="开启-ssl-连接">开启 SSL 连接</h4>
+<pre><code>// Server
+env.put(RMIConnectorServer.RMI_CLIENT_SOCKET_FACTORY_ATTRIBUTE, new SslRMIClientSocketFactory()); 
+env.put(RMIConnectorServer.RMI_SERVER_SOCKET_FACTORY_ATTRIBUTE, new SslRMIServerSocketFactory(); 
+</code></pre>
+<h4 id="设置权限认证">设置权限认证</h4>
+<pre><code>// Server
+SimpleAuthenticator auth = new SimpleAuthenticator();
+evn.put(JMXConnectorServer.AUTHENTICATOR, auth);
+env.put(&quot;jmx.remote.sasl.callback.handler&quot;, new CallbackHandler() {...}); 
+
+
+class SimpleAuthenticator implements JMXAuthenticator {
+
+    private final Map&lt;String, Auth&gt; authRole;
+
+    public SimpleAuthenticator() {
+        authRole = new HashMap&lt;&gt;();
+    }
+
+    public boolean addAuth(String username, String password) {
+        return addAuth(username, password, true);
+    }
+
+    public boolean addAuth(String username, String password, boolean readOnly) {
+        if (authRole.containsKey(username)) {
+            return false;
+        }
+        authRole.put(username, new Auth(password, readOnly));
+        return true;
+    }
+
+    public boolean removeAuth(String username) {
+        return authRole.remove(username) != null;
+    }
+
+    @Override
+    public Subject authenticate(Object credentials) {
+        if (!(credentials instanceof String[])) {
+            throw new SecurityException(&quot;Authentication failed!&quot;);
+        }
+        String[] credentialsInfo = (String[]) credentials;
+        if (credentialsInfo.length != 2) {
+            throw new SecurityException(&quot;Authentication failed!&quot;);
+        }
+        String userName = credentialsInfo[0];
+        Auth auth = authRole.get(userName);
+        if (auth == null) {
+            throw new SecurityException(&quot;Invalid Authentication!&quot;);
+        }
+        String password = credentialsInfo[1];
+        if (auth.password.equals(password)) {
+            return new Subject(auth.readOnly, Collections.singleton(new JMXPrincipal(userName)), 
+                Collections.EMPTY_SET, Collections.EMPTY_SET);
+        }
+        throw new SecurityException(&quot;Invalid Authentication!&quot;);
+    }
+
+    class Auth {
+        String password;
+        boolean readOnly;
+
+        Auth(String password, boolean readOnly) {
+            this.password = password;
+            this.readOnly = readOnly;
+        }
+    }
+}
+</code></pre>
+<pre><code>// Client
+String[] credentials = new String[] { &quot;username&quot; , &quot;password&quot; }; 
+env.put(JMXConnectorServer.AUTHENTICATOR, credentials);
+env.put(&quot;jmx.remote.sasl.callback.handler&quot;, new CallbackHandler() {...}); 
+JMXConnector conn = JMXConnectorFactory.connect(serviceURL, env);
+
+</code></pre>
+<h4 id="协议扩展">协议扩展</h4>
+<pre><code>// Server
+Security.addProvider(new com.sun.security.sasl.Provider());
+env.put(&quot;jmx.remote.profiles&quot;, &quot;TLS SASL/PLAIN&quot;); 
+env.put(&quot;jmx.remote.x.access.file&quot;, &quot;config&quot; + File.separator + &quot;access.properties&quot;); 
+
+JMXServiceURL url = new JMXServiceURL(&quot;jmxmp&quot;, null, 5555); 
+JMXConnectorServer cs = JMXConnectorServerFactory.newJMXConnectorServer(url, env, beanServer); 
+cs.start(); 
+</code></pre>
+<pre><code>// Client
+Security.addProvider(new com.sun.security.sasl.Provider());
+env.put(&quot;jmx.remote.profiles&quot;, &quot;TLS SASL/PLAIN&quot;); 
+JMXServiceURL url = new JMXServiceURL(&quot;jmxmp&quot;, null, port); 
+JMXConnector jmxc = JMXConnectorFactory.connect(url, env); 
+</code></pre>
+<blockquote>
+<p>详细步骤可见: <a href="https://docs.oracle.com/cd/E19698-01/816-7609/6mdjrf86r/index.html">https://docs.oracle.com/cd/E19698-01/816-7609/6mdjrf86r/index.html</a></p>
+</blockquote>
+<h3 id="监听">监听</h3>
+<p>主要用于 JMX 连接状态和 MXBean 调用的监听。</p>
+<p>通过实现 <code>javax.management.NotificationListener</code> 创建监听处理器，加入到 <code>NotificationBroadcaster</code> 的实现类下。</p>
+<pre><code>jmxConnector.addNotificationListener((notification, handback) -&gt; {...}, null, handback);
+</code></pre>
+<p>如果需要自定义监听广播可以继承 <code>NotificationBroadcasterSupport</code> 或 <code>NotificationEmitterSupport</code>，其内部已经实现了 addNotificationListener、removeNotificationListener 方法。</p>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+<section id="comments">
+  
+</section>
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/card-table/" rel="prev">跨代引用</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/maven-central/" rel="next">发布 jar 包至 maven 官方中央仓库</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

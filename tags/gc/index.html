@@ -232,11 +232,11 @@
   
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/tags/gc/">
-  <meta property="og:title" content="gc | 疯狂的厨子">
+  <meta property="og:title" content="GC | 疯狂的厨子">
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2018-07-15T12:06:05&#43;00:00">
+    <meta property="og:updated_time" content="2019-08-04T13:30:02&#43;00:00">
   
 
   
@@ -253,7 +253,7 @@
 
 
 
-  <title>gc | 疯狂的厨子</title>
+  <title>GC | 疯狂的厨子</title>
 
 </head>
 
@@ -468,7 +468,7 @@
     
   
 <div class="universal-wrapper pt-3">
-  <h1>gc</h1>
+  <h1>GC</h1>
 
   
 
@@ -481,6 +481,35 @@
   
 
   
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/shenandoah-gc/" >Shenandoah GC 介绍</a></h2>
+      <div class="article-style">
+        
+          介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时为了使大容量内存应用在垃圾回收时只进行短暂的应用暂停，使用 -XX:+UseShenandoahGC 开启。
+它能够在垃圾回收周期中进行 并发整理 和 并发更新，不暂停应用线程，并将垃圾回收分解为多个阶段，来达到极短的暂停时间，同时不会随着堆内存大小而影响。
+ 参考资料: https://wiki.openjdk.java.net/display/shenandoah/Main https://www.youtube.com/watch?v=VCeHkcwfF9Q https://www.youtube.com/watch?v=E1M3hNlhQCg https://www.researchgate.net/publication/306112816_Shenandoah_An_open-source_concurrent_compacting_garbage_collector_for_OpenJDK https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/ https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/
+ 特性 并发复制 Shenandoah GC 是如何做到并发复制的呢？这主要是利用了 读屏障 和 Brooks Pointers。
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div>
+      <h2><a href="/post/zgc/" >ZGC 介绍</a></h2>
+      <div class="article-style">
+        
+          什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:+UseZGC 开启，目前仅支持 Linux x86 64位的系统。
+ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 10毫秒 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。
+ 参考资料: https://openjdk.
+        
+      </div>
+    </div>
   
     
     

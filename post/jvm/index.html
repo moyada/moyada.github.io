@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="薛毅康">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。 另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。
+ https://www.youtube.com/watch?v=ZBJ0u9MaKtM
+ 类加载机制 Java虚拟机的类加载有加载 (load)、链接 (link)、初始化 (initialize) 三个步骤
+当一个类被实例化时或者类中静态方法被调用时将进行类加载
+加载 将不同的类数据源以字节码的形式加载到内存中以供类加载器使用，数据的来源可以是 jar 包、class 类、网络数据，一个类数据有且只有一个存在于一个类加载器中。
+正常的类加载是以双亲委任机制，不同的类加载器是以继承的方式链接的，当通过某个类加载器加载一个类数据时，当这个类加载器存在父类加载器时，那么它会先从父类加载器中寻找类数据，不存在再在自身中寻找，并且父类也是遵循这个机制。
+ Tomcat的类加载器重写了这个加载机制，会优先在自身中查找，这跟Tomcat所加载类的所在位置有关。
+ 链接 链接包含了验证、准备、解析三个步骤">
+
+  
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/jvm/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=STHeiti%7CLato:400,700%7CMerriweather%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://moyada.github.io/post/jvm/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:url" content="https://moyada.github.io/post/jvm/">
+  <meta property="og:title" content="Java 虚拟机总结 | 疯狂的厨子">
+  <meta property="og:description" content="JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。 另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。
+ https://www.youtube.com/watch?v=ZBJ0u9MaKtM
+ 类加载机制 Java虚拟机的类加载有加载 (load)、链接 (link)、初始化 (initialize) 三个步骤
+当一个类被实例化时或者类中静态方法被调用时将进行类加载
+加载 将不同的类数据源以字节码的形式加载到内存中以供类加载器使用，数据的来源可以是 jar 包、class 类、网络数据，一个类数据有且只有一个存在于一个类加载器中。
+正常的类加载是以双亲委任机制，不同的类加载器是以继承的方式链接的，当通过某个类加载器加载一个类数据时，当这个类加载器存在父类加载器时，那么它会先从父类加载器中寻找类数据，不存在再在自身中寻找，并且父类也是遵循这个机制。
+ Tomcat的类加载器重写了这个加载机制，会优先在自身中查找，这跟Tomcat所加载类的所在位置有关。
+ 链接 链接包含了验证、准备、解析三个步骤"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
+  
+    
+      <meta property="article:published_time" content="2018-05-19T19:15:57&#43;00:00">
+    
+    <meta property="article:modified_time" content="2018-05-19T19:15:57&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://moyada.github.io/post/jvm/"
+  },
+  "headline": "Java 虚拟机总结",
+  
+  "datePublished": "2018-05-19T19:15:57Z",
+  "dateModified": "2018-05-19T19:15:57Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "薛毅康"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "疯狂的厨子",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。 另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。\n https://www.youtube.com/watch?v=ZBJ0u9MaKtM\n 类加载机制 Java虚拟机的类加载有加载 (load)、链接 (link)、初始化 (initialize) 三个步骤\n当一个类被实例化时或者类中静态方法被调用时将进行类加载\n加载 将不同的类数据源以字节码的形式加载到内存中以供类加载器使用，数据的来源可以是 jar 包、class 类、网络数据，一个类数据有且只有一个存在于一个类加载器中。\n正常的类加载是以双亲委任机制，不同的类加载器是以继承的方式链接的，当通过某个类加载器加载一个类数据时，当这个类加载器存在父类加载器时，那么它会先从父类加载器中寻找类数据，不存在再在自身中寻找，并且父类也是遵循这个机制。\n Tomcat的类加载器重写了这个加载机制，会优先在自身中查找，这跟Tomcat所加载类的所在位置有关。\n 链接 链接包含了验证、准备、解析三个步骤"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Java 虚拟机总结 | 疯狂的厨子</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>搜索</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="搜索..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="切换导航">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">疯狂的厨子</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-center" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>主页</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link  active" href="/post"><span>文章</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/categories"><span>分类</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-xl-2 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">Java 虚拟机总结</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#jvmjava虚拟机">JVM(Java虚拟机)</a></li>
+    <li><a href="#类加载机制">类加载机制</a>
+      <ul>
+        <li><a href="#加载">加载</a></li>
+        <li><a href="#链接">链接</a></li>
+        <li><a href="#初始化">初始化</a></li>
+        <li><a href="#异常">异常</a></li>
+      </ul>
+    </li>
+    <li><a href="#运行时数据区域">运行时数据区域</a>
+      <ul>
+        <li><a href="#线程隔离的指令区">线程隔离的(指令区)</a></li>
+        <li><a href="#线程共享的数据区">线程共享的(数据区)</a></li>
+        <li><a href="#内存溢出">内存溢出</a></li>
+      </ul>
+    </li>
+    <li><a href="#执行引擎">执行引擎</a>
+      <ul>
+        <li><a href="#解释器-interpreter">解释器 (Interpreter)</a></li>
+        <li><a href="#分析器-hotspot-profiler">分析器 (Hotspot profiler)</a></li>
+        <li><a href="#jit-即时编译器">JIT (即时编译器)</a></li>
+      </ul>
+    </li>
+    <li><a href="#gc垃圾收集器策略">GC(垃圾收集器)策略</a>
+      <ul>
+        <li><a href="#serial">Serial</a></li>
+        <li><a href="#parallel">Parallel</a></li>
+        <li><a href="#cmsconcurrent-mark-sweep">CMS(Concurrent Mark Sweep)</a></li>
+        <li><a href="#g1garbage-first">G1(Garbage-First)</a></li>
+        <li><a href="#zgc">ZGC</a></li>
+      </ul>
+    </li>
+    <li><a href="#内存模型jmm">内存模型(JMM)</a>
+      <ul>
+        <li><a href="#年轻代">年轻代</a></li>
+        <li><a href="#老年代">老年代</a></li>
+        <li><a href="#永久代">永久代</a></li>
+        <li><a href="#tlab">TLAB</a></li>
+        <li><a href="#plab">PLAB</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-1 col-xl-1">
+    </div>
+
+    <main class="col-12 col-md-8 col-xl-8 py-md-6 pl-md-7 docs-content" role="main">
+	<article class="article">
+
+	  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Java 虚拟机总结</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2018-05-19
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/jvm/">JVM</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+	  <div class="article-container">
+
+	    <div class="article-style">
+	      <h2 id="jvmjava虚拟机">JVM(Java虚拟机)</h2>
+<p>JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。
+另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。</p>
+<blockquote>
+<p><a href="https://www.youtube.com/watch?v=ZBJ0u9MaKtM">https://www.youtube.com/watch?v=ZBJ0u9MaKtM</a></p>
+</blockquote>
+<h2 id="类加载机制">类加载机制</h2>
+<p>Java虚拟机的类加载有加载 (load)、链接 (link)、初始化 (initialize) 三个步骤</p>
+<p>当一个类被实例化时或者类中静态方法被调用时将进行类加载</p>
+<h3 id="加载">加载</h3>
+<p>将不同的类数据源以字节码的形式加载到内存中以供类加载器使用，数据的来源可以是 jar 包、class 类、网络数据，一个类数据有且只有一个存在于一个类加载器中。</p>
+<p>正常的类加载是以双亲委任机制，不同的类加载器是以继承的方式链接的，当通过某个类加载器加载一个类数据时，当这个类加载器存在父类加载器时，那么它会先从父类加载器中寻找类数据，不存在再在自身中寻找，并且父类也是遵循这个机制。</p>
+<blockquote>
+<p>Tomcat的类加载器重写了这个加载机制，会优先在自身中查找，这跟Tomcat所加载类的所在位置有关。</p>
+</blockquote>
+<h3 id="链接">链接</h3>
+<p>链接包含了验证、准备、解析三个步骤</p>
+<ol>
+<li>
+<p>验证确保了类加载的正确性，它校验了字节码数据是符合Class类规范，常量类型是否支持，语义分析，分析数据流和控制流校验程序语义，符号引用校验。</p>
+</li>
+<li>
+<p>准备环节是为一个类的静态域分配内存空间，并赋予零值。</p>
+</li>
+<li>
+<p>解析负责转化类中的符号引用，将类引用转换为直接引用，将类中的常量值转换为常量池中引用。</p>
+</li>
+</ol>
+<blockquote>
+<p>如果类字段的字段属性为 <code>ConstantValue</code>，即同时被 <code>final</code> 、<code>static</code> 修饰的基础类型数据，并且在定义时即赋值，如 <code>static final String CONSTANT_COMPILE = &quot;java&quot;;</code>，那么在准备阶段变量就会被初始化为属性所指定的值。</p>
+</blockquote>
+<h3 id="初始化">初始化</h3>
+<p>对类的静态域赋予正确的初始值，执行静态代码块为赋值静态域。</p>
+<h3 id="异常">异常</h3>
+<ul>
+<li>
+<p>ClassNotFoundException
+这种错误是发生在加载环节，当一个类在双亲委任机制中无法获取到时，便会抛出此异常。常见情景是依赖包的冲突。</p>
+</li>
+<li>
+<p>NoClassDefFoundError
+这个错误主要是发生在链接环节的解析中，当一个类的静态域引用至另一个类中的属性，而这个类无法获取时，那么虚拟机就会抛出此异常。</p>
+</li>
+</ul>
+<h2 id="运行时数据区域">运行时数据区域</h2>
+<p>Java 虚拟机在运行程序的过程中把内存数据划分为不同的区域</p>
+<h3 id="线程隔离的指令区">线程隔离的(指令区)</h3>
+<ul>
+<li>
+<p>程序计数器：指向线程下一个执行的指令的地址(<code>本地指针</code>或者<code>起始指令的偏移量</code>)，当执行的是本地方法时为 undefined。
+许多操作都需要依赖程序计数器来完成，例如在时间片抢占后切换线程能够恢复到正确的位置。</p>
+</li>
+<li>
+<p>虚拟机栈：包含了线程生命周期的方法调用，一个 Java 方法调用即为一个栈帧，根据调用顺序压入线程栈空间。
+栈帧存储当前线程运行方法所需要的局部变量表（基本数据类型、对象引用）、操作数栈、动态链接、方法返回地址，保证了多线程下调用方法的隔离性。</p>
+</li>
+<li>
+<p>本地方法区：与虚拟机栈作用相似，区别是执行 native 方法。</p>
+</li>
+</ul>
+<h3 id="线程共享的数据区">线程共享的(数据区)</h3>
+<ul>
+<li>
+<p>方法区／元空间 (MetaSpace)：存放类信息、静态域数据(对象实例存于堆中)、类编译期间生成的各种字面量和符号引用、字节码、JIT 编译后的机器码、动态代理产生的数据，使用本地内存存储，几乎不会被回收。</p>
+</li>
+<li>
+<p>堆 (Heap)：运行时常量池、对象实例域，是垃圾收集管理的主要区域。可分为新生代、老年代。</p>
+</li>
+<li>
+<p>直接内存：用于 NIO 数据交换的内存空间，只受实际内存及 JVM 参数限制。</p>
+</li>
+</ul>
+<h3 id="内存溢出">内存溢出</h3>
+<p>内存溢出是由于虚拟机空间分配失败所导致的致命性错误。</p>
+<ul>
+<li>
+<p>方法栈 (StackOverFlowError)
+常见原因有递归或大循环调用方法导致栈帧数量过多、线程内定义大量的本地变量。</p>
+</li>
+<li>
+<p>堆 (OutOfMemoryError)
+常量池溢出、线程持续占有对象都将可能导致堆溢出。</p>
+</li>
+<li>
+<p>方法区 (OutOfMemoryError)
+主要原因为动态创建大量的类，并且卸载无法满足新的元类存储。</p>
+</li>
+</ul>
+<h2 id="执行引擎">执行引擎</h2>
+<h3 id="解释器-interpreter">解释器 (Interpreter)</h3>
+<p>解释字节码，执行相应的命令</p>
+<h3 id="分析器-hotspot-profiler">分析器 (Hotspot profiler)</h3>
+<p>将频繁调用的热点方法编译成与本地平台相关的机器码</p>
+<h3 id="jit-即时编译器">JIT (即时编译器)</h3>
+<p>优化解释器，将字节码翻译成本地平台相关的机器码执行
+常见的 JIT 有 C1、C2，在 Java10 引入 Graal</p>
+<p>常见的 JIT 优化手段有</p>
+<ul>
+<li>
+<p>公共子表达式消除
+当一个大表达式已经被计算过后，再次出现已经包含了的表达式则不必重新计算，直接用结果代替。</p>
+</li>
+<li>
+<p>数组边界检查消除
+消除大循环体内对元素越界检查</p>
+</li>
+<li>
+<p>方法内联
+将频繁调用方法替换为调用方法代码</p>
+</li>
+<li>
+<p>逃逸分析
+当开启了标量替换 (-XX:+EliminateAllocations) 和逃逸分析 (-XX:+DoEscapeAnalysis) 后，会对线程栈内的对象进行分析，将只存活于栈帧内的可分解对象进行基础类型数据替换处理。</p>
+</li>
+<li>
+<p>同步消除 (-XX:+EliminateLocks)
+在开启逃逸分析和 -server 模式后，将会对无多线程竞争的锁进行消除。</p>
+</li>
+<li>
+<p>优化技术</p>
+</li>
+</ul>
+<p>编译器策略：延迟编译，分层编译，栈上替换，延迟优化，程序依赖图表示，静态单赋值表示。</p>
+<p>基于性能监控的优化技术：乐观空值断言，乐观类型断言，乐观类型增强，乐观数组增强，裁剪未被选择的分支，乐观的多态内联。分支频率预测，调用频率预测</p>
+<p>基于证据的优化技术：精确性推断，内存值推断，内存值跟踪，常量折叠，重组，操作符退化，空值检查消除。类型检测退化，类型检测消除，代数化简，公共子表达式消除</p>
+<p>数据流敏感重写：条件常量传播，基于六承载的类型缩减转换，无用代码消除</p>
+<p>语言相关的优化技术：类型继承关系分析，去虚拟机化，符号常量传播，自动装箱，消除逃逸分析，锁消除，锁膨胀，消除反射</p>
+<p>内存及代码位置交换：表达式提升，表达式下沉，冗余存储消除，相邻存储合并，交汇点分离</p>
+<p>循环变换：循环展开，循环剥离，安全点消除，迭代分离，范围检查消除</p>
+<p>局部代码调整：内联，全局代码提升，基于热度的代码分离，Switch 调整</p>
+<p>控制流图变换：本地代码编排，本独代码封包，延迟槽填充，着色图寄存器分配，线性扫描寄存器分配，复写聚合，常量分裂，复写移除，地址模式匹配。指令窥孔优化，基于确定有限状态机的代码生成</p>
+<ul>
+<li>Graal [jdk10]
+启动方式 -XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler</li>
+</ul>
+<h2 id="gc垃圾收集器策略">GC(垃圾收集器)策略</h2>
+<p>Java虚拟机在运行时会产生大量的对象，有些对象将不会再被使用，为了使内存不被这些无用的对象占用，垃圾收集器就需要分析出已经死亡的对象，将其所用空间回收。</p>
+<p>虚拟机从一部分称为 <code>GC Roots</code> 的节点开始搜索引用链，找出存活的引用 (并非特指对象)，对其余对象标记为虚引用，准备下一阶段进行回收释放内存空间。对重写了 finilize() 方法对象封装并放入队列中，在 GC 结束后单线程执行方法后移除。</p>
+<h3 id="serial">Serial</h3>
+<p><code>标记清除整理</code> 算法，单线程进行垃圾回收，无上下文切换开销，但 cpu 利用率较低，并且无法与应用线程并行进行。</p>
+<h3 id="parallel">Parallel</h3>
+<p>基于吞吐量优先的并行收集器，对年轻代使用 <code>标记复制</code> 算法，对老年代使用 <code>标记清除整理</code> 算法，适用于多核处理器，有效利用系统资源。</p>
+<h3 id="cmsconcurrent-mark-sweep">CMS(Concurrent Mark Sweep)</h3>
+<p>以 <code>标记清除</code> 算法为基础，以响应时间优先的并发收集器，对年轻代使用 <code>标记复制</code> 算法，对老年代使用 <code>标记清除</code> 算法。
+使用 <code>空闲空间列表</code> 来管理老年代内存，在老年代 GC 阶段大部分工作可以与应用线程并发执行，并且可在老年代空间内存利用率达到阀值时触发 CMS GC。</p>
+<p>收集工作分为数个阶段：初始标记、并发标记、并发预清理、并发可取消的预清理、最终标记、并发清除、并发重置</p>
+<p>CMS 由于不进行内存整理容易造成老年代内存碎片，并且当堆内存较大时，可能产生不可预估的暂停时间。</p>
+<h3 id="g1garbage-first">G1(Garbage-First)</h3>
+<p>以 <code>复制</code> 算法为基础，为了能够得到良好的停顿时间而产生的一款实时收集器。
+将内存空间以块 (Region) 进行分配空间，一般划分 2048 个，优先回收大垃圾的回收机制。使用空闲空间列表来管理所有内存。</p>
+<p>虚拟机在分配空间时会选定一个 Region(TLAB将分别指定一个Region)，当 Region 的剩余空间不足以分配对象或者小于最小可空间时，将重新指定下一个 Region 分配空间。</p>
+<h4 id="hregion">HRegion</h4>
+<p>当分配对象的大小大于 Region 空间的一半，将会分配一个 Humongous Region 直接进入老年代，省略年轻代的内存复制过程，这个 Humongous Region 的大小将为能容纳对象的最小 Region 空格倍数。</p>
+<h4 id="satb-snapshot-at-the-beginning">SATB (snapshot-at-the-beginning)</h4>
+<p>对象初始化时的快照，引用变化时使用 <code>write barrier</code> 进行更新，在 GC 中利用了此列表进行扫描。</p>
+<h4 id="rset">RSet</h4>
+<p>与 CMS 不同，G1 使用了记录 Region 引用关系的 <code>Remembered Set</code> 来记录，内部为多个 <code>Card Table</code> ，并且是用于记录 <code>被引用</code> 的对象集合。
+使用 <code>三色标记法</code> + <code>写屏障(write barrier)</code> 来更新其引用关系。</p>
+<p>G1 解决了 CMS 中的各种疑难问题, 包括暂停时间的可预测性, 并终结了堆内存的碎片化。</p>
+<h3 id="zgc">ZGC</h3>
+<p>是一个可伸缩的低延迟垃圾收集器，暂停时间不超过10毫秒，暂停时间不会随堆或实时设置大小而增加</p>
+<blockquote>
+<p><a href="https://blog.csdn.net/renfufei/article/details/54885190">https://blog.csdn.net/renfufei/article/details/54885190</a>
+<a href="https://www.zhihu.com/question/53613423/answer/135743258">https://www.zhihu.com/question/53613423/answer/135743258</a></p>
+</blockquote>
+<h2 id="内存模型jmm">内存模型(JMM)</h2>
+<p>heap 根据空间利用率、垃圾回收存活年龄分为年轻代、老年代，永久代。</p>
+<h3 id="年轻代">年轻代</h3>
+<p>年轻代又可细分为 Eden空间、S0空间 (From Survivor)、S1空间 (To Survivor)
+Eden Space 中存在线程私有的空间 TLAB，是每个线程的缓冲区，存放一些用过即丢弃的对象。</p>
+<h3 id="老年代">老年代</h3>
+<p>当新生代的对象超过设定年龄，或者同龄对象达到幸存区的一半，这些对象将被划入老年代(Old Space)。
+只有当老年代空间不足分配发生 Full GC 时 (CMS 中可以为 CMS GC)，才会对老年代的数据进行回收。</p>
+<h3 id="永久代">永久代</h3>
+<p>用于存放元类数据，在并发标记时和类加载器卸载时将会对相关数据进行回收。
+当一个类加载器死亡时，相对应的元数据也被销毁，释放其块空间。</p>
+<h4 id="permgenspace">PermgenSpace</h4>
+<p>java8 之前的永久代实现，也称为方法区，为一块固定空间大小，当空间不足时会进行Full GC。
+由于区空间大小固定，在大量动态创建类的程序中容易造成OOM。</p>
+<h4 id="metaspace">MetaSpace</h4>
+<p>源自 JRockit，在 Java8 与 Hotspot 合并，将 native method area 概念加入 Hotspot，由此得来 MetaSpace 替换原有的 PermGen，容量仅受可用的本地内存限制。</p>
+<p>MetaSpace 的空间是以块 (Chunk) 为单位，这个块的大小取决与申请空间的类加载器类型。</p>
+<p>当类加载器加载类时，从块分配器中获取一份块内存空间存在类元数据，并映射此地址。</p>
+<p>由于每个类加载器申请的块大小不一致，MetaspaceVM 也还未使用压缩技术，这就容易导致内存碎片的产生。</p>
+<h3 id="tlab">TLAB</h3>
+<p>当大量线程申请空间时，JVM 需要对并发操作保障不会发生指针碰撞，这样便增加了复杂性，降低性能。</p>
+<p>因此，在 jdk1.6 以后便引入了 TLAB 技术。</p>
+<p>TLAB 全名 Thread-local allocation buffers，是在线程初始化的时候在堆中新生代申请一块线程私有的分配空间(允许所有线程访问)，减少同步开销，使用参数 <code>-XX:UseTLAB</code> 开启。</p>
+<blockquote>
+<p><a href="https://www.jianshu.com/p/cd85098cca39">https://www.jianshu.com/p/cd85098cca39</a></p>
+</blockquote>
+<h3 id="plab">PLAB</h3>
+<p>全名 promotion-local allocation buffers，用于 Young GC 时的空间分配及复制。</p>
+<p>其他还有 CLAB，全名 core-local allocation buffers，用于全局的空间分配。</p>
+
+	    </div>
+	  </div>
+	</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="薛毅康">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io">薛毅康</a></h5>
+      <h6 class="card-subtitle">烹饪高手、洗碗新手</h6>
+      <p class="card-text">Java 佛性开发</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+<section id="comments">
+  
+</section>
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav">
+
+  <div style="display:inline">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/jvm-param/" rel="prev">JVM 参数</a>
+    </span>
+    <span style="padding-right: 60%"></span>
+  
+  
+  
+  
+    <span class="post-nav-item">
+      <span class="meta-nav">下一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/mat/" rel="next">使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</a>
+    </span>
+  
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"没有找到结果","placeholder":"搜索...","results":"搜索结果"};
+      const content_type = {
+        'post': "文章",
+        'project': "项目",
+        'publication' : "出版物",
+        'talk' : "演讲"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    © 2020 moyada &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">引用</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> 复制
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> 下载
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
