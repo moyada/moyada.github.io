@@ -232,7 +232,7 @@
   
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/">
-  <meta property="og:title" content="Posts | 疯狂的厨子">
+  <meta property="og:title" content="  | 疯狂的厨子">
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
@@ -253,7 +253,7 @@
 
 
 
-  <title>Posts | 疯狂的厨子</title>
+  <title>  | 疯狂的厨子</title>
 
 </head>
 
@@ -465,11 +465,13 @@
   
   
   
+  
     
   
+  
 <div class="universal-wrapper pt-3">
-  <h1>Posts</h1>
-
+  <h1> </h1>
+  
   
 
   
@@ -498,6 +500,7 @@
 
 
   
+  
 
 
 
@@ -516,8 +519,18 @@
 
     
     <div class="article-style">
-      oracle 在 jdk8 中引入了接口的默认方法，用 default 关键字标识。
-public inteface Listener { default void start() { ... } }  ...
+      
+oracle 在 jdk8 中引入了接口的默认方法，用 `default` 关键字标识。
+
+```
+public inteface Listener {
+	default void start() {
+		...
+	}
+}
+```
+
+该原  ...
     </div>
     
 
@@ -549,8 +562,10 @@ public inteface Listener { default void start() { ... } }  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  184 字 
   
 
   
@@ -595,6 +610,7 @@ public inteface Listener { default void start() { ... } }  ...
 
 
   
+  
 
 
 
@@ -613,8 +629,11 @@ public inteface Listener { default void start() { ... } }  ...
 
     
     <div class="article-style">
-      由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。
-Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
+      
+由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。
+
+## Stop-the-World
+在 HotSpot 虚拟机中，Stop-the-World 也被称之为 s  ...
     </div>
     
 
@@ -646,8 +665,10 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    3 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  1387 字 
   
 
   
@@ -692,6 +713,7 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
 
 
   
+  
 
 
 
@@ -710,8 +732,12 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
 
     
     <div class="article-style">
-      概念 volatile原语保障了多线程下变量的原子性、可见性、有序性。
-原子性 在32位虚拟机下对long、double类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来  ...
+      
+## 概念
+volatile原语保障了多线程下变量的原子性、可见性、有序性。
+
+## 原子性
+在32位虚拟机下对`long`、`double`类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证  ...
     </div>
     
 
@@ -743,8 +769,10 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    2 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  910 字 
   
 
   
@@ -789,6 +817,7 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
 
 
   
+  
 
 
 
@@ -807,8 +836,12 @@ Stop-the-World 在 HotSpot 虚拟机中，Stop-th  ...
 
     
     <div class="article-style">
-      synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量锁进行了优化。
-synchronized 是通过 monitor_enter 和 monitor_e  ...
+      
+## synchronized
+
+在 jdk1.6 之后,`synchronized` 原语通过引入偏向锁、轻量锁进行了优化。
+
+synchronized 是通过 `monitor_enter` 和 `monitor_exit` 来控制的  ...
     </div>
     
 
@@ -840,8 +873,10 @@ synchronized 是通过 monitor_enter 和 monitor_e  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  485 字 
   
 
   
@@ -886,6 +921,7 @@ synchronized 是通过 monitor_enter 和 monitor_e  ...
 
 
   
+  
 
 
 
@@ -904,8 +940,13 @@ synchronized 是通过 monitor_enter 和 monitor_e  ...
 
     
     <div class="article-style">
-      由于jdk9中对lombok所依赖的类进行了迁移，所以使用lombok的程序无法直接升级。需按照如下方式升级：
- 升级lombok依赖  &amp;lt;properties&amp;gt; &amp;lt;lombok.v  ...
+      
+由于jdk9中对lombok所依赖的类进行了迁移，所以使用lombok的程序无法直接升级。需按照如下方式升级：
+
+1. 升级lombok依赖
+```
+&lt;properties&gt;
+    &lt;lombok.version&gt;1.18.0&lt;/lom  ...
     </div>
     
 
@@ -937,8 +978,10 @@ synchronized 是通过 monitor_enter 和 monitor_e  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  136 字 
   
 
   
@@ -983,6 +1026,7 @@ synchronized 是通过 monitor_enter 和 monitor_e  ...
 
 
   
+  
 
 
 
@@ -1001,8 +1045,13 @@ synchronized 是通过 monitor_enter 和 monitor_e  ...
 
     
     <div class="article-style">
-      ConcurrentHashMap 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 HashMap 在并发环境下的线程安全问题。
-JDK7   利用分段锁(Segment)和 Reentra  ...
+      
+`ConcurrentHashMap` 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 `HashMap` 在并发环境下的线程安全问题。
+
+
+## JDK7
+
+* 利用分段锁(Segment)和 `ReentrantLock`   ...
     </div>
     
 
@@ -1034,8 +1083,10 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  477 字 
   
 
   
@@ -1076,6 +1127,7 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
 
 
   
+  
 
 
 
@@ -1094,9 +1146,12 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
 
     
     <div class="article-style">
-      使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。
-通过jmap -dump:format=b,file=[file_name]] [pid] 生成hprof文件
-在Eclipse Market  ...
+      
+使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。
+
+通过jmap -dump:format=b,file=[file_name]] [pid] 生成`hprof`文件
+
+在Eclipse Marketplace安装 Memory   ...
     </div>
     
 
@@ -1128,8 +1183,10 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    2 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  510 字 
   
 
   
@@ -1174,6 +1231,7 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
 
 
   
+  
 
 
 
@@ -1192,7 +1250,12 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
 
     
     <div class="article-style">
-      JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。 另外，JVM还提供了内存管理的功能，使得开发人员无需关  ...
+      
+## JVM(Java虚拟机)
+JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。
+另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。
+
+&gt; ht  ...
     </div>
     
 
@@ -1224,8 +1287,10 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    2 分钟阅读时长
+    8 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  3896 字 
   
 
   
@@ -1270,6 +1335,7 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
 
 
   
+  
 
 
 
@@ -1288,7 +1354,17 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
 
     
     <div class="article-style">
-      table th:nth-of-type(1) { width: 250px; } table th:nth-of-type(2) { width: 30px; } table th:nth-of-t  ...
+      
+&lt;style&gt;
+table th:nth-of-type(1) {
+    width: 250px;
+}
+
+table th:nth-of-type(2) {
+    width: 30px;
+}
+
+table th:nth-of-ty  ...
     </div>
     
 
@@ -1320,8 +1396,10 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    5 分钟阅读时长
+    9 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  4340 字 
   
 
   
@@ -1366,6 +1444,7 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
 
 
   
+  
 
 
 
@@ -1384,8 +1463,10 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
 
     
     <div class="article-style">
-      在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请求的话可以利用 Json 来解决。
-对于非 GET 请求的话就可以采用 CORS 协议来解决了。CORS 是一个W3C标准，全称是&amp;  ...
+      
+在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请求的话可以利用 Json 来解决。
+
+对于非 GET 请求的话就可以采用 `CORS` 协议来解决了。CORS 是一个W3C标准，全称是&#34;跨域资源共享&#34;（Cross-or  ...
     </div>
     
 
@@ -1417,8 +1498,10 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    2 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  646 字 
   
 
   
@@ -1582,7 +1665,7 @@ JDK7   利用分段锁(Segment)和 Reentra  ...
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

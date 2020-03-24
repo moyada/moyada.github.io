@@ -28,8 +28,7 @@
   
     
   
-  <meta name="description" content="cpu相关 uptime 查看系统平均负载状态，以 cpu 个数为标准，通过 cat /proc/cpuinfo | grep &#39;physical id&#39; | sort | uniq | wc -l 可获取 cpu 个数，如果负载过高则可根据 cpu 使用率判断是由于存在大量 cpu 调用还是 I/O 中断。
-top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行排序，H 切换为线程模式，top -Hp  查看进程内线程情况。">
+  <meta name="description" content="cpu相关 uptime 查看系统平均负载状态，以 cpu 个数为标准，通过 cat /proc/cpuinfo |">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/performance/">
@@ -232,8 +231,7 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/bak/performance/">
   <meta property="og:title" content="性能分析 | 疯狂的厨子">
-  <meta property="og:description" content="cpu相关 uptime 查看系统平均负载状态，以 cpu 个数为标准，通过 cat /proc/cpuinfo | grep &#39;physical id&#39; | sort | uniq | wc -l 可获取 cpu 个数，如果负载过高则可根据 cpu 使用率判断是由于存在大量 cpu 调用还是 I/O 中断。
-top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行排序，H 切换为线程模式，top -Hp  查看进程内线程情况。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="cpu相关 uptime 查看系统平均负载状态，以 cpu 个数为标准，通过 cat /proc/cpuinfo |"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -532,9 +530,11 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>性能分析</h1>
-
+  
   
 
   
@@ -759,7 +759,7 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -911,7 +911,7 @@ top 查看cpu指标，P 对cpu资源占用进行排序，M 对内存占用进行
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

@@ -5,118 +5,12 @@
     <link>https://moyada.github.io/categories/java/</link>
       <atom:link href="https://moyada.github.io/categories/java/index.xml" rel="self" type="application/rss+xml" />
     <description>Java</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 18 May 2019 08:47:26 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sun, 05 May 2019 20:23:32 +0000</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title>Java</title>
       <link>https://moyada.github.io/categories/java/</link>
     </image>
-    
-    <item>
-      <title>在非 SpringBoot 工程中使用 Feign 整合 Eureka</title>
-      <link>https://moyada.github.io/post/feign-eureka-without-springboot/</link>
-      <pubDate>Sat, 18 May 2019 08:47:26 +0000</pubDate>
-      <guid>https://moyada.github.io/post/feign-eureka-without-springboot/</guid>
-      <description>&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
-&lt;p&gt;最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 &lt;code&gt;@EnableDiscoveryClient&lt;/code&gt; 和 &lt;code&gt;@EnableFeignClients&lt;/code&gt; 即可获取服务接口实例。可是由于我使用了 BeanPostProcessor 对注解进行了切片代理，并且目标项目也存在非 SpringCloud 项目，那么便只能通过底层 API 构建服务方实例了。&lt;/p&gt;
-&lt;h2 id=&#34;方案&#34;&gt;方案&lt;/h2&gt;
-&lt;p&gt;EurekaClient 提供了服务发现注册功能，但是在 Feign 所接收的属性中并没有用于负载均衡的，其中最有可能的就是 Client 属性了，这是用于负责服务请求的模块，那么就需要调研下是否能够通过 EurekaClient 构建出一个带有负载均衡功能的客户端。&lt;/p&gt;
-&lt;h3 id=&#34;创建-lbclientfactory&#34;&gt;创建 LBClientFactory&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Feign&lt;/strong&gt; 的官方 Wiki 提供了构建服务实例的
-&lt;a href=&#34;https://github.com/OpenFeign/feign#integrations&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;方法&lt;/a&gt;，但 Feign 并不提供构建所需属性的实现，而是由其他框架适配 Feign 所提供的接口来实现每个功能。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;在分析 &lt;strong&gt;Ribbon&lt;/strong&gt; 的 Client 实现 &lt;code&gt;RibbonClient&lt;/code&gt;，其构造器接收一个 &lt;code&gt;LBClientFactory&lt;/code&gt; 参数，负载均衡的功能就是由它提供。&lt;/p&gt;
-&lt;p&gt;通过搜索引擎发现了打通 Robbion 与 EurekaClient 的实现方式，需要引入依赖 &lt;code&gt;&amp;amp;lt;artifactId&amp;amp;gt;ribbon-eureka&amp;amp;lt;/artifactId&amp;amp;gt;&lt;/code&gt;。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;private Client newClient(String vipAddress, Provider&amp;lt;EurekaClient&amp;gt; provider) {
-    ServerList&amp;lt;DiscoveryEnabledServer&amp;gt; list = new DiscoveryEnabledNIWSServerList(vipAddress, provider);
-    ServerListFilter&amp;lt;DiscoveryEnabledServer&amp;gt; filter = new ZoneAffinityServerListFilter&amp;lt;DiscoveryEnabledServer&amp;gt;();
-
-    ZoneAwareLoadBalancer&amp;lt;DiscoveryEnabledServer&amp;gt; lb = LoadBalancerBuilder.&amp;lt;DiscoveryEnabledServer&amp;gt;newBuilder()
-            .withDynamicServerList(list)
-            .withRule(new AvailabilityFilteringRule())
-            .withServerListFilter(filter)
-            .buildDynamicServerListLoadBalancer();
-
-    return RibbonClient.builder().lbClientFactory(new LBClientFactory() {
-        @Override
-        public LBClient create(String clientName) {
-            return LBClient.create(lb, ClientFactory.getNamedConfig(clientName));
-        }
-    }).build();
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;其中需要使用 &lt;code&gt;DiscoveryEnabledNIWSServerList&lt;/code&gt; 用于发现服务集合，它接收两个提供两个参数，一个是项目的 vipAddress，一个是 Provider&lt;EurekaClient&gt;。&lt;/p&gt;
-&lt;h3 id=&#34;创建-eurekaclient&#34;&gt;创建 EurekaClient&lt;/h3&gt;
-&lt;p&gt;在 &lt;strong&gt;Eureka&lt;/strong&gt; 的官方 Wiki 中提供了 EurekaClient 的
-&lt;a href=&#34;https://github.com/Netflix/eureka/tree/master/eureka-examples/src/main/java/com/netflix/eureka&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;构造方式&lt;/a&gt;，需要传入 &lt;code&gt;EurekaClientConfig&lt;/code&gt; 和 &lt;code&gt;EurekaInstanceConfig&lt;/code&gt; 用来提供模块的配置信息。&lt;/p&gt;
-&lt;p&gt;在 netflix 提供的 eureka-client 模块下，提供了 &lt;code&gt;DefaultEurekaClientConfig&lt;/code&gt; 和 &lt;code&gt;MyDataCenterInstanceConfig&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;这两个类默认将会读取 eureka-client.properties 下的配置，可以通过设置 &lt;code&gt;eureka.client.props&lt;/code&gt; 参数更改读取的配置文件，也可以使用 &lt;code&gt;ConfigurationManager&lt;/code&gt; 的静态方法来指定读取配置文件。&lt;/p&gt;
-&lt;p&gt;除此之外，spring-cloud 也提供了相应的实现类 &lt;code&gt;EurekaClientConfigBean&lt;/code&gt; 和 &lt;code&gt;EurekaInstanceConfigBean&lt;/code&gt;，通过 spring 的配置资源解析器将属性装配成对象使用。&lt;/p&gt;
-&lt;p&gt;入参已经拿到了，但是还未结束，在跟进 &lt;code&gt;DiscoveryClient&lt;/code&gt; 代码实现中，发现他在构造方法中会对属性进行静态保存。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;// This is a bit of hack to allow for existing code using DiscoveryManager.getInstance()
-// to work with DI&#39;d DiscoveryClient
-DiscoveryManager.getInstance().setDiscoveryClient(this);
-DiscoveryManager.getInstance().setEurekaClientConfig(config);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;在这个项目中，有可能存在业务项目内部与嵌入模块使用了不同的 Eureka 服务，为了保持与业务项目的隔离，这里需要对官方提供的代码模版进行点改造。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;private static volatile EurekaClient eurekaClient = null;
-
-public EurekaClient initEurekaClient(EurekaInstanceConfig instanceConfig, EurekaClientConfig clientConfig) {
-    if (null != eurekaClient) {
-        return eurekaClient;
-    }
-
-    synchronized (DiscoveryManager.class) {
-        if (null == eurekaClient) {
-            DiscoveryClient discoveryClient = DiscoveryManager.getInstance().getDiscoveryClient();
-            EurekaClientConfig eurekaClientConfig = DiscoveryManager.getInstance().getEurekaClientConfig();
-            EurekaInstanceConfig eurekaInstanceConfig = DiscoveryManager.getInstance().getEurekaInstanceConfig();
-
-            // create the client
-            InstanceInfo instanceInfo = new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();
-            ApplicationInfoManager infoManager = new ApplicationInfoManager(instanceConfig, instanceInfo);
-            infoManager.setInstanceStatus(InstanceInfo.InstanceStatus.STARTING);
-
-            EurekaClient client = new DiscoveryClient(infoManager, clientConfig);
-            infoManager.setInstanceStatus(InstanceInfo.InstanceStatus.UP);
-
-            eurekaClient = client;
-
-            DiscoveryManager.getInstance().setDiscoveryClient(discoveryClient);
-            DiscoveryManager.getInstance().setEurekaClientConfig(eurekaClientConfig);
-            DiscoveryManager.getInstance().setEurekaInstanceConfig(eurekaInstanceConfig);
-        }
-    }
-    return eurekaClient;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;blockquote&gt;
-&lt;p&gt;在实际开发中可通过 DiscoveryManager 的静态属性对其进行管理的，避免重复构建。但是在这个场景下需要保证与业务之间的隔离，则以这种方式构建。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h3 id=&#34;创建-providereurekaclient&#34;&gt;创建 Provider&lt;EurekaClient&gt;&lt;/h3&gt;
-&lt;p&gt;在创建 LBClientFactory 的过程中，我们需要构建 DiscoveryEnabledNIWSServerList 用于服务的发现，由于构造方法接收的参数为 &lt;code&gt;Provider&amp;lt;EurekaClient&amp;gt;&lt;/code&gt;，这里还需要对 EurekaClient 再经过包装后使用。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;new Provider&amp;lt;EurekaClient&amp;gt;() {
-    @Override
-    public EurekaClient get() {
-        return eurekaClient;
-    }
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3 id=&#34;构造服务实例&#34;&gt;构造服务实例&lt;/h3&gt;
-&lt;p&gt;通过上述步骤基本完成了一个 EurekaClient 到 RobbionClient 的各个过程，最后代入 Feign 的创建方法中便可构造使用 Eureka 进行服务发现的实例。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;public &amp;lt;T&amp;gt; T getInstance(Class&amp;lt;T&amp;gt; target, String namespace, Provider&amp;lt;EurekaClient&amp;gt; provider) {
-    return Feign.builder()
-        .client(newClient(namespace, provider))
-        .encoder(new JacksonEncoder())
-        .decoder(new JacksonDecoder())
-        .options(new Request.Options(1000, 3000))
-        .logLevel(Logger.Level.FULL)
-        .target(target, &amp;quot;http://&amp;quot; + namespace);
-}
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
     
     <item>
       <title>instanceOf、isInstance、isAssignableFrom 的区别</title>
@@ -1035,9 +929,8 @@ JNI_END
 &amp;lt;/plugin&amp;gt;
 
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;参考：&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/rzwitserloot/lombok/issues/985&#34;&gt;https://github.com/rzwitserloot/lombok/issues/985&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://github.com/rzwitserloot/lombok/issues/985&#34;&gt;https://github.com/rzwitserloot/lombok/issues/985&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 </description>
     </item>

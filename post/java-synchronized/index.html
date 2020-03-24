@@ -28,13 +28,7 @@
   
     
   
-  <meta name="description" content="介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。
-它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。
-  声明在方法内时，锁对象由开发者所指定
-  声明在方法上，锁对象则为当前类的实例
-  声明在静态方法上，锁对象就是由类加载器所加载的 Class
-  这里简单记录 synchronized 代码块在虚拟机内部的运转，版本为 OpenJDK11。
-获取同步锁 当线程进入临界区时，会根据是否开启了偏向锁选择进入 ObjectSynchronizer::fast_enter 方法或者 ObjectSynchronizer::slow_enter 方法。">
+  <meta name="description" content="介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。 它是通过获取对">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/java-synchronized/">
@@ -237,13 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/java-synchronized/">
   <meta property="og:title" content="synchronized 原理总结 | 疯狂的厨子">
-  <meta property="og:description" content="介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。
-它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。
-  声明在方法内时，锁对象由开发者所指定
-  声明在方法上，锁对象则为当前类的实例
-  声明在静态方法上，锁对象就是由类加载器所加载的 Class
-  这里简单记录 synchronized 代码块在虚拟机内部的运转，版本为 OpenJDK11。
-获取同步锁 当线程进入临界区时，会根据是否开启了偏向锁选择进入 ObjectSynchronizer::fast_enter 方法或者 ObjectSynchronizer::slow_enter 方法。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。 它是通过获取对"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -293,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。\n它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。\n  声明在方法内时，锁对象由开发者所指定\n  声明在方法上，锁对象则为当前类的实例\n  声明在静态方法上，锁对象就是由类加载器所加载的 Class\n  这里简单记录 synchronized 代码块在虚拟机内部的运转，版本为 OpenJDK11。\n获取同步锁 当线程进入临界区时，会根据是否开启了偏向锁选择进入 ObjectSynchronizer::fast_enter 方法或者 ObjectSynchronizer::slow_enter 方法。"
+  "description": "介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。 它是通过获取对"
 }
 </script>
 
@@ -560,9 +548,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>synchronized 原理总结</h1>
-
+  
   
 
   
@@ -589,8 +579,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    3 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  1060 字 
   
 
   
@@ -839,7 +831,7 @@
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -991,7 +983,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

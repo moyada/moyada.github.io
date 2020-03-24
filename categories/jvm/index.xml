@@ -5,7 +5,7 @@
     <link>https://moyada.github.io/categories/jvm/</link>
       <atom:link href="https://moyada.github.io/categories/jvm/index.xml" rel="self" type="application/rss+xml" />
     <description>JVM</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sun, 04 Aug 2019 13:30:02 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sun, 04 Aug 2019 13:30:02 +0000</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title>JVM</title>
@@ -1900,7 +1900,7 @@ table th:nth-of-type(4) {
 &lt;td align=&#34;left&#34;&gt;-XX:+UseShenandoahGC&lt;/td&gt;
 &lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;启动 Shenandoah 垃圾回收器&lt;/td&gt;
-&lt;td align=&#34;left&#34;&gt;java12，非正式版本需开启 &lt;code&gt;-XX:+UnlockExperimentalVMOptions&lt;/code&gt; 解锁参数&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;jdk12，非正式版本需开启 &lt;code&gt;-XX:+UnlockExperimentalVMOptions&lt;/code&gt; 解锁参数&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td align=&#34;left&#34;&gt;-XX:ShenandoahInitFreeThreshold=&lt;code&gt;&amp;lt;size&amp;gt;&lt;/code&gt;&lt;/td&gt;
@@ -2117,7 +2117,7 @@ table th:nth-of-type(4) {
 &lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td align=&#34;left&#34;&gt;-XX:NativeMemoryTracking=[off &amp;amp;##124; summary &amp;amp;##124; detail]&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;-XX:NativeMemoryTracking=[off | summary | detail]&lt;/td&gt;
 &lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
 &lt;td align=&#34;left&#34;&gt;
 &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/tooldescr007.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;查看 JVM 本地方法使用情况&lt;/a&gt;&lt;/td&gt;

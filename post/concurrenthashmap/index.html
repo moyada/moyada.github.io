@@ -28,10 +28,7 @@
   
     
   
-  <meta name="description" content="ConcurrentHashMap 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 HashMap 在并发环境下的线程安全问题。
-JDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类中维护了一组 Segment，通过对 key 进行 hash 获取相应的 Segment，Segment 内部维护了一组 HashEntry，类似 HashMap 结构，并且在并发修改阶段对管程进行加锁控制。
-  size() 方法使用的是遍历 Segment 加锁获取，在获取大小的时候会影响数据的修改。
-  JDK8 而 jdk8 中 ConcurrentHashMap 具体的变化有：">
+  <meta name="description" content="ConcurrentHashMap 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 HashMap 在并发环">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/concurrenthashmap/">
@@ -234,10 +231,7 @@ JDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类�
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/concurrenthashmap/">
   <meta property="og:title" content="ConcurrentHashMap 原理分析 | 疯狂的厨子">
-  <meta property="og:description" content="ConcurrentHashMap 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 HashMap 在并发环境下的线程安全问题。
-JDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类中维护了一组 Segment，通过对 key 进行 hash 获取相应的 Segment，Segment 内部维护了一组 HashEntry，类似 HashMap 结构，并且在并发修改阶段对管程进行加锁控制。
-  size() 方法使用的是遍历 Segment 加锁获取，在获取大小的时候会影响数据的修改。
-  JDK8 而 jdk8 中 ConcurrentHashMap 具体的变化有："><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="ConcurrentHashMap 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 HashMap 在并发环"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -287,7 +281,7 @@ JDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类�
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "ConcurrentHashMap 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 HashMap 在并发环境下的线程安全问题。\nJDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类中维护了一组 Segment，通过对 key 进行 hash 获取相应的 Segment，Segment 内部维护了一组 HashEntry，类似 HashMap 结构，并且在并发修改阶段对管程进行加锁控制。\n  size() 方法使用的是遍历 Segment 加锁获取，在获取大小的时候会影响数据的修改。\n  JDK8 而 jdk8 中 ConcurrentHashMap 具体的变化有："
+  "description": "ConcurrentHashMap 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 HashMap 在并发环"
 }
 </script>
 
@@ -537,9 +531,11 @@ JDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类�
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>ConcurrentHashMap 原理分析</h1>
-
+  
   
 
   
@@ -566,8 +562,10 @@ JDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类�
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  477 字 
   
 
   
@@ -739,7 +737,7 @@ JDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类�
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -891,7 +889,7 @@ JDK7   利用分段锁(Segment)和 ReentrantLock 类实现并发控制的，类�
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

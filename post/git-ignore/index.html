@@ -28,13 +28,7 @@
   
     
   
-  <meta name="description" content="删除仓库文件 当不小心提交了不应提交的文件后，可以用此方法处理。
-  git rm -r --cached &lt;file_path&gt;
-  更新 .gitignore 添加忽略文件。
-  提交修改
-  这样本地文件不会删除，但是 git 仓库里的文件则会被标记删除，
-停止跟踪文件 当有一份文件，只需要一份基础版本，每个机器独自增加配置时，则可以使用 git update-index --assume-unchanged &lt;file_path&gt;，忽略文件后续的变更。
-当需要对这个基础版本再此迭代时，可以使用git update-index --no-assume-unchanged &lt;file_path&gt;，重新跟踪文件的修改。">
+  <meta name="description" content="删除仓库文件 当不小心提交了不应提交的文件后，可以用此方法处理">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/git-ignore/">
@@ -237,13 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/git-ignore/">
   <meta property="og:title" content="Git 文件忽略 | 疯狂的厨子">
-  <meta property="og:description" content="删除仓库文件 当不小心提交了不应提交的文件后，可以用此方法处理。
-  git rm -r --cached &lt;file_path&gt;
-  更新 .gitignore 添加忽略文件。
-  提交修改
-  这样本地文件不会删除，但是 git 仓库里的文件则会被标记删除，
-停止跟踪文件 当有一份文件，只需要一份基础版本，每个机器独自增加配置时，则可以使用 git update-index --assume-unchanged &lt;file_path&gt;，忽略文件后续的变更。
-当需要对这个基础版本再此迭代时，可以使用git update-index --no-assume-unchanged &lt;file_path&gt;，重新跟踪文件的修改。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="删除仓库文件 当不小心提交了不应提交的文件后，可以用此方法处理"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -293,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "删除仓库文件 当不小心提交了不应提交的文件后，可以用此方法处理。\n  git rm -r --cached \u0026lt;file_path\u0026gt;\n  更新 .gitignore 添加忽略文件。\n  提交修改\n  这样本地文件不会删除，但是 git 仓库里的文件则会被标记删除，\n停止跟踪文件 当有一份文件，只需要一份基础版本，每个机器独自增加配置时，则可以使用 git update-index --assume-unchanged \u0026lt;file_path\u0026gt;，忽略文件后续的变更。\n当需要对这个基础版本再此迭代时，可以使用git update-index --no-assume-unchanged \u0026lt;file_path\u0026gt;，重新跟踪文件的修改。"
+  "description": "删除仓库文件 当不小心提交了不应提交的文件后，可以用此方法处理"
 }
 </script>
 
@@ -543,9 +531,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Git 文件忽略</h1>
-
+  
   
 
   
@@ -572,8 +562,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  202 字 
   
 
   
@@ -735,7 +727,7 @@
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -887,7 +879,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

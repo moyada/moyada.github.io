@@ -28,12 +28,7 @@
   
     
   
-  <meta name="description" content="synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量锁进行了优化。
-synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 javap 反编译能观察到。
-线程在进入 synchronized 代码块时，将通过获取对象头内 Mark Work 的锁标记来决定是否进入 临界区。
-偏向锁 没有多线程竞争环境，如果没有设置 -XX:-UseBiasedLocking 关闭偏向锁的话将会通过 CAS 获取锁，并设置持有锁的线程 id，当该线程再次尝试获取锁时，如果锁内线程为当前线程则直接判断获取锁标记。
-轻量锁 在多个线程尝试获取偏向锁时，当线程获取偏向锁失败时将会膨胀为轻量锁，通过CAS操作来获取锁标记进入临界区。
-重量锁 如果轻量锁的 CAS 操作失败时，将会升级为重量级锁。">
+  <meta name="description" content="synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/java-lock/">
@@ -236,12 +231,7 @@ synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 java
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/java-lock/">
   <meta property="og:title" content="Java 锁机制 | 疯狂的厨子">
-  <meta property="og:description" content="synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量锁进行了优化。
-synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 javap 反编译能观察到。
-线程在进入 synchronized 代码块时，将通过获取对象头内 Mark Work 的锁标记来决定是否进入 临界区。
-偏向锁 没有多线程竞争环境，如果没有设置 -XX:-UseBiasedLocking 关闭偏向锁的话将会通过 CAS 获取锁，并设置持有锁的线程 id，当该线程再次尝试获取锁时，如果锁内线程为当前线程则直接判断获取锁标记。
-轻量锁 在多个线程尝试获取偏向锁时，当线程获取偏向锁失败时将会膨胀为轻量锁，通过CAS操作来获取锁标记进入临界区。
-重量锁 如果轻量锁的 CAS 操作失败时，将会升级为重量级锁。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -291,7 +281,7 @@ synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 java
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量锁进行了优化。\nsynchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 javap 反编译能观察到。\n线程在进入 synchronized 代码块时，将通过获取对象头内 Mark Work 的锁标记来决定是否进入 临界区。\n偏向锁 没有多线程竞争环境，如果没有设置 -XX:-UseBiasedLocking 关闭偏向锁的话将会通过 CAS 获取锁，并设置持有锁的线程 id，当该线程再次尝试获取锁时，如果锁内线程为当前线程则直接判断获取锁标记。\n轻量锁 在多个线程尝试获取偏向锁时，当线程获取偏向锁失败时将会膨胀为轻量锁，通过CAS操作来获取锁标记进入临界区。\n重量锁 如果轻量锁的 CAS 操作失败时，将会升级为重量级锁。"
+  "description": "synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量"
 }
 </script>
 
@@ -546,9 +536,11 @@ synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 java
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Java 锁机制</h1>
-
+  
   
 
   
@@ -575,8 +567,10 @@ synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 java
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  485 字 
   
 
   
@@ -739,7 +733,7 @@ synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 java
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -891,7 +885,7 @@ synchronized 是通过 monitor_enter 和 monitor_exit 来控制的，通过 java
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

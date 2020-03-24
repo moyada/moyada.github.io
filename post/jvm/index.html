@@ -28,14 +28,7 @@
   
     
   
-  <meta name="description" content="JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。 另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。
- https://www.youtube.com/watch?v=ZBJ0u9MaKtM
- 类加载机制 Java虚拟机的类加载有加载 (load)、链接 (link)、初始化 (initialize) 三个步骤
-当一个类被实例化时或者类中静态方法被调用时将进行类加载
-加载 将不同的类数据源以字节码的形式加载到内存中以供类加载器使用，数据的来源可以是 jar 包、class 类、网络数据，一个类数据有且只有一个存在于一个类加载器中。
-正常的类加载是以双亲委任机制，不同的类加载器是以继承的方式链接的，当通过某个类加载器加载一个类数据时，当这个类加载器存在父类加载器时，那么它会先从父类加载器中寻找类数据，不存在再在自身中寻找，并且父类也是遵循这个机制。
- Tomcat的类加载器重写了这个加载机制，会优先在自身中查找，这跟Tomcat所加载类的所在位置有关。
- 链接 链接包含了验证、准备、解析三个步骤">
+  <meta name="description" content="JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/jvm/">
@@ -238,14 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/jvm/">
   <meta property="og:title" content="Java 虚拟机总结 | 疯狂的厨子">
-  <meta property="og:description" content="JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。 另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。
- https://www.youtube.com/watch?v=ZBJ0u9MaKtM
- 类加载机制 Java虚拟机的类加载有加载 (load)、链接 (link)、初始化 (initialize) 三个步骤
-当一个类被实例化时或者类中静态方法被调用时将进行类加载
-加载 将不同的类数据源以字节码的形式加载到内存中以供类加载器使用，数据的来源可以是 jar 包、class 类、网络数据，一个类数据有且只有一个存在于一个类加载器中。
-正常的类加载是以双亲委任机制，不同的类加载器是以继承的方式链接的，当通过某个类加载器加载一个类数据时，当这个类加载器存在父类加载器时，那么它会先从父类加载器中寻找类数据，不存在再在自身中寻找，并且父类也是遵循这个机制。
- Tomcat的类加载器重写了这个加载机制，会优先在自身中查找，这跟Tomcat所加载类的所在位置有关。
- 链接 链接包含了验证、准备、解析三个步骤"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -295,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。 另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。\n https://www.youtube.com/watch?v=ZBJ0u9MaKtM\n 类加载机制 Java虚拟机的类加载有加载 (load)、链接 (link)、初始化 (initialize) 三个步骤\n当一个类被实例化时或者类中静态方法被调用时将进行类加载\n加载 将不同的类数据源以字节码的形式加载到内存中以供类加载器使用，数据的来源可以是 jar 包、class 类、网络数据，一个类数据有且只有一个存在于一个类加载器中。\n正常的类加载是以双亲委任机制，不同的类加载器是以继承的方式链接的，当通过某个类加载器加载一个类数据时，当这个类加载器存在父类加载器时，那么它会先从父类加载器中寻找类数据，不存在再在自身中寻找，并且父类也是遵循这个机制。\n Tomcat的类加载器重写了这个加载机制，会优先在自身中查找，这跟Tomcat所加载类的所在位置有关。\n 链接 链接包含了验证、准备、解析三个步骤"
+  "description": "JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏"
 }
 </script>
 
@@ -584,9 +570,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Java 虚拟机总结</h1>
-
+  
   
 
   
@@ -613,8 +601,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    2 分钟阅读时长
+    8 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  3896 字 
   
 
   
@@ -952,7 +942,7 @@ Eden Space 中存在线程私有的空间 TLAB，是每个线程的缓冲区，�
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -1104,7 +1094,7 @@ Eden Space 中存在线程私有的空间 TLAB，是每个线程的缓冲区，�
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

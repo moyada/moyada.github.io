@@ -28,9 +28,7 @@
   
     
   
-  <meta name="description" content="什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:&#43;UseZGC 开启，目前仅支持 Linux x86 64位的系统。
-ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 10毫秒 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。
- 参考资料: https://openjdk.">
+  <meta name="description" content="什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/zgc/">
@@ -233,9 +231,7 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/zgc/">
   <meta property="og:title" content="ZGC 介绍 | 疯狂的厨子">
-  <meta property="og:description" content="什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:&#43;UseZGC 开启，目前仅支持 Linux x86 64位的系统。
-ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 10毫秒 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。
- 参考资料: https://openjdk."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -285,7 +281,7 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:+UseZGC 开启，目前仅支持 Linux x86 64位的系统。\nZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 10毫秒 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。\n 参考资料: https://openjdk."
+  "description": "什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶"
 }
 </script>
 
@@ -544,9 +540,11 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>ZGC 介绍</h1>
-
+  
   
 
   
@@ -573,8 +571,10 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    2 分钟阅读时长
+    5 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  2172 字 
   
 
   
@@ -834,13 +834,13 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/feign-eureka-without-springboot/" rel="prev">在非 SpringBoot 工程中使用 Feign 整合 Eureka</a>
+      <a style="color: rgb(80,150,255)" href="/post/feign-eureka-without-springboot/" rel="prev">在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</a>
     </span>
   
   </div>
@@ -870,6 +870,8 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
     <ul>
       
       <li><a href="/post/jvm-gc/">Java GC过程</a></li>
+      
+      <li><a href="/post/jvm-param/">JVM 参数</a></li>
       
     </ul>
   </div>
@@ -995,7 +997,7 @@ ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

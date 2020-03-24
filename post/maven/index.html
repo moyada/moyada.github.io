@@ -28,7 +28,7 @@
   
     
   
-  <meta name="description" content="pom配置文件 命令  mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile: 编译测试程序 mvn test: 执行测试 mvn package: 打包项目输出到target目录下 mvn install: 安装项目到本地仓库 安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar mvn deploy: 将打包好的包上传到远程仓库,[-N]跳过子模块 mvn site: 生成站点 mvn dependency: 操作依赖 获取远端依赖: mvn dependency:resolve 获取单个远端依赖: mvn dependency:get -Dartifact=&lt;groupId&gt;:&lt;artifactId&gt;:&lt;version&gt;  跳过测试用例 -Dmaven.">
+  <meta name="description" content="pom配置文件 命令 mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile:">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/maven/">
@@ -231,7 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/maven/">
   <meta property="og:title" content="Maven 基本操作 | 疯狂的厨子">
-  <meta property="og:description" content="pom配置文件 命令  mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile: 编译测试程序 mvn test: 执行测试 mvn package: 打包项目输出到target目录下 mvn install: 安装项目到本地仓库 安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar mvn deploy: 将打包好的包上传到远程仓库,[-N]跳过子模块 mvn site: 生成站点 mvn dependency: 操作依赖 获取远端依赖: mvn dependency:resolve 获取单个远端依赖: mvn dependency:get -Dartifact=&lt;groupId&gt;:&lt;artifactId&gt;:&lt;version&gt;  跳过测试用例 -Dmaven."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="pom配置文件 命令 mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile:"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -281,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "pom配置文件 命令  mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile: 编译测试程序 mvn test: 执行测试 mvn package: 打包项目输出到target目录下 mvn install: 安装项目到本地仓库 安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar mvn deploy: 将打包好的包上传到远程仓库,[-N]跳过子模块 mvn site: 生成站点 mvn dependency: 操作依赖 获取远端依赖: mvn dependency:resolve 获取单个远端依赖: mvn dependency:get -Dartifact=\u0026lt;groupId\u0026gt;:\u0026lt;artifactId\u0026gt;:\u0026lt;version\u0026gt;  跳过测试用例 -Dmaven."
+  "description": "pom配置文件 命令 mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile:"
 }
 </script>
 
@@ -550,9 +550,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Maven 基本操作</h1>
-
+  
   
 
   
@@ -579,8 +581,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    3 分钟阅读时长
+    3 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  1372 字 
   
 
   
@@ -760,78 +764,78 @@
 <table>
 <thead>
 <tr>
-<th>Goals</th>
-<th align="center">Description</th>
+<th align="left">Goals</th>
+<th align="left">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>cargo:start</td>
-<td align="center">Start a container.</td>
+<td align="left">cargo:start</td>
+<td align="left">Start a container.</td>
 </tr>
 <tr>
-<td>cargo:run</td>
-<td align="center">Start a container and wait for the user to press CTRL + C to stop.</td>
+<td align="left">cargo:run</td>
+<td align="left">Start a container and wait for the user to press CTRL + C to stop.</td>
 </tr>
 <tr>
-<td>cargo:stop</td>
-<td align="center">Stop a container.</td>
+<td align="left">cargo:stop</td>
+<td align="left">Stop a container.</td>
 </tr>
 <tr>
-<td>cargo:restart</td>
-<td align="center">Stop and start again a container. If the container was not running before calling cargo:restart, it will simply be started.</td>
+<td align="left">cargo:restart</td>
+<td align="left">Stop and start again a container. If the container was not running before calling cargo:restart, it will simply be started.</td>
 </tr>
 <tr>
-<td>cargo:configure</td>
-<td align="center">Create the configuration for a local container, without starting it. Note that the cargo:start and cargo:run goals will also install the container automatically (but will not call cargo:install).</td>
+<td align="left">cargo:configure</td>
+<td align="left">Create the configuration for a local container, without starting it. Note that the cargo:start and cargo:run goals will also install the container automatically (but will not call cargo:install).</td>
 </tr>
 <tr>
-<td>cargo:package</td>
-<td align="center">Package the local container.</td>
+<td align="left">cargo:package</td>
+<td align="left">Package the local container.</td>
 </tr>
 <tr>
-<td>cargo:daemon-start</td>
-<td align="center">Start a container via the daemon.</td>
+<td align="left">cargo:daemon-start</td>
+<td align="left">Start a container via the daemon.</td>
 </tr>
 <tr>
-<td>cargo:daemon-stop</td>
-<td align="center">Stop a container via the daemon.</td>
+<td align="left">cargo:daemon-stop</td>
+<td align="left">Stop a container via the daemon.</td>
 </tr>
 <tr>
-<td>cargo:deployer-deploy (aliased to cargo:deploy)</td>
-<td align="center">Deploy a deployable to a running container.</td>
+<td align="left">cargo:deployer-deploy (aliased to cargo:deploy)</td>
+<td align="left">Deploy a deployable to a running container.</td>
 </tr>
 <tr>
-<td>cargo:deployer-undeploy(aliased to cargo:undeploy)</td>
-<td align="center">Undeploy a deployable from a running container.</td>
+<td align="left">cargo:deployer-undeploy(aliased to cargo:undeploy)</td>
+<td align="left">Undeploy a deployable from a running container.</td>
 </tr>
 <tr>
-<td>cargo:deployer-start</td>
-<td align="center">Start a deployable already installed in a running container.</td>
+<td align="left">cargo:deployer-start</td>
+<td align="left">Start a deployable already installed in a running container.</td>
 </tr>
 <tr>
-<td>cargo:deployer-stop</td>
-<td align="center">Stop a deployed deployable without undeploying it.</td>
+<td align="left">cargo:deployer-stop</td>
+<td align="left">Stop a deployed deployable without undeploying it.</td>
 </tr>
 <tr>
-<td>cargo:deployer-redeploy(aliased to cargo:redeploy)</td>
-<td align="center">Undeploy and deploy again a deployable. If the deployable was not deployed before calling cargo:deployer-redeploy (or its alias cargo:redeploy) it will simply be deployed.</td>
+<td align="left">cargo:deployer-redeploy(aliased to cargo:redeploy)</td>
+<td align="left">Undeploy and deploy again a deployable. If the deployable was not deployed before calling cargo:deployer-redeploy (or its alias cargo:redeploy) it will simply be deployed.</td>
 </tr>
 <tr>
-<td>cargo:uberwar</td>
-<td align="center">Stop a deployed deployable without undeploying it.</td>
+<td align="left">cargo:uberwar</td>
+<td align="left">Stop a deployed deployable without undeploying it.</td>
 </tr>
 <tr>
-<td>cargo:deployer-stop</td>
-<td align="center">Merge several WAR files into one.</td>
+<td align="left">cargo:deployer-stop</td>
+<td align="left">Merge several WAR files into one.</td>
 </tr>
 <tr>
-<td>cargo:install</td>
-<td align="center">Installs a container distribution on the file system. Note that the cargo:start goal will also install the container automatically (but will not call cargo:install).</td>
+<td align="left">cargo:install</td>
+<td align="left">Installs a container distribution on the file system. Note that the cargo:start goal will also install the container automatically (but will not call cargo:install).</td>
 </tr>
 <tr>
-<td>cargo:help</td>
-<td align="center">Get help (list of available goals, available options, etc.).</td>
+<td align="left">cargo:help</td>
+<td align="left">Get help (list of available goals, available options, etc.).</td>
 </tr>
 </tbody>
 </table>
@@ -967,7 +971,7 @@
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -1119,7 +1123,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

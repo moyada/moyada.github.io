@@ -28,10 +28,7 @@
   
     
   
-  <meta name="description" content="前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负载问题时通过监控便能够查看系统状态快照，还能够通过监控系统开发其他效能组件，进一步提高系统的可用性。
-监控应用程序 通常情况下，要想获得应用的负载情况就需要改造原有工程，提供 pull 或 push 的方式将应用状况进行上报。
-Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态信息，监控系统可以定时从应用中拉取记录。
- 在 SpringBoot 应用中引入依赖  &lt;!-- prometheus --&gt; &lt;dependency&gt; &lt;groupId&gt;io.micrometer&lt;/groupId&gt; &lt;artifactId&gt;micrometer-registry-prometheus&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- endpoint --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt; &lt;/dependency&gt;  配置暴露的 endpoint 及系统标识  management.">
+  <meta name="description" content="前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/prometheus-grafana/">
@@ -234,10 +231,7 @@ Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/prometheus-grafana/">
   <meta property="og:title" content="使用 Prometheus &#43; Grafana 搭建监控系统 | 疯狂的厨子">
-  <meta property="og:description" content="前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负载问题时通过监控便能够查看系统状态快照，还能够通过监控系统开发其他效能组件，进一步提高系统的可用性。
-监控应用程序 通常情况下，要想获得应用的负载情况就需要改造原有工程，提供 pull 或 push 的方式将应用状况进行上报。
-Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态信息，监控系统可以定时从应用中拉取记录。
- 在 SpringBoot 应用中引入依赖  &lt;!-- prometheus --&gt; &lt;dependency&gt; &lt;groupId&gt;io.micrometer&lt;/groupId&gt; &lt;artifactId&gt;micrometer-registry-prometheus&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- endpoint --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt; &lt;/dependency&gt;  配置暴露的 endpoint 及系统标识  management."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -287,7 +281,7 @@ Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负载问题时通过监控便能够查看系统状态快照，还能够通过监控系统开发其他效能组件，进一步提高系统的可用性。\n监控应用程序 通常情况下，要想获得应用的负载情况就需要改造原有工程，提供 pull 或 push 的方式将应用状况进行上报。\nPrometheus 使用的是 pull 模式，在应用中开放端口提供系统状态信息，监控系统可以定时从应用中拉取记录。\n 在 SpringBoot 应用中引入依赖  \u0026lt;!-- prometheus --\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;io.micrometer\u0026lt;/groupId\u0026gt; \u0026lt;artifactId\u0026gt;micrometer-registry-prometheus\u0026lt;/artifactId\u0026gt; \u0026lt;/dependency\u0026gt; \u0026lt;!-- endpoint --\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;org.springframework.boot\u0026lt;/groupId\u0026gt; \u0026lt;artifactId\u0026gt;spring-boot-starter-actuator\u0026lt;/artifactId\u0026gt; \u0026lt;/dependency\u0026gt;  配置暴露的 endpoint 及系统标识  management."
+  "description": "前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负"
 }
 </script>
 
@@ -539,9 +533,11 @@ Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>使用 Prometheus &#43; Grafana 搭建监控系统</h1>
-
+  
   
 
   
@@ -568,8 +564,10 @@ Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  463 字 
   
 
   
@@ -772,7 +770,7 @@ scrape_configs:
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -924,7 +922,7 @@ scrape_configs:
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

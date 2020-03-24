@@ -28,10 +28,7 @@
   
     
   
-  <meta name="description" content="在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况，在 Major GC 时，为了标记这些引用的新生代对象，需要通过扫描老年代来间接标记。
-然而，正常扫描全部老年代来获取的做法效率太低下了，由此便产生了称为 CardTable (卡表) 的数据。
-Card Table 保存了所在由老年代所引用的新生代对象的集合，同时利用写屏障，在引用对象变化时，对引用记录标记为 &ldquo;脏&rdquo; ，那么当下次 GC 到来时，只用扫描脏页 (Dirty Page) 便可以标记出由老年代引用的新生代存活对象。并且在 GC 后，由于复制算法导致了数据的迁移，根据迁移的位置决定是否对引用记录再次进行标记。
-在 G1 中，除了 Card Table 还存在 Remembered Set，更好的解决了跨代引用的问题。">
+  <meta name="description" content="在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/card-table/">
@@ -234,10 +231,7 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/card-table/">
   <meta property="og:title" content="跨代引用 | 疯狂的厨子">
-  <meta property="og:description" content="在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况，在 Major GC 时，为了标记这些引用的新生代对象，需要通过扫描老年代来间接标记。
-然而，正常扫描全部老年代来获取的做法效率太低下了，由此便产生了称为 CardTable (卡表) 的数据。
-Card Table 保存了所在由老年代所引用的新生代对象的集合，同时利用写屏障，在引用对象变化时，对引用记录标记为 &ldquo;脏&rdquo; ，那么当下次 GC 到来时，只用扫描脏页 (Dirty Page) 便可以标记出由老年代引用的新生代存活对象。并且在 GC 后，由于复制算法导致了数据的迁移，根据迁移的位置决定是否对引用记录再次进行标记。
-在 G1 中，除了 Card Table 还存在 Remembered Set，更好的解决了跨代引用的问题。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -287,7 +281,7 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况，在 Major GC 时，为了标记这些引用的新生代对象，需要通过扫描老年代来间接标记。\n然而，正常扫描全部老年代来获取的做法效率太低下了，由此便产生了称为 CardTable (卡表) 的数据。\nCard Table 保存了所在由老年代所引用的新生代对象的集合，同时利用写屏障，在引用对象变化时，对引用记录标记为 \u0026ldquo;脏\u0026rdquo; ，那么当下次 GC 到来时，只用扫描脏页 (Dirty Page) 便可以标记出由老年代引用的新生代存活对象。并且在 GC 后，由于复制算法导致了数据的迁移，根据迁移的位置决定是否对引用记录再次进行标记。\n在 G1 中，除了 Card Table 还存在 Remembered Set，更好的解决了跨代引用的问题。"
+  "description": "在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况"
 }
 </script>
 
@@ -532,9 +526,11 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>跨代引用</h1>
-
+  
   
 
   
@@ -561,8 +557,10 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  431 字 
   
 
   
@@ -716,7 +714,7 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -868,7 +866,7 @@ Card Table 保存了所在由老年代所引用的新生代对象的集合，同
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

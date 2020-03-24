@@ -28,9 +28,7 @@
   
     
   
-  <meta name="description" content="cpu top 是基本的系统监控命令，可以查看到当前系统的总cpu，内存，负载情况，以及各个进程的情况。 在多核cpu的系统中可以按1切换每个逻辑cpu的情况。
-vmstat 是一种低开销的系统性能观察方式，并且还能够查看到cpu队列(r)、io阻塞(b)、中断被处理数目(in)、上下文切换数目(cs)
-dstat dstat是实时地监控所有系统资源 常见选项 -l ：显示负载统计量 -m ：显示内存使用率（包括used，buffer，cache，free值） -r ：显示I/O统计 -s ：显示交换分区使用情况 -t ：将当前时间显示在第一行 –fs ：显示文件系统统计数据（包括文件总数量和inodes值） –nocolor ：不显示颜色（有时候有用） –socket ：显示网络统计数据 –tcp ：显示常用的TCP统计 –udp ：显示监听的UDP接口及其当前用量的一些动态数据 –output file [-cdn]：输出监控情况为文件保存，可用-cdn设置保存csv">
+  <meta name="description" content="cpu top 是基本的系统监控命令，可以查看到当前系统的总cpu，内存">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/linux-cpu/">
@@ -233,9 +231,7 @@ dstat dstat是实时地监控所有系统资源 常见选项 -l ：显示负载�
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/bak/linux-cpu/">
   <meta property="og:title" content="linux资源查看 | 疯狂的厨子">
-  <meta property="og:description" content="cpu top 是基本的系统监控命令，可以查看到当前系统的总cpu，内存，负载情况，以及各个进程的情况。 在多核cpu的系统中可以按1切换每个逻辑cpu的情况。
-vmstat 是一种低开销的系统性能观察方式，并且还能够查看到cpu队列(r)、io阻塞(b)、中断被处理数目(in)、上下文切换数目(cs)
-dstat dstat是实时地监控所有系统资源 常见选项 -l ：显示负载统计量 -m ：显示内存使用率（包括used，buffer，cache，free值） -r ：显示I/O统计 -s ：显示交换分区使用情况 -t ：将当前时间显示在第一行 –fs ：显示文件系统统计数据（包括文件总数量和inodes值） –nocolor ：不显示颜色（有时候有用） –socket ：显示网络统计数据 –tcp ：显示常用的TCP统计 –udp ：显示监听的UDP接口及其当前用量的一些动态数据 –output file [-cdn]：输出监控情况为文件保存，可用-cdn设置保存csv"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="cpu top 是基本的系统监控命令，可以查看到当前系统的总cpu，内存"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -506,9 +502,11 @@ dstat dstat是实时地监控所有系统资源 常见选项 -l ：显示负载�
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>linux资源查看</h1>
-
+  
   
 
   
@@ -746,7 +744,7 @@ sar -bud				#查看I/O使用情况</p>
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -898,7 +896,7 @@ sar -bud				#查看I/O使用情况</p>
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

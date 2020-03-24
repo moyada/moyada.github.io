@@ -28,11 +28,7 @@
   
     
   
-  <meta name="description" content="工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。
- 编译器具体处理过程可查看 OpenJDK 官方文档: https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html
-   定义注解 创建注解处理器的第一步就是需要定义相关注解，并且在注解上定义 @Retention，当指定为 RetentionPolicy.SOURCE 时，该注解即在编译结束后会被擦除。
-  创建处理器 接着就需要创建处理器了，一般可通过继承 javax.annotation.processing.AbstractProcessor 定义处理器，由于注解处理器是通过反射获取的，所以需要提供无参构造函数。
-  设置解析注解 重写 getSupportedAnnotationTypes 或定义 @SupportedAnnotationTypes 将先前定义的注解类名加入解析目标，也可以使用 * 通配符。">
+  <meta name="description" content="工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/java-annotation-processor/">
@@ -235,11 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/java-annotation-processor/">
   <meta property="og:title" content="Java 注解处理器 | 疯狂的厨子">
-  <meta property="og:description" content="工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。
- 编译器具体处理过程可查看 OpenJDK 官方文档: https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html
-   定义注解 创建注解处理器的第一步就是需要定义相关注解，并且在注解上定义 @Retention，当指定为 RetentionPolicy.SOURCE 时，该注解即在编译结束后会被擦除。
-  创建处理器 接着就需要创建处理器了，一般可通过继承 javax.annotation.processing.AbstractProcessor 定义处理器，由于注解处理器是通过反射获取的，所以需要提供无参构造函数。
-  设置解析注解 重写 getSupportedAnnotationTypes 或定义 @SupportedAnnotationTypes 将先前定义的注解类名加入解析目标，也可以使用 * 通配符。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -289,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。\n 编译器具体处理过程可查看 OpenJDK 官方文档: https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html\n   定义注解 创建注解处理器的第一步就是需要定义相关注解，并且在注解上定义 @Retention，当指定为 RetentionPolicy.SOURCE 时，该注解即在编译结束后会被擦除。\n  创建处理器 接着就需要创建处理器了，一般可通过继承 javax.annotation.processing.AbstractProcessor 定义处理器，由于注解处理器是通过反射获取的，所以需要提供无参构造函数。\n  设置解析注解 重写 getSupportedAnnotationTypes 或定义 @SupportedAnnotationTypes 将先前定义的注解类名加入解析目标，也可以使用 * 通配符。"
+  "description": "工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件"
 }
 </script>
 
@@ -540,9 +532,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Java 注解处理器</h1>
-
+  
   
 
   
@@ -569,8 +563,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    2 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  962 字 
   
 
   
@@ -776,7 +772,7 @@
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -928,7 +924,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

@@ -28,14 +28,7 @@
   
     
   
-  <meta name="description" content="发生上下文切换的原因有很多，比如 时间片耗尽 任务抢占 主动挂起 硬件中断 IO阻塞 锁机制
-在CPU对进程、线程进行上下文切换时，系统需要将当前寄存器内数据保存，也就是所谓的保存现场，当再次获取时间片运行时进行置换。
-这种开销需要操作系统进行资源管理和线程协调，当大频率发生上下文切换时，会造成很大的性能损耗。
-并且，并发环境下的程序处理是十分复杂，当处于共享资源时，需要考虑线程的执行顺序和数据的一致性。
-所以，在设计程序时，需要考虑合理的并发数设置，不使cpu大部分时间空闲，也不能产生大量上下文切换。
-设置线程数公式为 (线程等待时间 / cpu执行线程时间 &#43; 1) * cpu核心数目
-如果是高并发程序和执行时间长的计算密集程序，应尽量使得并发数和cpu核心数一致。
-如果是IO密集型程序，cpu执行时间短，则可以加大并发数设置。">
+  <meta name="description" content="发生上下文切换的原因有很多，比如 时间片耗尽 任务抢占 主动挂起 硬">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/multi-thread/">
@@ -238,14 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/bak/multi-thread/">
   <meta property="og:title" content="上下文切换 | 疯狂的厨子">
-  <meta property="og:description" content="发生上下文切换的原因有很多，比如 时间片耗尽 任务抢占 主动挂起 硬件中断 IO阻塞 锁机制
-在CPU对进程、线程进行上下文切换时，系统需要将当前寄存器内数据保存，也就是所谓的保存现场，当再次获取时间片运行时进行置换。
-这种开销需要操作系统进行资源管理和线程协调，当大频率发生上下文切换时，会造成很大的性能损耗。
-并且，并发环境下的程序处理是十分复杂，当处于共享资源时，需要考虑线程的执行顺序和数据的一致性。
-所以，在设计程序时，需要考虑合理的并发数设置，不使cpu大部分时间空闲，也不能产生大量上下文切换。
-设置线程数公式为 (线程等待时间 / cpu执行线程时间 &#43; 1) * cpu核心数目
-如果是高并发程序和执行时间长的计算密集程序，应尽量使得并发数和cpu核心数一致。
-如果是IO密集型程序，cpu执行时间短，则可以加大并发数设置。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="发生上下文切换的原因有很多，比如 时间片耗尽 任务抢占 主动挂起 硬"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -497,9 +483,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>上下文切换</h1>
-
+  
   
 
   
@@ -666,7 +654,7 @@
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -818,7 +806,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

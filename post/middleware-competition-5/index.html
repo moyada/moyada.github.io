@@ -28,11 +28,7 @@
   
     
   
-  <meta name="description" content="今年参与了阿里巴巴举办的 中间件性能挑战赛，并且有幸进入到了复赛，虽然后期由于其他原因没法专心参与，不过通过这次比赛也让我在技术上收获了不少，这边小小的做下本次比赛的总结。
-初赛：《自适应负载均衡的设计实现》 赛题分析 初赛的题目是在 Dubbo 之上进行的插件开发，对参与者对于 Dubbo 的调用过程有一定的要求。官方在 gateway 端提供了 CallbackListenerImpl、TestClientFilter、UserLoadBalance 供开发。在 provider 端提供了 CallbackServiceImpl、TestRequestLimiter、TestServerFilter 供开发。
-将这些组件结合起来就形成了基本的调用链路。
-目标   provider 在接收请求大于处理线程池大小的时候，将会执行拒绝策略 AbortPolicyWithReport，并将线程栈信息以日志文件输出。这无疑增加了服务端的压力，那么就需要让 provider 在 TestRequestLimiter 进行限流，在剩余线程数量不足时拒绝进来的请求。
-  要完成自适应的负载均衡，那么就需要由 provider 端将权重推送至 gateway，这项工作通过 CallbackServiceImpl 和 CallbackListenerImpl 来完成。但是传输的数据为字符串，不包含 provider 标识，这时就需要能够获取 provider 的服务地址，连带指标推送给 gateway。">
+  <meta name="description" content="今年参与了阿里巴巴举办的 中间件性能挑战赛，并且有幸进入到了复">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/middleware-competition-5/">
@@ -235,11 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/middleware-competition-5/">
   <meta property="og:title" content="第五届中间件性能挑战赛 | 疯狂的厨子">
-  <meta property="og:description" content="今年参与了阿里巴巴举办的 中间件性能挑战赛，并且有幸进入到了复赛，虽然后期由于其他原因没法专心参与，不过通过这次比赛也让我在技术上收获了不少，这边小小的做下本次比赛的总结。
-初赛：《自适应负载均衡的设计实现》 赛题分析 初赛的题目是在 Dubbo 之上进行的插件开发，对参与者对于 Dubbo 的调用过程有一定的要求。官方在 gateway 端提供了 CallbackListenerImpl、TestClientFilter、UserLoadBalance 供开发。在 provider 端提供了 CallbackServiceImpl、TestRequestLimiter、TestServerFilter 供开发。
-将这些组件结合起来就形成了基本的调用链路。
-目标   provider 在接收请求大于处理线程池大小的时候，将会执行拒绝策略 AbortPolicyWithReport，并将线程栈信息以日志文件输出。这无疑增加了服务端的压力，那么就需要让 provider 在 TestRequestLimiter 进行限流，在剩余线程数量不足时拒绝进来的请求。
-  要完成自适应的负载均衡，那么就需要由 provider 端将权重推送至 gateway，这项工作通过 CallbackServiceImpl 和 CallbackListenerImpl 来完成。但是传输的数据为字符串，不包含 provider 标识，这时就需要能够获取 provider 的服务地址，连带指标推送给 gateway。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="今年参与了阿里巴巴举办的 中间件性能挑战赛，并且有幸进入到了复"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -289,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "今年参与了阿里巴巴举办的 中间件性能挑战赛，并且有幸进入到了复赛，虽然后期由于其他原因没法专心参与，不过通过这次比赛也让我在技术上收获了不少，这边小小的做下本次比赛的总结。\n初赛：《自适应负载均衡的设计实现》 赛题分析 初赛的题目是在 Dubbo 之上进行的插件开发，对参与者对于 Dubbo 的调用过程有一定的要求。官方在 gateway 端提供了 CallbackListenerImpl、TestClientFilter、UserLoadBalance 供开发。在 provider 端提供了 CallbackServiceImpl、TestRequestLimiter、TestServerFilter 供开发。\n将这些组件结合起来就形成了基本的调用链路。\n目标   provider 在接收请求大于处理线程池大小的时候，将会执行拒绝策略 AbortPolicyWithReport，并将线程栈信息以日志文件输出。这无疑增加了服务端的压力，那么就需要让 provider 在 TestRequestLimiter 进行限流，在剩余线程数量不足时拒绝进来的请求。\n  要完成自适应的负载均衡，那么就需要由 provider 端将权重推送至 gateway，这项工作通过 CallbackServiceImpl 和 CallbackListenerImpl 来完成。但是传输的数据为字符串，不包含 provider 标识，这时就需要能够获取 provider 的服务地址，连带指标推送给 gateway。"
+  "description": "今年参与了阿里巴巴举办的 中间件性能挑战赛，并且有幸进入到了复"
 }
 </script>
 
@@ -552,9 +544,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>第五届中间件性能挑战赛</h1>
-
+  
   
 
   
@@ -581,8 +575,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    3 分钟阅读时长
+    7 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  3067 字 
   
 
   
@@ -902,7 +898,7 @@ public static String getAddress(URL url) {
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -1054,7 +1050,7 @@ public static String getAddress(URL url) {
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

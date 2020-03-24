@@ -236,7 +236,7 @@
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2019-02-23T20:31:04&#43;00:00">
+    <meta property="og:updated_time" content="2019-05-18T08:47:26&#43;00:00">
   
 
   
@@ -465,11 +465,13 @@
   
   
   
+  
     
+  
   
 <div class="universal-wrapper pt-3">
   <h1>Spring</h1>
-
+  
   
 
   
@@ -485,31 +487,63 @@
     
     
     
-    <div>
-      <h2><a href="/post/spring-configure/" >Spring 自定义配置加载</a></h2>
+    <div style="margin-bottom: 30px">
+      <h2><a href="/post/feign-eureka-without-springboot/" >在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</a></h2>
       <div class="article-style">
         
-          Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spring 中的。
-1. xml 配置 这是早期 Spring 提供的配置方式，需要与 xsd 文件配合使用。
-文件的解析是需要通过实现 org.springframework.beans.factory.xml.NamespaceHandlerSupport 提供解析器，在 init 方法中调用 registerBeanDefinitionParser 将 xsd元素名称 与 元素解析器 进行绑定。
-对于 xsd元素 所绑定的解析器是 org.
         
+
+
+        
+          
+        
+
+        
+
+        背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
+      <h2><a href="/post/spring-configure/" >Spring 自定义配置加载</a></h2>
+      <div class="article-style">
+        
+        
+
+
+        
+          
+        
+
+        
+          
+          
+        
+
+        Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支  ...
+      </div>
+    </div>
+  
+    
+    
+    
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/cros/" >通过 CROS 协议解决跨域问题</a></h2>
       <div class="article-style">
         
-          在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请求的话可以利用 Json 来解决。
-对于非 GET 请求的话就可以采用 CORS 协议来解决了。CORS 是一个W3C标准，全称是&quot;跨域资源共享&rdquo;（Cross-origin resource sharing）。 它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而解决了只能同源使用的限制，具体详解参考 跨域资源共享 CORS 详解。
-如果你需要信息的绝对安全，不要依赖 CORS 当中的权限制度，应当使用更多其它的措施来保障，比如 OAuth2。
-对于 Java 服务器的话，常用的解决方案就是自定义个 Filter 来添加相应头。
-@Component public class CorsFilter implements Filter { private static final Logger logger = LoggerFactory.
         
+
+
+        
+          
+        
+
+        
+
+        在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请 
       </div>
     </div>
   
@@ -635,7 +669,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

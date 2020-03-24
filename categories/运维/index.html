@@ -465,11 +465,13 @@
   
   
   
+  
     
+  
   
 <div class="universal-wrapper pt-3">
   <h1>运维</h1>
-
+  
   
 
   
@@ -485,15 +487,20 @@
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/prometheus-grafana/" >使用 Prometheus &#43; Grafana 搭建监控系统</a></h2>
       <div class="article-style">
         
-          前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负载问题时通过监控便能够查看系统状态快照，还能够通过监控系统开发其他效能组件，进一步提高系统的可用性。
-监控应用程序 通常情况下，要想获得应用的负载情况就需要改造原有工程，提供 pull 或 push 的方式将应用状况进行上报。
-Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态信息，监控系统可以定时从应用中拉取记录。
- 在 SpringBoot 应用中引入依赖  &lt;!-- prometheus --&gt; &lt;dependency&gt; &lt;groupId&gt;io.micrometer&lt;/groupId&gt; &lt;artifactId&gt;micrometer-registry-prometheus&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- endpoint --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt; &lt;/dependency&gt;  配置暴露的 endpoint 及系统标识  management.
         
+
+
+        
+          
+        
+
+        
+
+        前言 系统监控是中大型企业中必不可少的组件，在线上服务器遇到负 
       </div>
     </div>
   
@@ -619,7 +626,7 @@ Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

@@ -28,12 +28,7 @@
   
     
   
-  <meta name="description" content="当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。
- https://central.sonatype.org/pages/ossrh-guide.html
- 创建发布需求 在创建问题时需要注意，如果 groupId 选择的是私有域名时，那么管理员会要求验证域名的归属，而对于 github 的子域名则无需验证。
-接下来管理员会要求你进行第一次的发布操作，在发布前你需要使用 gpg 创建你的秘钥。
-创建秘钥 Mac 下可以通过 brew 下载安装，使用命令 gpg --gen-key 生成，完成后通过 gpg --list-keys 即可查看已创建秘钥。
-接下来需要将秘钥发布到远程服务器上，如 gpg --keyserver hkp://keyserver.ubuntu.com:11371 --send-keys &lt;sec_key&gt;，发布后可以使用 gpg --keyserver hkp://keyserver.">
+  <meta name="description" content="当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/maven-central/">
@@ -236,12 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/maven-central/">
   <meta property="og:title" content="发布 jar 包至 maven 官方中央仓库 | 疯狂的厨子">
-  <meta property="og:description" content="当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。
- https://central.sonatype.org/pages/ossrh-guide.html
- 创建发布需求 在创建问题时需要注意，如果 groupId 选择的是私有域名时，那么管理员会要求验证域名的归属，而对于 github 的子域名则无需验证。
-接下来管理员会要求你进行第一次的发布操作，在发布前你需要使用 gpg 创建你的秘钥。
-创建秘钥 Mac 下可以通过 brew 下载安装，使用命令 gpg --gen-key 生成，完成后通过 gpg --list-keys 即可查看已创建秘钥。
-接下来需要将秘钥发布到远程服务器上，如 gpg --keyserver hkp://keyserver.ubuntu.com:11371 --send-keys &lt;sec_key&gt;，发布后可以使用 gpg --keyserver hkp://keyserver."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -291,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。\n https://central.sonatype.org/pages/ossrh-guide.html\n 创建发布需求 在创建问题时需要注意，如果 groupId 选择的是私有域名时，那么管理员会要求验证域名的归属，而对于 github 的子域名则无需验证。\n接下来管理员会要求你进行第一次的发布操作，在发布前你需要使用 gpg 创建你的秘钥。\n创建秘钥 Mac 下可以通过 brew 下载安装，使用命令 gpg --gen-key 生成，完成后通过 gpg --list-keys 即可查看已创建秘钥。\n接下来需要将秘钥发布到远程服务器上，如 gpg --keyserver hkp://keyserver.ubuntu.com:11371 --send-keys \u0026lt;sec_key\u0026gt;，发布后可以使用 gpg --keyserver hkp://keyserver."
+  "description": "当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。"
 }
 </script>
 
@@ -543,9 +533,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>发布 jar 包至 maven 官方中央仓库</h1>
-
+  
   
 
   
@@ -572,8 +564,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  450 字 
   
 
   
@@ -739,7 +733,7 @@
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -891,7 +885,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

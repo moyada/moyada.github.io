@@ -28,10 +28,7 @@
   
     
   
-  <meta name="description" content="介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时为了使大容量内存应用在垃圾回收时只进行短暂的应用暂停，使用 -XX:&#43;UseShenandoahGC 开启。
-它能够在垃圾回收周期中进行 并发整理 和 并发更新，不暂停应用线程，并将垃圾回收分解为多个阶段，来达到极短的暂停时间，同时不会随着堆内存大小而影响。
- 参考资料: https://wiki.openjdk.java.net/display/shenandoah/Main https://www.youtube.com/watch?v=VCeHkcwfF9Q https://www.youtube.com/watch?v=E1M3hNlhQCg https://www.researchgate.net/publication/306112816_Shenandoah_An_open-source_concurrent_compacting_garbage_collector_for_OpenJDK https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/ https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/
- 特性 并发复制 Shenandoah GC 是如何做到并发复制的呢？这主要是利用了 读屏障 和 Brooks Pointers。">
+  <meta name="description" content="介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/shenandoah-gc/">
@@ -234,10 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/shenandoah-gc/">
   <meta property="og:title" content="Shenandoah GC 介绍 | 疯狂的厨子">
-  <meta property="og:description" content="介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时为了使大容量内存应用在垃圾回收时只进行短暂的应用暂停，使用 -XX:&#43;UseShenandoahGC 开启。
-它能够在垃圾回收周期中进行 并发整理 和 并发更新，不暂停应用线程，并将垃圾回收分解为多个阶段，来达到极短的暂停时间，同时不会随着堆内存大小而影响。
- 参考资料: https://wiki.openjdk.java.net/display/shenandoah/Main https://www.youtube.com/watch?v=VCeHkcwfF9Q https://www.youtube.com/watch?v=E1M3hNlhQCg https://www.researchgate.net/publication/306112816_Shenandoah_An_open-source_concurrent_compacting_garbage_collector_for_OpenJDK https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/ https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/
- 特性 并发复制 Shenandoah GC 是如何做到并发复制的呢？这主要是利用了 读屏障 和 Brooks Pointers。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -287,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时为了使大容量内存应用在垃圾回收时只进行短暂的应用暂停，使用 -XX:+UseShenandoahGC 开启。\n它能够在垃圾回收周期中进行 并发整理 和 并发更新，不暂停应用线程，并将垃圾回收分解为多个阶段，来达到极短的暂停时间，同时不会随着堆内存大小而影响。\n 参考资料: https://wiki.openjdk.java.net/display/shenandoah/Main https://www.youtube.com/watch?v=VCeHkcwfF9Q https://www.youtube.com/watch?v=E1M3hNlhQCg https://www.researchgate.net/publication/306112816_Shenandoah_An_open-source_concurrent_compacting_garbage_collector_for_OpenJDK https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/ https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/\n 特性 并发复制 Shenandoah GC 是如何做到并发复制的呢？这主要是利用了 读屏障 和 Brooks Pointers。"
+  "description": "介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时"
 }
 </script>
 
@@ -545,9 +539,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Shenandoah GC 介绍</h1>
-
+  
   
 
   
@@ -574,8 +570,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    2 分钟阅读时长
+    3 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  1151 字 
   
 
   
@@ -828,7 +826,7 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -866,6 +864,8 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
       <li><a href="/post/zgc/">ZGC 介绍</a></li>
       
       <li><a href="/post/jvm-gc/">Java GC过程</a></li>
+      
+      <li><a href="/post/jvm-param/">JVM 参数</a></li>
       
     </ul>
   </div>
@@ -991,7 +991,7 @@ inline HeapWord** ShenandoahBrooksPointer::brooks_ptr_addr(oop obj) {
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

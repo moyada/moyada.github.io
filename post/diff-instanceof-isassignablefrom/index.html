@@ -28,8 +28,7 @@
   
     
   
-  <meta name="description" content="在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeName]、class.isInstance(obj)、class.isAssignableFrom(class)，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。
-  其中 instanceof 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 templateTable.hpp 中发现了 instanceof 方法的定义，从其中 templateTable_x86.cpp、templateTable_arm.cpp 的 instanceof 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。">
+  <meta name="description" content="在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeN">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/diff-instanceof-isassignablefrom/">
@@ -232,8 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/diff-instanceof-isassignablefrom/">
   <meta property="og:title" content="instanceOf、isInstance、isAssignableFrom 的区别 | 疯狂的厨子">
-  <meta property="og:description" content="在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeName]、class.isInstance(obj)、class.isAssignableFrom(class)，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。
-  其中 instanceof 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 templateTable.hpp 中发现了 instanceof 方法的定义，从其中 templateTable_x86.cpp、templateTable_arm.cpp 的 instanceof 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeN"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -283,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeName]、class.isInstance(obj)、class.isAssignableFrom(class)，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。\n  其中 instanceof 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 templateTable.hpp 中发现了 instanceof 方法的定义，从其中 templateTable_x86.cpp、templateTable_arm.cpp 的 instanceof 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。"
+  "description": "在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeN"
 }
 </script>
 
@@ -528,9 +526,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>instanceOf、isInstance、isAssignableFrom 的区别</h1>
-
+  
   
 
   
@@ -557,8 +557,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    2 分钟阅读时长
+    3 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  1026 字 
   
 
   
@@ -804,7 +806,7 @@ JNI_END
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -822,7 +824,7 @@ JNI_END
       
         <span class="post-nav-item">
           <span class="meta-nav">下一篇</span>&nbsp;
-          <a style="color: rgb(80,150,255)" href="/post/feign-eureka-without-springboot/" rel="next">在非 SpringBoot 工程中使用 Feign 整合 Eureka</a>
+          <a style="color: rgb(80,150,255)" href="/post/feign-eureka-without-springboot/" rel="next">在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</a>
         </span>
       
     </div>
@@ -956,7 +958,7 @@ JNI_END
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

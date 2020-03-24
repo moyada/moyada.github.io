@@ -465,11 +465,13 @@
   
   
   
+  
     
+  
   
 <div class="universal-wrapper pt-3">
   <h1>Maven</h1>
-
+  
   
 
   
@@ -485,29 +487,40 @@
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/maven-central/" >发布 jar 包至 maven 官方中央仓库</a></h2>
       <div class="article-style">
         
-          当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。
- https://central.sonatype.org/pages/ossrh-guide.html
- 创建发布需求 在创建问题时需要注意，如果 groupId 选择的是私有域名时，那么管理员会要求验证域名的归属，而对于 github 的子域名则无需验证。
-接下来管理员会要求你进行第一次的发布操作，在发布前你需要使用 gpg 创建你的秘钥。
-创建秘钥 Mac 下可以通过 brew 下载安装，使用命令 gpg --gen-key 生成，完成后通过 gpg --list-keys 即可查看已创建秘钥。
-接下来需要将秘钥发布到远程服务器上，如 gpg --keyserver hkp://keyserver.ubuntu.com:11371 --send-keys &lt;sec_key&gt;，发布后可以使用 gpg --keyserver hkp://keyserver.
         
+
+
+        
+          
+        
+
+        
+
+        当项目准备发布至 maven 中央仓库时，基本上按照官方指南操作就行了。 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/maven/" >Maven 基本操作</a></h2>
       <div class="article-style">
         
-          pom配置文件 命令  mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile: 编译测试程序 mvn test: 执行测试 mvn package: 打包项目输出到target目录下 mvn install: 安装项目到本地仓库 安装本地jar包: mvn install:install-file -Dfile=a.jar -DgroupId=com.a -DartifactId=a -Dversion=0.0.1 -Dpackaging=jar mvn deploy: 将打包好的包上传到远程仓库,[-N]跳过子模块 mvn site: 生成站点 mvn dependency: 操作依赖 获取远端依赖: mvn dependency:resolve 获取单个远端依赖: mvn dependency:get -Dartifact=&lt;groupId&gt;:&lt;artifactId&gt;:&lt;version&gt;  跳过测试用例 -Dmaven.
         
+
+
+        
+          
+        
+
+        
+
+        pom配置文件 命令 mvn clean: 清除target目录 mvn compile: 编译主程序 mvn test-compile: 
       </div>
     </div>
   
@@ -633,7 +646,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

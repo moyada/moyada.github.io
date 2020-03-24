@@ -28,10 +28,7 @@
   
     
   
-  <meta name="description" content="在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致结果的偏差。 所以，为了在大程度上避免这种偏差问题，则会用到OpenJDK的性能基准测试项目 JMH。
-项目构建 可以通过maven命令构建项目
-mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjdk.jmh \ -DarchetypeArtifactId=jmh-java-benchmark-archetype \ -DgroupId=&lt;you_groupId&gt; \ -DartifactId=&lt;you_artifactId&gt; \ -Dversion=1.0-SNAPSHOT  或者在已有项目中引入依赖包
-&lt;dependency&gt; &lt;groupId&gt;org.openjdk.jmh&lt;/groupId&gt; &lt;artifactId&gt;jmh-core&lt;/artifactId&gt; &lt;version&gt;${jmh.version}&lt;/version&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.openjdk.jmh&lt;/groupId&gt; &lt;artifactId&gt;jmh-generator-annprocess&lt;/artifactId&gt; &lt;version&gt;${jmh.version}&lt;/version&gt; &lt;scope&gt;provided&lt;/scope&gt; &lt;/dependency&gt;  基本使用 注解    参数 作用 范围     @State 配置每个实例的生命周期 类   @BenchmarkMode 测试的维度，有吞吐量、平时时间、随机取样、单次运行 方法、类   @OutputTimeUnit 输出结果的时间单位 方法、类   @Warmup 预热迭代，以保证即时编译的工作 方法、类   @Measurement 设置执行测试迭代的参数 方法、类   @Fork 使用额外虚拟机测试数量 方法、类   @Setup 测试前置执行逻辑 方法   @TearDown 测试结束执行逻辑 方法   @Benchmark 标记该方法需要进行测试，并生成class类 方法   @Param 指定参数的测试范围 属性   @CompilerControl 设置即时编译的效果 构造器、类、方法    启动 编写 main 方法编译启动或打包成 jar 包运行">
+  <meta name="description" content="在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/jmh/">
@@ -234,10 +231,7 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/jmh/">
   <meta property="og:title" content="Java 基准测试框架(JMH) | 疯狂的厨子">
-  <meta property="og:description" content="在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致结果的偏差。 所以，为了在大程度上避免这种偏差问题，则会用到OpenJDK的性能基准测试项目 JMH。
-项目构建 可以通过maven命令构建项目
-mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjdk.jmh \ -DarchetypeArtifactId=jmh-java-benchmark-archetype \ -DgroupId=&lt;you_groupId&gt; \ -DartifactId=&lt;you_artifactId&gt; \ -Dversion=1.0-SNAPSHOT  或者在已有项目中引入依赖包
-&lt;dependency&gt; &lt;groupId&gt;org.openjdk.jmh&lt;/groupId&gt; &lt;artifactId&gt;jmh-core&lt;/artifactId&gt; &lt;version&gt;${jmh.version}&lt;/version&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.openjdk.jmh&lt;/groupId&gt; &lt;artifactId&gt;jmh-generator-annprocess&lt;/artifactId&gt; &lt;version&gt;${jmh.version}&lt;/version&gt; &lt;scope&gt;provided&lt;/scope&gt; &lt;/dependency&gt;  基本使用 注解    参数 作用 范围     @State 配置每个实例的生命周期 类   @BenchmarkMode 测试的维度，有吞吐量、平时时间、随机取样、单次运行 方法、类   @OutputTimeUnit 输出结果的时间单位 方法、类   @Warmup 预热迭代，以保证即时编译的工作 方法、类   @Measurement 设置执行测试迭代的参数 方法、类   @Fork 使用额外虚拟机测试数量 方法、类   @Setup 测试前置执行逻辑 方法   @TearDown 测试结束执行逻辑 方法   @Benchmark 标记该方法需要进行测试，并生成class类 方法   @Param 指定参数的测试范围 属性   @CompilerControl 设置即时编译的效果 构造器、类、方法    启动 编写 main 方法编译启动或打包成 jar 包运行"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -287,7 +281,7 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致结果的偏差。 所以，为了在大程度上避免这种偏差问题，则会用到OpenJDK的性能基准测试项目 JMH。\n项目构建 可以通过maven命令构建项目\nmvn archetype:generate \\ -DinteractiveMode=false \\ -DarchetypeGroupId=org.openjdk.jmh \\ -DarchetypeArtifactId=jmh-java-benchmark-archetype \\ -DgroupId=\u0026lt;you_groupId\u0026gt; \\ -DartifactId=\u0026lt;you_artifactId\u0026gt; \\ -Dversion=1.0-SNAPSHOT  或者在已有项目中引入依赖包\n\u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;org.openjdk.jmh\u0026lt;/groupId\u0026gt; \u0026lt;artifactId\u0026gt;jmh-core\u0026lt;/artifactId\u0026gt; \u0026lt;version\u0026gt;${jmh.version}\u0026lt;/version\u0026gt; \u0026lt;/dependency\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;org.openjdk.jmh\u0026lt;/groupId\u0026gt; \u0026lt;artifactId\u0026gt;jmh-generator-annprocess\u0026lt;/artifactId\u0026gt; \u0026lt;version\u0026gt;${jmh.version}\u0026lt;/version\u0026gt; \u0026lt;scope\u0026gt;provided\u0026lt;/scope\u0026gt; \u0026lt;/dependency\u0026gt;  基本使用 注解    参数 作用 范围     @State 配置每个实例的生命周期 类   @BenchmarkMode 测试的维度，有吞吐量、平时时间、随机取样、单次运行 方法、类   @OutputTimeUnit 输出结果的时间单位 方法、类   @Warmup 预热迭代，以保证即时编译的工作 方法、类   @Measurement 设置执行测试迭代的参数 方法、类   @Fork 使用额外虚拟机测试数量 方法、类   @Setup 测试前置执行逻辑 方法   @TearDown 测试结束执行逻辑 方法   @Benchmark 标记该方法需要进行测试，并生成class类 方法   @Param 指定参数的测试范围 属性   @CompilerControl 设置即时编译的效果 构造器、类、方法    启动 编写 main 方法编译启动或打包成 jar 包运行"
+  "description": "在对不同工具做性能对比测试时，由于jvm的运行期优化可能导致"
 }
 </script>
 
@@ -542,9 +536,11 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Java 基准测试框架(JMH)</h1>
-
+  
   
 
   
@@ -571,8 +567,10 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  376 字 
   
 
   
@@ -826,7 +824,7 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -978,7 +976,7 @@ mvn archetype:generate \ -DinteractiveMode=false \ -DarchetypeGroupId=org.openjd
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

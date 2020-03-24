@@ -28,10 +28,7 @@
   
     
   
-  <meta name="description" content="因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 ConcurrentHashMap。
- 虽然在 jdk8 修复了该问题，但仍然还存在其他并发问题。
- 其产生的主要原因是扩容时元素的循环引用，在这里简单描述下。
-// jdk7 中造成问题的核心代码 void transfer(Entry[] newTable, boolean rehash) { int newCapacity = newTable.length; for (Entry&lt;K,V&gt; e : table) { while(null !">
+  <meta name="description" content="因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 Concu">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/hashmap-problem/">
@@ -234,10 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/hashmap-problem/">
   <meta property="og:title" content="HashMap 在并发环境下的死循环问题 | 疯狂的厨子">
-  <meta property="og:description" content="因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 ConcurrentHashMap。
- 虽然在 jdk8 修复了该问题，但仍然还存在其他并发问题。
- 其产生的主要原因是扩容时元素的循环引用，在这里简单描述下。
-// jdk7 中造成问题的核心代码 void transfer(Entry[] newTable, boolean rehash) { int newCapacity = newTable.length; for (Entry&lt;K,V&gt; e : table) { while(null !"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 Concu"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -287,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 ConcurrentHashMap。\n 虽然在 jdk8 修复了该问题，但仍然还存在其他并发问题。\n 其产生的主要原因是扩容时元素的循环引用，在这里简单描述下。\n// jdk7 中造成问题的核心代码 void transfer(Entry[] newTable, boolean rehash) { int newCapacity = newTable.length; for (Entry\u0026lt;K,V\u0026gt; e : table) { while(null !"
+  "description": "因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 Concu"
 }
 </script>
 
@@ -532,9 +526,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>HashMap 在并发环境下的死循环问题</h1>
-
+  
   
 
   
@@ -561,8 +557,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    2 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  534 字 
   
 
   
@@ -748,7 +746,7 @@ void transfer(Entry[] newTable, boolean rehash) {
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -900,7 +898,7 @@ void transfer(Entry[] newTable, boolean rehash) {
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

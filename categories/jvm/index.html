@@ -465,11 +465,13 @@
   
   
   
+  
     
+  
   
 <div class="universal-wrapper pt-3">
   <h1>JVM</h1>
-
+  
   
 
   
@@ -485,123 +487,163 @@
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/shenandoah-gc/" >Shenandoah GC 介绍</a></h2>
       <div class="article-style">
         
-          介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时为了使大容量内存应用在垃圾回收时只进行短暂的应用暂停，使用 -XX:+UseShenandoahGC 开启。
-它能够在垃圾回收周期中进行 并发整理 和 并发更新，不暂停应用线程，并将垃圾回收分解为多个阶段，来达到极短的暂停时间，同时不会随着堆内存大小而影响。
- 参考资料: https://wiki.openjdk.java.net/display/shenandoah/Main https://www.youtube.com/watch?v=VCeHkcwfF9Q https://www.youtube.com/watch?v=E1M3hNlhQCg https://www.researchgate.net/publication/306112816_Shenandoah_An_open-source_concurrent_compacting_garbage_collector_for_OpenJDK https://developers.redhat.com/blog/2019/06/27/shenandoah-gc-in-jdk-13-part-1-load-reference-barriers/ https://developers.redhat.com/blog/2019/06/28/shenandoah-gc-in-jdk-13-part-2-eliminating-the-forward-pointer-word/
- 特性 并发复制 Shenandoah GC 是如何做到并发复制的呢？这主要是利用了 读屏障 和 Brooks Pointers。
         
+
+
+        
+          
+        
+
+        
+
+        介绍 Shenandoah GC 是 OpenJDK 在 JDK12 推出的新一代 标记整理 的垃圾回收器，它的目标时 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/zgc/" >ZGC 介绍</a></h2>
       <div class="article-style">
         
-          什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶段需要花费更长的时间，为了提高 jvm 在大容量内存应用的回收效率，一款新的垃圾回收器 ZGC 在 JDK11 上正式公布问世。通过配置参数 -XX:+UseZGC 开启，目前仅支持 Linux x86 64位的系统。
-ZGC 全称 Z Garbage Collector，是一款 低停顿 的标记整理垃圾收集器，它能够在大部分时间与应用线程并行运行。ZGC 在 Oracle 官方资料中表明能够保证垃圾回收中最高 10毫秒 的停顿，而作为低停顿的代价也只是最多下降 15% 的总吞吐量。
- 参考资料: https://openjdk.
         
+
+
+        
+          
+        
+
+        
+
+        什么是 ZGC 由于现在系统日趋增长的内存，传统的垃圾回收器在整理阶 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/java-synchronized/" >synchronized 原理总结</a></h2>
       <div class="article-style">
         
-          介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。
-它是通过获取对象头的 Mark Word 来实现互斥功能的，当使用方式不同时所操作的对象也不同。
-  声明在方法内时，锁对象由开发者所指定
-  声明在方法上，锁对象则为当前类的实例
-  声明在静态方法上，锁对象就是由类加载器所加载的 Class
-  这里简单记录 synchronized 代码块在虚拟机内部的运转，版本为 OpenJDK11。
-获取同步锁 当线程进入临界区时，会根据是否开启了偏向锁选择进入 ObjectSynchronizer::fast_enter 方法或者 ObjectSynchronizer::slow_enter 方法。
         
+
+
+        
+          
+        
+
+        
+
+        介绍 在 Java 中 synchronized 是用于并发环境下使用临界区的原语。 它是通过获取对 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/java-management/" >JMX 简介</a></h2>
       <div class="article-style">
         
-          JMX 的全称为 Java Management Extensions，是一种监控、管理正在运行的 Java 应用程序的机制，并且支持开发人员自定义 MBean 监视器。
-常用 MXBean 通过查询 java.lang.management.PlatformManagedObject 的继承接口能够得知当前 JDK 版本提供的所有 MXBean。
-   类名 功能     java.lang.management.CompilationMXBean 编译器的管理接口   java.
         
+
+
+        
+          
+        
+
+        
+
+        JMX 的全称为 Java Management Extensions，是一种监控、管理正在运行 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/card-table/" >跨代引用</a></h2>
       <div class="article-style">
         
-          在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况，在 Major GC 时，为了标记这些引用的新生代对象，需要通过扫描老年代来间接标记。
-然而，正常扫描全部老年代来获取的做法效率太低下了，由此便产生了称为 CardTable (卡表) 的数据。
-Card Table 保存了所在由老年代所引用的新生代对象的集合，同时利用写屏障，在引用对象变化时，对引用记录标记为 &ldquo;脏&rdquo; ，那么当下次 GC 到来时，只用扫描脏页 (Dirty Page) 便可以标记出由老年代引用的新生代存活对象。并且在 GC 后，由于复制算法导致了数据的迁移，根据迁移的位置决定是否对引用记录再次进行标记。
-在 G1 中，除了 Card Table 还存在 Remembered Set，更好的解决了跨代引用的问题。
         
+
+
+        
+          
+        
+
+        
+
+        在 JVM 虚拟机的内存管理中，有可能存在老年代对象引用新生代的情况 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/jvm-gc/" >Java GC过程</a></h2>
       <div class="article-style">
         
-          由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。
-Stop-the-World 在 HotSpot 虚拟机中，Stop-the-World 也被称之为 safepoint，在此阶段内，所有运行 Java 代码与 JVM 交互的应用线程将会被挂起。
-以便在执行 GC 复制算法、栈上替换代码、JIT 去优化、清除 code cache、重定义 Class、偏向锁的去除、debug 操作等任务时保证数据的一致性。
-YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过程中最频繁的GC。
-原因及过程 YoungGC 的产生原因主要是eden区内存不足以分配新对象或者剩余空间达到GC触发条件。 在发生 GC 时，虚拟机会将 eden 区和 survival from 区中存活的对象拷贝进 survival to 区，清理其余对象。
         
+
+
+        
+          
+        
+
+        
+
+        由于JVM分代设计，GC也根据原因不同而产生不同效果的GC， 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/jvm/" >Java 虚拟机总结</a></h2>
       <div class="article-style">
         
-          JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。 另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。
- https://www.youtube.com/watch?v=ZBJ0u9MaKtM
- 类加载机制 Java虚拟机的类加载有加载 (load)、链接 (link)、初始化 (initialize) 三个步骤
-当一个类被实例化时或者类中静态方法被调用时将进行类加载
-加载 将不同的类数据源以字节码的形式加载到内存中以供类加载器使用，数据的来源可以是 jar 包、class 类、网络数据，一个类数据有且只有一个存在于一个类加载器中。
-正常的类加载是以双亲委任机制，不同的类加载器是以继承的方式链接的，当通过某个类加载器加载一个类数据时，当这个类加载器存在父类加载器时，那么它会先从父类加载器中寻找类数据，不存在再在自身中寻找，并且父类也是遵循这个机制。
- Tomcat的类加载器重写了这个加载机制，会优先在自身中查找，这跟Tomcat所加载类的所在位置有关。
- 链接 链接包含了验证、准备、解析三个步骤
         
+
+
+        
+          
+        
+
+        
+
+        JVM(Java虚拟机) JVM 是 JRE 包含的 Java 程序运行所需的程序，屏 
       </div>
     </div>
   
     
     
     
-    <div>
+    <div style="margin-bottom: 30px">
       <h2><a href="/post/jvm-param/" >JVM 参数</a></h2>
       <div class="article-style">
         
-          table th:nth-of-type(1) { width: 250px; } table th:nth-of-type(2) { width: 30px; } table th:nth-of-type(3) { width: 300px; } table th:nth-of-type(4) { width: 150px; }  空间 通用    参数 常用 说明 备注     -Xms&lt;size&gt;&lt;unit&gt; ● Heap 初始化的大小    -Xmx&lt;size&gt;&lt;unit&gt; ● Heap 最大值    -Xmn&lt;size&gt;&lt;unit&gt; ● 新生代的大小 G1 GC 下建议不设置该参数   -Xss&lt;size&gt;&lt;unit&gt; ● 线程栈的大小，默认 1M    -XX:MaxDirectMemorySize=&lt;size&gt;&lt;unit&gt;  设置 NIO 的直接缓存最大容量    -XX:SurvivorRatio=&lt;size&gt; ● Eden 和 Survior(from和to) 大小比例，默认是 8    -XX:AutoBoxCacheMax=&lt;size&gt;  设置自动装箱池缓存大小 server模式专有   -XX:+UseAdaptiveGCBoundary  动态化使用资源    -XX:+UseAdaptiveSizePolicy  动态调整各个代区的内存大小，每次 minor gc 后会重新计算 eden，from 和 to 的大小    -XX:NewSize=&lt;size&gt;&lt;unit&gt;  设置新生代的初始大小    -XX:MaxNewSize=&lt;size&gt;&lt;unit&gt;  设置新生代的最大值    -XX:NewRatio=&lt;size&gt;  设置新生代和老年代的比例    -Dsun.
         
+
+
+        
+          
+        
+
+        
+          
+          
+        
+
+        table th:nth-of-type(1) { width: 250px; } table th:nth-of-type(2) { width: 30px; } table th:nth-of-type(3) { width: 300p  ...
       </div>
     </div>
   
@@ -727,7 +769,7 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

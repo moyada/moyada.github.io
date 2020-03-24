@@ -28,7 +28,7 @@
   
     
   
-  <meta name="description" content="">
+  <meta name="description" content="背景 爬虫与反爬虫是个在软件开发行业里一直存在的斗争。爬虫，一">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/scrapy/">
@@ -231,7 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/scrapy/">
   <meta property="og:title" content="爬虫与反爬虫 | 疯狂的厨子">
-  <meta property="og:description" content=""><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="背景 爬虫与反爬虫是个在软件开发行业里一直存在的斗争。爬虫，一"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -281,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": ""
+  "description": "背景 爬虫与反爬虫是个在软件开发行业里一直存在的斗争。爬虫，一"
 }
 </script>
 
@@ -499,7 +499,23 @@
         <li><a href="#" id="back_to_top" class="docs-toc-title">爬虫与反爬虫</a></li>
       </ul>
 
-      <nav id="TableOfContents"></nav>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#背景">背景</a></li>
+    <li><a href="#爬虫">爬虫</a>
+      <ul>
+        <li><a href="#api">API</a></li>
+        <li><a href="#模拟浏览器">模拟浏览器</a></li>
+      </ul>
+    </li>
+    <li><a href="#反爬虫">反爬虫</a>
+      <ul>
+        <li><a href="#header-拦截">Header 拦截</a></li>
+        <li><a href="#频次拦截">频次拦截</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
       
     </div>
 
@@ -526,9 +542,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>爬虫与反爬虫</h1>
-
+  
   
 
   
@@ -555,8 +573,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    0 分钟阅读时长
+    1 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  234 字 
   
 
   
@@ -591,7 +611,16 @@
 		  
 
 		    <div class="article-style">
-		      
+		      <h2 id="背景">背景</h2>
+<p>爬虫与反爬虫是个在软件开发行业里一直存在的斗争。爬虫，一般常见的有窃取同行数据、分析行业数据、恶意攻击等，最终都是以牟利为目的。为了防止爬虫，反爬虫就得做出防护，常见的有分析请求 <code>User-agent</code>、加密请求数据、限制游客请求、设置用户 ip 请求频次。然而，再完善的拦截，还是会有被突破的可能，这一切都是成本的博弈，当爬虫获得的收益低于它所付出的成本时，那么反爬虫就是成功的。</p>
+<p>下面就来分析一下这些常见的爬虫与反爬虫手段都有哪些不同。</p>
+<h2 id="爬虫">爬虫</h2>
+<h3 id="api">API</h3>
+<h3 id="模拟浏览器">模拟浏览器</h3>
+<h2 id="反爬虫">反爬虫</h2>
+<h3 id="header-拦截">Header 拦截</h3>
+<h3 id="频次拦截">频次拦截</h3>
+
 		    </div>
 		  
 		</article>
@@ -696,7 +725,7 @@
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -841,7 +870,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

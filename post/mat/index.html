@@ -28,12 +28,7 @@
   
     
   
-  <meta name="description" content="使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。
-通过jmap -dump:format=b,file=[file_name]] [pid] 生成hprof文件
-在Eclipse Marketplace安装 Memory Analyzer，打开dump文件
- 注意: dump 导出后的内存跟实际监控看到的内存大小不一致的时候, 有可能是使用了堆外内存  Overview 面板 Remainder(剩余) 应用 Heap 可分配的内存, 如果可分配内存很小, 则可以考虑加大或者进行优化
-Histogram 面板 (类 的角度) 可以查看内存中实例的数量以及占用内存的大小
-Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的顺序列举了对象列表情况">
+  <meta name="description" content="使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。 通过">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/mat/">
@@ -236,12 +231,7 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/mat/">
   <meta property="og:title" content="使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏 | 疯狂的厨子">
-  <meta property="og:description" content="使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。
-通过jmap -dump:format=b,file=[file_name]] [pid] 生成hprof文件
-在Eclipse Marketplace安装 Memory Analyzer，打开dump文件
- 注意: dump 导出后的内存跟实际监控看到的内存大小不一致的时候, 有可能是使用了堆外内存  Overview 面板 Remainder(剩余) 应用 Heap 可分配的内存, 如果可分配内存很小, 则可以考虑加大或者进行优化
-Histogram 面板 (类 的角度) 可以查看内存中实例的数量以及占用内存的大小
-Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的顺序列举了对象列表情况"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。 通过"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -291,7 +281,7 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。\n通过jmap -dump:format=b,file=[file_name]] [pid] 生成hprof文件\n在Eclipse Marketplace安装 Memory Analyzer，打开dump文件\n 注意: dump 导出后的内存跟实际监控看到的内存大小不一致的时候, 有可能是使用了堆外内存  Overview 面板 Remainder(剩余) 应用 Heap 可分配的内存, 如果可分配内存很小, 则可以考虑加大或者进行优化\nHistogram 面板 (类 的角度) 可以查看内存中实例的数量以及占用内存的大小\nDominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的顺序列举了对象列表情况"
+  "description": "使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。 通过"
 }
 </script>
 
@@ -561,9 +551,11 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</h1>
-
+  
   
 
   
@@ -590,8 +582,10 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    2 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  510 字 
   
 
   
@@ -778,7 +772,7 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -930,7 +924,7 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

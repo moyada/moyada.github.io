@@ -28,10 +28,7 @@
   
     
   
-  <meta name="description" content="Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spring 中的。
-1. xml 配置 这是早期 Spring 提供的配置方式，需要与 xsd 文件配合使用。
-文件的解析是需要通过实现 org.springframework.beans.factory.xml.NamespaceHandlerSupport 提供解析器，在 init 方法中调用 registerBeanDefinitionParser 将 xsd元素名称 与 元素解析器 进行绑定。
-对于 xsd元素 所绑定的解析器是 org.">
+  <meta name="description" content="Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/spring-configure/">
@@ -234,10 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/spring-configure/">
   <meta property="og:title" content="Spring 自定义配置加载 | 疯狂的厨子">
-  <meta property="og:description" content="Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spring 中的。
-1. xml 配置 这是早期 Spring 提供的配置方式，需要与 xsd 文件配合使用。
-文件的解析是需要通过实现 org.springframework.beans.factory.xml.NamespaceHandlerSupport 提供解析器，在 init 方法中调用 registerBeanDefinitionParser 将 xsd元素名称 与 元素解析器 进行绑定。
-对于 xsd元素 所绑定的解析器是 org."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -287,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spring 中的。\n1. xml 配置 这是早期 Spring 提供的配置方式，需要与 xsd 文件配合使用。\n文件的解析是需要通过实现 org.springframework.beans.factory.xml.NamespaceHandlerSupport 提供解析器，在 init 方法中调用 registerBeanDefinitionParser 将 xsd元素名称 与 元素解析器 进行绑定。\n对于 xsd元素 所绑定的解析器是 org."
+  "description": "Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支"
 }
 </script>
 
@@ -543,9 +537,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Spring 自定义配置加载</h1>
-
+  
   
 
   
@@ -572,8 +568,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    2 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  773 字 
   
 
   
@@ -740,7 +738,7 @@
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -892,7 +890,7 @@
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

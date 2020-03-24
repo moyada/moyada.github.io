@@ -28,9 +28,7 @@
   
     
   
-  <meta name="description" content="随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴起，很好的解决了 应用程序 与 运行环境 的不一致问题。
-在 Docker 的管理里，应用程序时以容器的方式运行的，一个容器其实就是一个进程，通过 Namespaces 限制进程所能查看到的信息，并且使用 CGroups 限制进程所能使用的资源，挂载 rootfs 配置容器的可操作的数据，使用指定网络模型进行容器间通信。
-Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行步骤等一系列正常发布流程，通过 docker build path 命令将操作打包成一个 Image 镜像 (可在 Dockerfile 同目录下增加 .">
+  <meta name="description" content="随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/docker/">
@@ -233,9 +231,7 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/bak/docker/">
   <meta property="og:title" content="初识 Docker | 疯狂的厨子">
-  <meta property="og:description" content="随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴起，很好的解决了 应用程序 与 运行环境 的不一致问题。
-在 Docker 的管理里，应用程序时以容器的方式运行的，一个容器其实就是一个进程，通过 Namespaces 限制进程所能查看到的信息，并且使用 CGroups 限制进程所能使用的资源，挂载 rootfs 配置容器的可操作的数据，使用指定网络模型进行容器间通信。
-Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行步骤等一系列正常发布流程，通过 docker build path 命令将操作打包成一个 Image 镜像 (可在 Dockerfile 同目录下增加 ."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -487,9 +483,11 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>初识 Docker</h1>
-
+  
   
 
   
@@ -656,7 +654,7 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -801,7 +799,7 @@ Docker 是通过编写 Dockerfile 来配置应用环境、代码文件、执行�
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

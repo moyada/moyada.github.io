@@ -28,11 +28,7 @@
   
     
   
-  <meta name="description" content="分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩短查询时间，常常会考虑做分表设计。分表分两种，一种是纵向分表（将本来可以在同一个表的内容，人为划分存储在为多个不同结构的表）和横向分表（把大的表结构，横向切割为同样结构的不同表）。
-其中，纵向分表常见的方式有根据活跃度分表、根据重要性分表等。其主要解决问题如下：
-表与表之间资源争用问题； 锁争用机率小； 实现核心与非核心的分级存储，如UDB登陆库拆分成一级二级三级库； 解决了数据库同步压力问题。 横向分表是指根据某些特定的规则来划分大数据量表，如根据时间分表。其主要解决问题如下：
-单表过大造成的性能问题； 单表过大造成的单服务器空间问题。
-设计  使用明确、统一的标明和列名，例如 School, SchoolCourse, CourceID。 数据表名使用单数而不是复数，例如 StudentCourse，而不是StudentCourses。 数据表名不要使用空格。 数据表名不要使用不必要的前缀或者后缀，例如使用School，而不是TblSchool，或者SchoolTable等等。 数据库中的密码要加密，到应用中再解密。 （其实就是散列存储、单向加密） 使用整数作为ID字段，也许现在没有这个必要，但是将来需要，例如关联表，索引等等。 使用整数字段做索引，否则会带来很大的性能问题 。 使用 bit 作为布尔字段，使用整数或者varcha是浪费。同时，这类字段应该以“Is”开头。 要经过认证才能访问数据库，不要给每一个用户管理员权限。 尽量避免使用“select *”，而使用“select [required_column_list]”以获得更好的性能。 假如程序代码比较复杂，使用ORM框架，例如hibernate，iBatis。ORM框架的性能问题可以通过详细的配置去解决。 分割不常使用的数据表到不同的物理存储以获得更好的性能。 对于关键数据库，使用安全备份系统，例如集群，同步等等。 使用外键，非空等限制来保证数据的完整性，不要把所有的东西都扔给程序。 缺乏数据库文档是致命的。你应该为你的数据库设计写文档，包括触发器、存储过程和其他脚本。 对于经常使用的查询和大型数据表，要使用索引。数据分析工具可以帮助你决定如何建立索引。 数据库服务器和网页服务器应该放在不同的机器上。这回提高安全性，并减轻CPU压力。 Image和blob字段不应该定义在常用的数据表中，否则会影响性能。 范式（Normalization）要按照要求使用以提高性能。Normalization做的不够会导致数据冗余，而过度Normalization 会导致太多的join和数据表，这两种情况都会影响性能。 多花点时间在数据库设计上，否则你将来会付出加倍的时间来偿还。  索引 少建索引或不建索引。这个问题最突出，建议建表时 DBA 可以一起协助把关。 索引滥用。滥用索引将导致写请求变慢，拖慢整体数据库的响应速度（5.">
+  <meta name="description" content="分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/database-design/">
@@ -235,11 +231,7 @@
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/bak/database-design/">
   <meta property="og:title" content="数据库设计 | 疯狂的厨子">
-  <meta property="og:description" content="分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩短查询时间，常常会考虑做分表设计。分表分两种，一种是纵向分表（将本来可以在同一个表的内容，人为划分存储在为多个不同结构的表）和横向分表（把大的表结构，横向切割为同样结构的不同表）。
-其中，纵向分表常见的方式有根据活跃度分表、根据重要性分表等。其主要解决问题如下：
-表与表之间资源争用问题； 锁争用机率小； 实现核心与非核心的分级存储，如UDB登陆库拆分成一级二级三级库； 解决了数据库同步压力问题。 横向分表是指根据某些特定的规则来划分大数据量表，如根据时间分表。其主要解决问题如下：
-单表过大造成的性能问题； 单表过大造成的单服务器空间问题。
-设计  使用明确、统一的标明和列名，例如 School, SchoolCourse, CourceID。 数据表名使用单数而不是复数，例如 StudentCourse，而不是StudentCourses。 数据表名不要使用空格。 数据表名不要使用不必要的前缀或者后缀，例如使用School，而不是TblSchool，或者SchoolTable等等。 数据库中的密码要加密，到应用中再解密。 （其实就是散列存储、单向加密） 使用整数作为ID字段，也许现在没有这个必要，但是将来需要，例如关联表，索引等等。 使用整数字段做索引，否则会带来很大的性能问题 。 使用 bit 作为布尔字段，使用整数或者varcha是浪费。同时，这类字段应该以“Is”开头。 要经过认证才能访问数据库，不要给每一个用户管理员权限。 尽量避免使用“select *”，而使用“select [required_column_list]”以获得更好的性能。 假如程序代码比较复杂，使用ORM框架，例如hibernate，iBatis。ORM框架的性能问题可以通过详细的配置去解决。 分割不常使用的数据表到不同的物理存储以获得更好的性能。 对于关键数据库，使用安全备份系统，例如集群，同步等等。 使用外键，非空等限制来保证数据的完整性，不要把所有的东西都扔给程序。 缺乏数据库文档是致命的。你应该为你的数据库设计写文档，包括触发器、存储过程和其他脚本。 对于经常使用的查询和大型数据表，要使用索引。数据分析工具可以帮助你决定如何建立索引。 数据库服务器和网页服务器应该放在不同的机器上。这回提高安全性，并减轻CPU压力。 Image和blob字段不应该定义在常用的数据表中，否则会影响性能。 范式（Normalization）要按照要求使用以提高性能。Normalization做的不够会导致数据冗余，而过度Normalization 会导致太多的join和数据表，这两种情况都会影响性能。 多花点时间在数据库设计上，否则你将来会付出加倍的时间来偿还。  索引 少建索引或不建索引。这个问题最突出，建议建表时 DBA 可以一起协助把关。 索引滥用。滥用索引将导致写请求变慢，拖慢整体数据库的响应速度（5."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -491,9 +483,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>数据库设计</h1>
-
+  
   
 
   
@@ -714,7 +708,7 @@ mysql explain</p>
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -866,7 +860,7 @@ mysql explain</p>
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

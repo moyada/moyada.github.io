@@ -28,11 +28,7 @@
   
     
   
-  <meta name="description" content="由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。
-Stop-the-World 在 HotSpot 虚拟机中，Stop-the-World 也被称之为 safepoint，在此阶段内，所有运行 Java 代码与 JVM 交互的应用线程将会被挂起。
-以便在执行 GC 复制算法、栈上替换代码、JIT 去优化、清除 code cache、重定义 Class、偏向锁的去除、debug 操作等任务时保证数据的一致性。
-YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过程中最频繁的GC。
-原因及过程 YoungGC 的产生原因主要是eden区内存不足以分配新对象或者剩余空间达到GC触发条件。 在发生 GC 时，虚拟机会将 eden 区和 survival from 区中存活的对象拷贝进 survival to 区，清理其余对象。">
+  <meta name="description" content="由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/jvm-gc/">
@@ -235,11 +231,7 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/jvm-gc/">
   <meta property="og:title" content="Java GC过程 | 疯狂的厨子">
-  <meta property="og:description" content="由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。
-Stop-the-World 在 HotSpot 虚拟机中，Stop-the-World 也被称之为 safepoint，在此阶段内，所有运行 Java 代码与 JVM 交互的应用线程将会被挂起。
-以便在执行 GC 复制算法、栈上替换代码、JIT 去优化、清除 code cache、重定义 Class、偏向锁的去除、debug 操作等任务时保证数据的一致性。
-YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过程中最频繁的GC。
-原因及过程 YoungGC 的产生原因主要是eden区内存不足以分配新对象或者剩余空间达到GC触发条件。 在发生 GC 时，虚拟机会将 eden 区和 survival from 区中存活的对象拷贝进 survival to 区，清理其余对象。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -289,7 +281,7 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，并且在Java的发展过程中根据不同的GC策略也有不同的过程实现。\nStop-the-World 在 HotSpot 虚拟机中，Stop-the-World 也被称之为 safepoint，在此阶段内，所有运行 Java 代码与 JVM 交互的应用线程将会被挂起。\n以便在执行 GC 复制算法、栈上替换代码、JIT 去优化、清除 code cache、重定义 Class、偏向锁的去除、debug 操作等任务时保证数据的一致性。\nYoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过程中最频繁的GC。\n原因及过程 YoungGC 的产生原因主要是eden区内存不足以分配新对象或者剩余空间达到GC触发条件。 在发生 GC 时，虚拟机会将 eden 区和 survival from 区中存活的对象拷贝进 survival to 区，清理其余对象。"
+  "description": "由于JVM分代设计，GC也根据原因不同而产生不同效果的GC，"
 }
 </script>
 
@@ -553,9 +545,11 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>Java GC过程</h1>
-
+  
   
 
   
@@ -582,8 +576,10 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    3 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  1387 字 
   
 
   
@@ -817,7 +813,7 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -847,6 +843,15 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
 
 
   
+  
+  <div class="article-widget content-widget-hr">
+    <h3>相关</h3>
+    <ul>
+      
+      <li><a href="/post/jvm-param/">JVM 参数</a></li>
+      
+    </ul>
+  </div>
   
 
 
@@ -969,7 +974,7 @@ YoungGC 发生在新生代的GC称为 Young GC，也叫 YGC，是 JVM 运行过�
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

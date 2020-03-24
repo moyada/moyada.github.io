@@ -28,19 +28,7 @@
   
     
   
-  <meta name="description" content="概念 volatile原语保障了多线程下变量的原子性、可见性、有序性。
-原子性 在32位虚拟机下对long、double类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证不存在中间值，但是由于读取的一刻其他线程也有可能改变值，所以复合操作无法达到原子性。
- 64位下不存在该问题，并且近代jdk中普通操作也能达到原子性
- 可见性 其目的是使多线程环境下对共享变量的修改能被其他线程立即查看到。
-由于线程对变量的读取是先从线程的工作内存(cpu缓存)中获取，不存在才从主内存中获取。
-那么在多线程环境下多普通共享变量的修改操作就会由于cpu缓存中已存在而导致的数据不一致。
-为了解决这个问题，处理器会对编译后指令增加lock指令前缀，大部分处理器架构采用了RingBus &#43; MESI协议的方式来解决，部分老版本cpu架构则采用锁总线来达到效果。
-原理是在修改数据时候更新cpu缓存之后立即写回主存、并且通知到使用相同变量线程，将该变量设置为无效，当读取变量时再从主存或者寄存器中获取。
- 由于volatile的可见性，也可用来完成轻量锁的实现，例如线程的终止判断
- 有序性 操作系统为了使cpu流水线的各个阶段不存在空闲内核，往往会多当前编译好的指令进行重排序，但是只会保证单条线程的程序正确性，并不保障并发环境下的正确性。
-JVM为了保证volatile域的可见性(happens-before)，会在编译时对指令前后都加入内存屏障指令lock前缀，使得不会将后面的指令重排序到内存屏障之前的位置。
- 当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。 当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。 当第一个操作是volatile写，第二个操作是volatile读时，不能重排序。   最经典的场景有double check单例，由于重排序，可能出现对象尚未创建成功，但是对象引用缺被赋值使用，造成空指针异常。
- ">
+  <meta name="description" content="概念 volatile原语保障了多线程下变量的原子性、可见性、">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/volatile/">
@@ -243,19 +231,7 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/volatile/">
   <meta property="og:title" content="volatile 浅析 | 疯狂的厨子">
-  <meta property="og:description" content="概念 volatile原语保障了多线程下变量的原子性、可见性、有序性。
-原子性 在32位虚拟机下对long、double类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证不存在中间值，但是由于读取的一刻其他线程也有可能改变值，所以复合操作无法达到原子性。
- 64位下不存在该问题，并且近代jdk中普通操作也能达到原子性
- 可见性 其目的是使多线程环境下对共享变量的修改能被其他线程立即查看到。
-由于线程对变量的读取是先从线程的工作内存(cpu缓存)中获取，不存在才从主内存中获取。
-那么在多线程环境下多普通共享变量的修改操作就会由于cpu缓存中已存在而导致的数据不一致。
-为了解决这个问题，处理器会对编译后指令增加lock指令前缀，大部分处理器架构采用了RingBus &#43; MESI协议的方式来解决，部分老版本cpu架构则采用锁总线来达到效果。
-原理是在修改数据时候更新cpu缓存之后立即写回主存、并且通知到使用相同变量线程，将该变量设置为无效，当读取变量时再从主存或者寄存器中获取。
- 由于volatile的可见性，也可用来完成轻量锁的实现，例如线程的终止判断
- 有序性 操作系统为了使cpu流水线的各个阶段不存在空闲内核，往往会多当前编译好的指令进行重排序，但是只会保证单条线程的程序正确性，并不保障并发环境下的正确性。
-JVM为了保证volatile域的可见性(happens-before)，会在编译时对指令前后都加入内存屏障指令lock前缀，使得不会将后面的指令重排序到内存屏障之前的位置。
- 当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。 当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。 当第一个操作是volatile写，第二个操作是volatile读时，不能重排序。   最经典的场景有double check单例，由于重排序，可能出现对象尚未创建成功，但是对象引用缺被赋值使用，造成空指针异常。
- "><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="概念 volatile原语保障了多线程下变量的原子性、可见性、"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -305,7 +281,7 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "概念 volatile原语保障了多线程下变量的原子性、可见性、有序性。\n原子性 在32位虚拟机下对long、double类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证不存在中间值，但是由于读取的一刻其他线程也有可能改变值，所以复合操作无法达到原子性。\n 64位下不存在该问题，并且近代jdk中普通操作也能达到原子性\n 可见性 其目的是使多线程环境下对共享变量的修改能被其他线程立即查看到。\n由于线程对变量的读取是先从线程的工作内存(cpu缓存)中获取，不存在才从主内存中获取。\n那么在多线程环境下多普通共享变量的修改操作就会由于cpu缓存中已存在而导致的数据不一致。\n为了解决这个问题，处理器会对编译后指令增加lock指令前缀，大部分处理器架构采用了RingBus + MESI协议的方式来解决，部分老版本cpu架构则采用锁总线来达到效果。\n原理是在修改数据时候更新cpu缓存之后立即写回主存、并且通知到使用相同变量线程，将该变量设置为无效，当读取变量时再从主存或者寄存器中获取。\n 由于volatile的可见性，也可用来完成轻量锁的实现，例如线程的终止判断\n 有序性 操作系统为了使cpu流水线的各个阶段不存在空闲内核，往往会多当前编译好的指令进行重排序，但是只会保证单条线程的程序正确性，并不保障并发环境下的正确性。\nJVM为了保证volatile域的可见性(happens-before)，会在编译时对指令前后都加入内存屏障指令lock前缀，使得不会将后面的指令重排序到内存屏障之前的位置。\n 当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。 当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。 当第一个操作是volatile写，第二个操作是volatile读时，不能重排序。   最经典的场景有double check单例，由于重排序，可能出现对象尚未创建成功，但是对象引用缺被赋值使用，造成空指针异常。\n "
+  "description": "概念 volatile原语保障了多线程下变量的原子性、可见性、"
 }
 </script>
 
@@ -557,9 +533,11 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
   
   
   
+  
+  
 <div class="article-container pt-3">
   <h1>volatile 浅析</h1>
-
+  
   
 
   
@@ -586,8 +564,10 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 分钟阅读时长
+    2 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  910 字 
   
 
   
@@ -758,7 +738,7 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -910,7 +890,7 @@ JVM为了保证volatile域的可见性(happens-before)，会在编译时对指�
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

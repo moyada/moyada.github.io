@@ -5,7 +5,7 @@
     <link>https://moyada.github.io/test/</link>
       <atom:link href="https://moyada.github.io/test/index.xml" rel="self" type="application/rss+xml" />
     <description>Tests</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2020 moyada</copyright><lastBuildDate>Sat, 21 Mar 2020 19:26:03 +0800</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sat, 21 Mar 2020 19:26:03 +0800</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title>Tests</title>

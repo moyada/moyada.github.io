@@ -28,9 +28,7 @@
   
     
   
-  <meta name="description" content="背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 @EnableDiscoveryClient 和 @EnableFeignClients 即可获取服务接口实例。可是由于我使用了 BeanPostProcessor 对注解进行了切片代理，并且目标项目也存在非 SpringCloud 项目，那么便只能通过底层 API 构建服务方实例了。
-方案 EurekaClient 提供了服务发现注册功能，但是在 Feign 所接收的属性中并没有用于负载均衡的，其中最有可能的就是 Client 属性了，这是用于负责服务请求的模块，那么就需要调研下是否能够通过 EurekaClient 构建出一个带有负载均衡功能的客户端。
-创建 LBClientFactory  Feign 的官方 Wiki 提供了构建服务实例的 方法，但 Feign 并不提供构建所需属性的实现，而是由其他框架适配 Feign 所提供的接口来实现每个功能。">
+  <meta name="description" content="背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka">
 
   
   <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/feign-eureka-without-springboot/">
@@ -232,10 +230,8 @@
   
   <meta property="og:site_name" content="疯狂的厨子">
   <meta property="og:url" content="https://moyada.github.io/post/feign-eureka-without-springboot/">
-  <meta property="og:title" content="在非 SpringBoot 工程中使用 Feign 整合 Eureka | 疯狂的厨子">
-  <meta property="og:description" content="背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 @EnableDiscoveryClient 和 @EnableFeignClients 即可获取服务接口实例。可是由于我使用了 BeanPostProcessor 对注解进行了切片代理，并且目标项目也存在非 SpringCloud 项目，那么便只能通过底层 API 构建服务方实例了。
-方案 EurekaClient 提供了服务发现注册功能，但是在 Feign 所接收的属性中并没有用于负载均衡的，其中最有可能的就是 Client 属性了，这是用于负责服务请求的模块，那么就需要调研下是否能够通过 EurekaClient 构建出一个带有负载均衡功能的客户端。
-创建 LBClientFactory  Feign 的官方 Wiki 提供了构建服务实例的 方法，但 Feign 并不提供构建所需属性的实现，而是由其他框架适配 Feign 所提供的接口来实现每个功能。"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:title" content="在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务 | 疯狂的厨子">
+  <meta property="og:description" content="背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
@@ -267,7 +263,7 @@
     "@type": "WebPage",
     "@id": "https://moyada.github.io/post/feign-eureka-without-springboot/"
   },
-  "headline": "在非 SpringBoot 工程中使用 Feign 整合 Eureka",
+  "headline": "在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务",
   
   "datePublished": "2019-05-18T08:47:26Z",
   "dateModified": "2019-05-18T08:47:26Z",
@@ -285,7 +281,7 @@
       "url": "https://moyada.github.io/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 @EnableDiscoveryClient 和 @EnableFeignClients 即可获取服务接口实例。可是由于我使用了 BeanPostProcessor 对注解进行了切片代理，并且目标项目也存在非 SpringCloud 项目，那么便只能通过底层 API 构建服务方实例了。\n方案 EurekaClient 提供了服务发现注册功能，但是在 Feign 所接收的属性中并没有用于负载均衡的，其中最有可能的就是 Client 属性了，这是用于负责服务请求的模块，那么就需要调研下是否能够通过 EurekaClient 构建出一个带有负载均衡功能的客户端。\n创建 LBClientFactory  Feign 的官方 Wiki 提供了构建服务实例的 方法，但 Feign 并不提供构建所需属性的实现，而是由其他框架适配 Feign 所提供的接口来实现每个功能。"
+  "description": "背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka"
 }
 </script>
 
@@ -303,7 +299,7 @@
 
 
 
-  <title>在非 SpringBoot 工程中使用 Feign 整合 Eureka | 疯狂的厨子</title>
+  <title>在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务 | 疯狂的厨子</title>
 
 </head>
 
@@ -500,7 +496,7 @@
   <div class="row flex-xl-nowrap">
     <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
-        <li><a href="#" id="back_to_top" class="docs-toc-title">在非 SpringBoot 工程中使用 Feign 整合 Eureka</a></li>
+        <li><a href="#" id="back_to_top" class="docs-toc-title">在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</a></li>
       </ul>
 
       <nav id="TableOfContents">
@@ -542,9 +538,11 @@
   
   
   
+  
+  
 <div class="article-container pt-3">
-  <h1>在非 SpringBoot 工程中使用 Feign 整合 Eureka</h1>
-
+  <h1>在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</h1>
+  
   
 
   
@@ -571,8 +569,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    2 分钟阅读时长
+    3 分钟阅读时长 
   </span>
+  <span>&nbsp;</span>
+  1151 字 
   
 
   
@@ -583,7 +583,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
+    <i class="fas fa-folder mr-1"></i><a href="/categories/spring/">Spring</a></span>
   
 
 </div>
@@ -621,7 +621,7 @@
 <a href="https://github.com/OpenFeign/feign#integrations" target="_blank" rel="noopener">方法</a>，但 Feign 并不提供构建所需属性的实现，而是由其他框架适配 Feign 所提供的接口来实现每个功能。</p>
 </blockquote>
 <p>在分析 <strong>Ribbon</strong> 的 Client 实现 <code>RibbonClient</code>，其构造器接收一个 <code>LBClientFactory</code> 参数，负载均衡的功能就是由它提供。</p>
-<p>通过搜索引擎发现了打通 Robbion 与 EurekaClient 的实现方式，需要引入依赖 <code>&amp;lt;artifactId&amp;gt;ribbon-eureka&amp;lt;/artifactId&amp;gt;</code>。</p>
+<p>通过搜索引擎发现了打通 Robbion 与 EurekaClient 的实现方式，需要引入依赖 <code>&lt;artifactId&gt;ribbon-eureka&lt;/artifactId&gt;</code>。</p>
 <pre><code>private Client newClient(String vipAddress, Provider&lt;EurekaClient&gt; provider) {
     ServerList&lt;DiscoveryEnabledServer&gt; list = new DiscoveryEnabledNIWSServerList(vipAddress, provider);
     ServerListFilter&lt;DiscoveryEnabledServer&gt; filter = new ZoneAffinityServerListFilter&lt;DiscoveryEnabledServer&gt;();
@@ -814,7 +814,7 @@ public EurekaClient initEurekaClient(EurekaInstanceConfig instanceConfig, Eureka
 
 <div class="article-widget">
   
-<div class="post-nav row">
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
   <div class="col-12 col-md-6 col-xl-6">
   
     
@@ -966,7 +966,7 @@ public EurekaClient initEurekaClient(EurekaInstanceConfig instanceConfig, Eureka
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
