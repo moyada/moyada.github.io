@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件">
+  <meta name="description" content="">
 
   
-  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/java-annotation-processor/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/spring-bean/">
 
   
 
@@ -215,7 +215,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="https://moyada.github.io/post/java-annotation-processor/">
+  <link rel="canonical" href="https://moyada.github.io/post/spring-bean/">
 
   
   
@@ -229,15 +229,15 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="疯狂的厨子">
-  <meta property="og:url" content="https://moyada.github.io/post/java-annotation-processor/">
-  <meta property="og:title" content="Java 注解处理器 | 疯狂的厨子">
-  <meta property="og:description" content="工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="https://moyada.github.io/post/spring-bean/">
+  <meta property="og:title" content="Spring Bean | 疯狂的厨子">
+  <meta property="og:description" content=""><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
-      <meta property="article:published_time" content="2019-01-15T19:40:15&#43;00:00">
+      <meta property="article:published_time" content="2020-03-28T14:19:35&#43;08:00">
     
-    <meta property="article:modified_time" content="2019-01-15T19:40:15&#43;00:00">
+    <meta property="article:modified_time" content="2020-03-28T14:19:35&#43;08:00">
   
 
   
@@ -261,12 +261,12 @@
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://moyada.github.io/post/java-annotation-processor/"
+    "@id": "https://moyada.github.io/post/spring-bean/"
   },
-  "headline": "Java 注解处理器",
+  "headline": "Spring Bean",
   
-  "datePublished": "2019-01-15T19:40:15Z",
-  "dateModified": "2019-01-15T19:40:15Z",
+  "datePublished": "2020-03-28T14:19:35+08:00",
+  "dateModified": "2020-03-28T14:19:35+08:00",
   
   "publisher": {
     "@type": "Organization",
@@ -276,7 +276,7 @@
       "url": "https://moyada.github.io/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "工作流程 注解处理器是一种应用于编译期间的模块，在编译完源文件"
+  "description": ""
 }
 </script>
 
@@ -294,7 +294,7 @@
 
 
 
-  <title>Java 注解处理器 | 疯狂的厨子</title>
+  <title>Spring Bean | 疯狂的厨子</title>
 
 </head>
 
@@ -513,16 +513,10 @@
   <div class="row flex-xl-nowrap">
     <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
-        <li><a href="#" id="back_to_top" class="docs-toc-title">Java 注解处理器</a></li>
+        <li><a href="#" id="back_to_top" class="docs-toc-title">Spring Bean</a></li>
       </ul>
 
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#工作流程">工作流程</a></li>
-    <li><a href="#创建文件">创建文件</a></li>
-    <li><a href="#修改语法树">修改语法树</a></li>
-  </ul>
-</nav>
+      <nav id="TableOfContents"></nav>
       
     </div>
 
@@ -556,7 +550,7 @@
 <div class=" pt-3">
   
     
-      <h1>Java 注解处理器</h1>
+      <h1>Spring Bean</h1>
     
   
   
@@ -577,7 +571,7 @@
     
       
     
-    2019-01-15
+    2020-03-28
   </span>
   
 
@@ -586,10 +580,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    2 分钟阅读时长 
+    0 分钟阅读时长 
   </span>
   <span>&nbsp;</span>
-  962 字 
+  0 字 
   
 
   
@@ -597,10 +591,6 @@
   
 
   
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
   
 
 </div>
@@ -628,69 +618,7 @@
 		  
 
 		    <div class="article-style">
-		      <h2 id="工作流程">工作流程</h2>
-<p>注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。</p>
-<blockquote>
-<p>编译器具体处理过程可查看 OpenJDK 官方文档: <a href="https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html">https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html</a></p>
-</blockquote>
-<ol>
-<li>
-<p>定义注解
-创建注解处理器的第一步就是需要定义相关注解，并且在注解上定义 <code>@Retention</code>，当指定为 <code>RetentionPolicy.SOURCE</code> 时，该注解即在编译结束后会被擦除。</p>
-</li>
-<li>
-<p>创建处理器
-接着就需要创建处理器了，一般可通过继承 <code>javax.annotation.processing.AbstractProcessor</code> 定义处理器，由于注解处理器是通过反射获取的，所以需要提供无参构造函数。</p>
-</li>
-<li>
-<p>设置解析注解
-重写 <code>getSupportedAnnotationTypes</code> 或定义 <code>@SupportedAnnotationTypes</code> 将先前定义的注解类名加入解析目标，也可以使用 <code>*</code> 通配符。</p>
-</li>
-<li>
-<p>指定支持版本
-对于存在源文件版本需求的处理器，则可以通过重写 <code>SupportedSourceVersion</code> 或定义 <code>@SupportedSourceVersion</code> 来指定版本。</p>
-</li>
-<li>
-<p>初始化处理器
-注解处理器拥有许多可供使用的工具类，但是这些工具类需要通过 <code>init</code> 方法的 <code>ProcessingEnvironment</code> 才可获取，一般做法也是重写此方法，提取所需工具对象保存至处理器中。</p>
-</li>
-<li>
-<p>实现处理流程
-注解处理器的核心流程为 <code>process</code> 方法，可通过参数 <code>RoundEnvironment</code> 获取被注解标记的元素，实现想提供的功能，一般为 <code>动态创建源文件</code> 或 <code>修改语法树</code>。</p>
-</li>
-<li>
-<p>注册处理器
-注册注解处理器的方式可以在编译时通过 <code>javac -processor</code> 指定。
-也可以配置自动加载，依照 <code>ServiceLoader</code> 形式，在 <code>META-INF/services</code> 下创建名为 <code>javax.annotation.processing.Processor</code> 的文件，将创建的注解处理器全类名填入，由于注解处理器是作用于编译期的，在编译时需要增加参数 <code>-proc:none</code> 以不使用注解处理器。</p>
-</li>
-</ol>
-<h2 id="创建文件">创建文件</h2>
-<p>文件的创建需要通过 <code>javax.annotation.processing.Filer</code> 来实现，可通过 <code>init</code> 方法获取。
-通过 Filer 可以新建源文件并获取 <code>JavaFileObject</code>，以 Java 代码的方法将内容写入源文件。</p>
-<p><code>MapStruct</code> 和 <code>JavaPoet</code> 就是利用这个功能开发的工具。</p>
-<h2 id="修改语法树">修改语法树</h2>
-<p>对比创建文件，修改语法树则是十分复杂且麻烦的工作，同样要通过 <code>init</code> 获取语法树构造器 <code>com.sun.source.util.Trees</code>。
-通过 Trees 可以将元素转换为语法树，并接受 <code>Visitor</code> 以进行语法树节点扫描和修改，一般监视器的实现可以通过继承 <code>TreeTranslator</code> 或 <code>TreeScanner</code>，对需要的方法进行重写。</p>
-<p>而语法树操作的难点在于其他方面:</p>
-<ol>
-<li>
-<p>文档的缺少，这是无疑是对开发人员不友好的。</p>
-</li>
-<li>
-<p>不稳定 api，有可能这个版本还能用的，在下一个版本就无效了。</p>
-</li>
-<li>
-<p>未知的异常，可能由于操作失误而引发的，而且通过异常信息无法准确定位问题。</p>
-</li>
-<li>
-<p>无法很好的控制注解处理器之间的顺序。</p>
-</li>
-</ol>
-<p><code>Lombok</code> 就是一种修改语法树的工具。</p>
-<blockquote>
-<p>这是我开发的一款通过修改语法树增加方法校验功能的工具: <a href="https://moyada.github.io/medivh/">https://moyada.github.io/medivh/</a></p>
-</blockquote>
-
+		      
 		    </div>
 		  
 		</article>
@@ -801,20 +729,13 @@
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/java-synchronized/" rel="prev">synchronized 原理总结</a>
+      <a style="color: rgb(80,150,255)" href="/post/scrapy/" rel="prev">爬虫与反爬虫</a>
     </span>
   
   </div>
 
   <div class="col-12 col-md-6 col-xl-6">
     <div style="float: right;">
-      
-      
-      
-        <span class="post-nav-item">
-          <span class="meta-nav">下一篇</span>&nbsp;
-          <a style="color: rgb(80,150,255)" href="/post/spring-configure/" rel="next">Spring 自定义配置加载</a>
-        </span>
       
     </div>
   </div>
