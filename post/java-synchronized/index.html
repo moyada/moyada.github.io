@@ -295,7 +295,6 @@
 
 
   <title>synchronized 原理总结 | 疯狂的厨子</title>
-
 </head>
 
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -510,7 +509,17 @@
 </nav>
 
 
-  <div class="row flex-xl-nowrap">
+  <head>
+  <link rel="stylesheet" type="text/css" href="/css/_custom.css"></link>
+
+  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/_custom.js"></script>
+</head>
+
+
+<div class="top-scroll-bar"></div>
+
+<div class="row flex-xl-nowrap">
     <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
         <li><a href="#" id="back_to_top" class="docs-toc-title">synchronized 原理总结</a></li>
@@ -638,6 +647,9 @@
 
   
 </div>
+
+
+		  
 
 
 
@@ -773,9 +785,6 @@
 
 
 
-
-
-
   
   
 
@@ -886,6 +895,31 @@
   
   
 
+
+	
+
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: '21a1c2de86a732503284',
+    clientSecret: 'c37ae7968228d3959c617563b57ed69972d025d7',
+    repo: 'moyada.github.io',
+    owner: 'moyada',
+    admin: ['moyada'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+  });
+  
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+      return;
+    }
+    gitalk.render('gitalk-container');
+  })();
+</script>
 
 </div>
 

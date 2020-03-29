@@ -1,0 +1,11 @@
+
+.top-scroll-bar {
+    position: fixed;
+    top: 520;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    width: 10px;
+    height: 3px;
+    background: #ef3982;
+}
