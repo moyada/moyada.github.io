@@ -509,12 +509,41 @@
 </nav>
 
 
-  <head>
-  <link rel="stylesheet" type="text/css" href="/css/_custom.css"></link>
+  
 
-  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-  <script type="text/javascript" src="/js/_custom.js"></script>
-</head>
+
+
+
+	<head>
+  	  <meta http-equiv="charset" charset="utf-8" content="text/html; charset=utf-8">
+  	  <base href="/">
+
+	  <style type="text/css">
+	  	.top-scroll-bar {
+		    position: fixed;
+		    top: 520;
+		    left: 0;
+		    z-index: 9999;
+		    display: none;
+		    width: 0;
+		    height: 3px;
+		    background: #ef3982;
+		}
+	  </style>
+
+	  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+	  <script type="text/javascript">
+	 	$(document).ready(function () {
+		  $(window).scroll(function(){
+		    $(".top-scroll-bar").attr("style", "width: " + ($(this).scrollTop() / ($(document).height() - $(this).height()) * 100) + "%; display: block;");
+		  });
+		});
+	  </script>
+	  
+	  
+	</head>
+
 
 
 <div class="top-scroll-bar"></div>
@@ -805,8 +834,8 @@
 	
 
 <div id="gitalk-container"></div>
-<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script>
   const gitalk = new Gitalk({
     clientID: '21a1c2de86a732503284',

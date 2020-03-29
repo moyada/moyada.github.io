@@ -1,0 +1,11 @@
+// 顶部阅读进度条
+.top-scroll-bar {
+    position: fixed;
+    top: 520;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    width: 0;
+    height: 3px;
+    background: #ef3982;
+}
