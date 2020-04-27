@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="概念 volatile原语保障了多线程下变量的原子性、可见性、">
+  <meta name="description" content="moyada">
 
   
-  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/volatile/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/">
 
   
 
@@ -210,12 +210,14 @@
 
 
   
+  <link rel="alternate" href="/bak/index.xml" type="application/rss+xml" title="不睡觉的猫头鹰">
+  
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="https://moyada.github.io/post/volatile/">
+  <link rel="canonical" href="https://moyada.github.io/bak/">
 
   
   
@@ -229,60 +231,17 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="不睡觉的猫头鹰">
-  <meta property="og:url" content="https://moyada.github.io/post/volatile/">
-  <meta property="og:title" content="volatile 浅析 | 不睡觉的猫头鹰">
-  <meta property="og:description" content="概念 volatile原语保障了多线程下变量的原子性、可见性、"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="https://moyada.github.io/bak/">
+  <meta property="og:title" content="Baks | 不睡觉的猫头鹰">
+  <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    
-      <meta property="article:published_time" content="2018-07-14T18:01:17&#43;00:00">
-    
-    <meta property="article:modified_time" content="2018-07-14T18:01:17&#43;00:00">
+    <meta property="og:updated_time" content="2020-03-28T14:19:35&#43;08:00">
   
 
   
 
 
-    
-
-
-
-
-
-
-  
-
-
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://moyada.github.io/post/volatile/"
-  },
-  "headline": "volatile 浅析",
-  
-  "datePublished": "2018-07-14T18:01:17Z",
-  "dateModified": "2018-07-14T18:01:17Z",
-  
-  "publisher": {
-    "@type": "Organization",
-    "name": "不睡觉的猫头鹰",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://moyada.github.io/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png"
-    }
-  },
-  "description": "概念 volatile原语保障了多线程下变量的原子性、可见性、"
-}
-</script>
-
-  
-
-  
 
 
   
@@ -294,7 +253,7 @@
 
 
 
-  <title>volatile 浅析 | 不睡觉的猫头鹰</title>
+  <title>Baks | 不睡觉的猫头鹰</title>
 </head>
 
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -414,7 +373,7 @@
         
 
         <li class="nav-item">
-          <a class="nav-link  active" href="/post"><span>文章</span></a>
+          <a class="nav-link " href="/post"><span>文章</span></a>
         </li>
 
         
@@ -514,348 +473,91 @@
 
 
 
-	<head>
-  	  <meta http-equiv="charset" charset="utf-8" content="text/html; charset=utf-8">
-  	  
-
-	  <style type="text/css">
-	  	.top-scroll-bar {
-		    position: fixed;
-		    top: 520;
-		    left: 0;
-		    z-index: 9999;
-		    display: none;
-		    width: 0;
-		    height: 3px;
-		    background: #ef3982;
-		}
-	  </style>
-
-	  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-
-	  <script type="text/javascript">
-	 	$(document).ready(function () {
-		  $(window).scroll(function(){
-		    $(".top-scroll-bar").attr("style", "width: " + ($(this).scrollTop() / ($(document).height() - $(this).height()) * 100) + "%; display: block;");
-		  });
-		});
-	  </script>
-	  
-	  
-	</head>
 
 
 
-<div class="top-scroll-bar"></div>
 
-<div class="row flex-xl-nowrap">
-    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
-      <ul class="nav toc-top">
-        <li><a href="#" id="back_to_top" class="docs-toc-title">volatile 浅析</a></li>
-      </ul>
 
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#概念">概念</a></li>
-    <li><a href="#原子性">原子性</a></li>
-    <li><a href="#可见性">可见性</a></li>
-    <li><a href="#有序性">有序性</a></li>
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+<div class="universal-wrapper pt-3">
+  
+  
+  
+
+  
+</div>
+
+
+
+<style type="text/css">
+  a:hover{text-decoration: none}
+</style>
+
+
+
+
+  <div class="row universal-wrapper">
+
+
+  
+
+  
+  
+    
+    
+    
+
+    
+      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
+    
+
+
+    
+      
+      
+      <div style="white-space: nowrap"><a href="/bak/collection/" >收藏</a></div>
+    
+
+      <div class="article-style">
+        
+        
+
+
+        
+          
+        
+
+        
+
+        博客 计算机书籍控 开源文档 程序猿DD - Spring Boot教程与Spri 
+      </div>
+    </div>
+  
+
+  
+<nav>
+  <ul class="pagination justify-content-center">
+    
+    <li class="page-item"><a class="page-link" href="/bak/">&laquo;</a></li>
+    
+    
   </ul>
 </nav>
-      
-    </div>
 
-    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
-
-    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
-		<article class="article">
-
-		  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class=" pt-3">
-  
-    
-      <h1>volatile 浅析</h1>
-    
-  
-  
-  
-
-  
-    
-
-
-<div class="article-metadata">
-
-  
-  
-
-  
-  <span class="article-date">
-    
-    
-      
-    
-    2018-07-14
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    2 分钟阅读时长 
-  </span>
-  <span>&nbsp;</span>
-  910 字 
-  
-
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
-  
-
-</div>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-</div>
-
-
-		  
-
-
-
-		  
-
-		    <div class="article-style">
-		      <h2 id="概念">概念</h2>
-<p>volatile原语保障了多线程下变量的原子性、可见性、有序性。</p>
-<h2 id="原子性">原子性</h2>
-<p>在32位虚拟机下对<code>long</code>、<code>double</code>类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证不存在中间值，但是由于读取的一刻其他线程也有可能改变值，所以复合操作无法达到原子性。</p>
-<blockquote>
-<p>64位下不存在该问题，并且近代jdk中普通操作也能达到原子性</p>
-</blockquote>
-<h2 id="可见性">可见性</h2>
-<p>其目的是使多线程环境下对共享变量的修改能被其他线程立即查看到。</p>
-<p>由于线程对变量的读取是先从线程的工作内存(cpu缓存)中获取，不存在才从主内存中获取。</p>
-<p>那么在多线程环境下多普通共享变量的修改操作就会由于cpu缓存中已存在而导致的数据不一致。</p>
-<p>为了解决这个问题，处理器会对编译后指令增加lock指令前缀，大部分处理器架构采用了<code>RingBus</code> + <code>MESI协议</code>的方式来解决，部分老版本cpu架构则采用锁总线来达到效果。</p>
-<p>原理是在修改数据时候更新cpu缓存之后立即写回主存、并且通知到使用相同变量线程，将该变量设置为无效，当读取变量时再从主存或者寄存器中获取。</p>
-<blockquote>
-<p>由于volatile的可见性，也可用来完成轻量锁的实现，例如线程的终止判断</p>
-</blockquote>
-<h2 id="有序性">有序性</h2>
-<p>操作系统为了使cpu流水线的各个阶段不存在空闲内核，往往会多当前编译好的指令进行重排序，但是只会保证单条线程的程序正确性，并不保障并发环境下的正确性。</p>
-<p>JVM为了保证volatile域的可见性(happens-before)，会在编译时对指令前后都加入内存屏障指令lock前缀，使得不会将后面的指令重排序到内存屏障之前的位置。</p>
-<ol>
-<li>当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。</li>
-<li>当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。</li>
-<li>当第一个操作是volatile写，第二个操作是volatile读时，不能重排序。</li>
-</ol>
-<blockquote>
-<p>最经典的场景有double check单例，由于重排序，可能出现对象尚未创建成功，但是对象引用缺被赋值使用，造成空指针异常。</p>
-</blockquote>
-
-		    </div>
-		  
-		</article>
-	</main>
-</div>
-
-<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-  
-  
-  
-    
-  
-  
-  
-  <div class="media author-card content-widget-hr">
-    
-      
-      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar-1_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="">
-    
-
-    <div class="media-body">
-      <h5 class="card-title"><a href="https://moyada.github.io"></a></h5>
-      <h6 class="card-subtitle">向上生长的老白兔</h6>
-      
-      <ul class="network-icon" aria-hidden="true">
-  
-    
-    
-    
-      
-    
-    
-    
-    
-    
-    <li>
-      <a href="mailto:xykmoyada@gmail.com" >
-        <i class="fas fa-envelope"></i>
-      </a>
-    </li>
-  
-    
-    
-    
-      
-    
-    
-    
-    
-    
-      
-    
-    <li>
-      <a href="https://github.com/moyada" target="_blank" rel="noopener">
-        <i class="fab fa-github"></i>
-      </a>
-    </li>
-  
-</ul>
-
-    </div>
-  </div>
-
-
-
-
-
-
-
-<section id="comments">
-  
-</section>
-
-
-
-
-<div class="article-widget">
-  
-<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
-  <div class="col-12 col-md-6 col-xl-6">
-  
-    
-    <span class="post-nav-item">
-      <span class="meta-nav">上一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/java-lock/" rel="prev">Java 锁机制</a>
-    </span>
-  
-  </div>
-
-  <div class="col-12 col-md-6 col-xl-6">
-    <div style="float: right;">
-      
-      
-      
-        <span class="post-nav-item">
-          <span class="meta-nav">下一篇</span>&nbsp;
-          <a style="color: rgb(80,150,255)" href="/post/jvm-gc/" rel="next">Java GC过程</a>
-        </span>
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-
-
-  
-  
-
-
-	
-
-<div id="gitalk-container"></div>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
-<script>
-  const gitalk = new Gitalk({
-    clientID: '21a1c2de86a732503284',
-    clientSecret: 'c37ae7968228d3959c617563b57ed69972d025d7',
-    repo: 'moyada.github.io',
-    owner: 'moyada',
-    admin: ['moyada'],
-    id: location.pathname, 
-    distractionFreeMode: false 
-  });
-  
-  (function() {
-    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
-      return;
-    }
-    gitalk.render('gitalk-container');
-  })();
-</script>
 
 </div>
 
