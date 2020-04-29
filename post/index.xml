@@ -5,12 +5,61 @@
     <link>https://moyada.github.io/post/</link>
       <atom:link href="https://moyada.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <description> </description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Mon, 23 Mar 2020 00:28:42 +0800</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Wed, 29 Apr 2020 22:10:40 +0800</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title> </title>
       <link>https://moyada.github.io/post/</link>
     </image>
+    
+    <item>
+      <title>谷歌翻译 API 调用</title>
+      <link>https://moyada.github.io/post/google-translate/</link>
+      <pubDate>Wed, 29 Apr 2020 22:10:40 +0800</pubDate>
+      <guid>https://moyada.github.io/post/google-translate/</guid>
+      <description>&lt;h2 id=&#34;调试接口&#34;&gt;调试接口&lt;/h2&gt;
+&lt;p&gt;由于时常使用
+&lt;a href=&#34;https://translate.google.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;谷歌翻译&lt;/a&gt;，就想着把接口做成服务调用，省去登陆网页的麻烦。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;需要更好的服务可以使用谷歌云服务 &lt;a href=&#34;https://cloud.google.com/translate&#34;&gt;https://cloud.google.com/translate&lt;/a&gt; ，每月可获赠价值不超过 $10 的免费用量&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;用开发者工具调试页面接口拿到了翻译调用的接口&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;https://translate.google.com/translate_a/single?client=webapp&amp;amp;sl=zh-CN&amp;amp;tl=en&amp;amp;hl=zh-CN&amp;amp;dt=at&amp;amp;dt=bd&amp;amp;dt=ex&amp;amp;dt=ld&amp;amp;dt=md&amp;amp;dt=qca&amp;amp;dt=rw&amp;amp;dt=rm&amp;amp;dt=sos&amp;amp;dt=ss&amp;amp;dt=t&amp;amp;otf=1&amp;amp;ssel=5&amp;amp;tsel=5&amp;amp;xid=1791807%2C45625687%2C45626150&amp;amp;kc=11&amp;amp;tk=718445.806187&amp;amp;q=%E4%BD%A0%E5%A5%BD&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;但是在调试发现，接口中带了个签名参数 &lt;code&gt;tk&lt;/code&gt;，通过查找 js 源文件，在 
+&lt;a href=&#34;https://translate.google.com/translate/releases/twsfe_w_20200420_RC00/r/js/translate_m_zh-CN.js&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;translate_m_zh-CN.js&lt;/a&gt; 这里发现了相关痕迹，但是解析起来太费劲了。。。&lt;/p&gt;
+&lt;h2 id=&#34;调用模块&#34;&gt;调用模块&lt;/h2&gt;
+&lt;p&gt;这个时候检索的能力就体验出来了，通过在 Google 里的一顿操作，得知 &lt;code&gt;Node&lt;/code&gt; 里有相关使用库。&lt;/p&gt;
+&lt;p&gt;通过 &lt;code&gt;npm install --save google-translate-api&lt;/code&gt; 安装模块到本地，修改源代码。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;将 &lt;code&gt;google-translate-api&lt;/code&gt; 和 &lt;code&gt;google-translate-token&lt;/code&gt; 下的 &lt;code&gt;index.js&lt;/code&gt; 里的 &lt;b&gt;translate.google.com&lt;/b&gt; 替换为 &lt;b&gt;translate.google.cn&lt;/b&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;修改 &lt;code&gt;google-translate-api/index.js&lt;/code&gt; 中请求参数 &lt;code&gt;data&lt;/code&gt; 的数据 &lt;b&gt;client: &#39;gtx&#39;&lt;/b&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;使用&#34;&gt;使用&lt;/h2&gt;
+&lt;p&gt;修改完成后便在国内也能调用。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;const translate = require(&#39;google-translate-api&#39;);
+ 
+translate(&#39;您好&#39;, {to: &#39;en&#39;}).then(res =&amp;gt; {
+    console.log(res.text);
+}).catch(err =&amp;gt; {
+    console.error(err);
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在 &lt;code&gt;Python&lt;/code&gt; 中使用可以这样方式调用 node&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import os
+
+p = os.popen(&#39;node translate.js %s&#39; % value)
+print(p.readlines()[0])
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://www.zhihu.com/question/47239748&#34;&gt;https://www.zhihu.com/question/47239748&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
     
     <item>
       <title>爬虫与反爬虫</title>
