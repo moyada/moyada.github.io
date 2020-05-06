@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="moyada">
+  <meta name="description" content="容器是 Spring 设计中一个核心组件，它负责管理 Bean 实例，并提供了接口 BeanFactory">
 
   
-  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/spring-bean/">
 
   
 
@@ -210,14 +210,12 @@
 
 
   
-  <link rel="alternate" href="/bak/index.xml" type="application/rss+xml" title="不睡觉的猫头鹰">
-  
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="https://moyada.github.io/bak/">
+  <link rel="canonical" href="https://moyada.github.io/post/spring-bean/">
 
   
   
@@ -231,18 +229,58 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="不睡觉的猫头鹰">
-  <meta property="og:url" content="https://moyada.github.io/bak/">
-  <meta property="og:title" content="Baks | 不睡觉的猫头鹰">
-  <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="https://moyada.github.io/post/spring-bean/">
+  <meta property="og:title" content="Spring Bean 的生命周期解析 | 不睡觉的猫头鹰">
+  <meta property="og:description" content="容器是 Spring 设计中一个核心组件，它负责管理 Bean 实例，并提供了接口 BeanFactory"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2018-11-16T11:33:50&#43;00:00">
+    
+      <meta property="article:published_time" content="2020-03-28T14:19:35&#43;08:00">
+    
+    <meta property="article:modified_time" content="2020-04-28T01:19:35&#43;08:00">
   
 
   
 
 
+    
 
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://moyada.github.io/post/spring-bean/"
+  },
+  "headline": "Spring Bean 的生命周期解析",
+  
+  "datePublished": "2020-03-28T14:19:35+08:00",
+  "dateModified": "2020-04-28T01:19:35+08:00",
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "不睡觉的猫头鹰",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://moyada.github.io/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "容器是 Spring 设计中一个核心组件，它负责管理 Bean 实例，并提供了接口 BeanFactory"
+}
+</script>
+
+  
 
   
 
@@ -250,10 +288,13 @@
   
 
 
+  
 
 
 
-  <title>Baks | 不睡觉的猫头鹰</title>
+
+
+  <title>Spring Bean 的生命周期解析 | 不睡觉的猫头鹰</title>
 </head>
 
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -373,7 +414,7 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/post"><span>文章</span></a>
+          <a class="nav-link  active" href="/post"><span>文章</span></a>
         </li>
 
         
@@ -473,6 +514,60 @@
 
 
 
+	<head>
+  	  <meta http-equiv="charset" charset="utf-8" content="text/html; charset=utf-8">
+  	  
+
+	  <style type="text/css">
+	  	.top-scroll-bar {
+		    position: fixed;
+		    top: 520;
+		    left: 0;
+		    z-index: 9999;
+		    display: none;
+		    width: 0;
+		    height: 3px;
+		    background: #ef3982;
+		}
+	  </style>
+
+	  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+	  <script type="text/javascript">
+	 	$(document).ready(function () {
+		  $(window).scroll(function(){
+		    $(".top-scroll-bar").attr("style", "width: " + ($(this).scrollTop() / ($(document).height() - $(this).height()) * 100) + "%; display: block;");
+		  });
+		});
+	  </script>
+	  
+	  
+	</head>
+
+
+
+<div class="top-scroll-bar"></div>
+
+<div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">Spring Bean 的生命周期解析</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#创建">创建</a></li>
+  </ul>
+</nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
+
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
+
+		  
 
 
 
@@ -486,339 +581,278 @@
 
 
 
+
+
+
+
+
+
+
+
+<div class=" pt-3">
+  
+    
+      <h1>Spring Bean 的生命周期解析</h1>
+    
+  
+  
+  
+
+  
+    
+
+
+<div class="article-metadata">
 
   
   
 
+  
+  <span class="article-date">
+    
+    
+      
+          最近更新于
+      
+    
+    2020-04-28
+  </span>
+  
 
+  
 
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    1 分钟阅读时长 
+  </span>
+  <span>&nbsp;</span>
+  77 字 
+  
 
-<div class="universal-wrapper pt-3">
   
   
   
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
 </div>
 
 
+		  
 
-<style type="text/css">
-  a:hover{text-decoration: none}
-</style>
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/spring/">Spring</a>
+  
+</div>
+
+
+
+		  
+
+		    <div class="article-style">
+		      <p>容器是 Spring 设计中一个核心组件，它负责管理 Bean 实例，并提供了接口 <code>BeanFactory</code> 使用。</p>
+<blockquote>
+<p>Spring 研究版本为 5.1.4</p>
+</blockquote>
+<h2 id="创建">创建</h2>
+<p>对 <code>getBean</code> 方法跟踪，进入到了 <code>AbstractBeanFactory</code> 的 <code>doGetBean</code> 方法，该方法的内容就是构造 Bean 的主要流程了。</p>
+
+		    </div>
+		  
+		</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
 
 
 
 
-  <div class="row universal-wrapper">
+
+
+
+
+
+
+
+
+
 
 
   
+  
+
+
+
+
 
   
   
+  
     
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
+  
+  
+  
+  <div class="media author-card content-widget-hr">
     
       
-      
-      <div style="white-space: nowrap"><a href="/bak/docker/" >初识 Docker</a></div>
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar-1_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="">
     
 
-      <div class="article-style">
-        
-        
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io"></a></h5>
+      <h6 class="card-subtitle">求知若渴，虚怀若谷</h6>
+      
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+</ul>
 
-
-        
-          
-        
-
-        
-
-        随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴 
-      </div>
     </div>
+  </div>
+
+
+
+
+
+
+
+<section id="comments">
+  
+</section>
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
+  <div class="col-12 col-md-6 col-xl-6">
   
     
-    
-    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/scrapy/" rel="prev">爬虫与反爬虫</a>
+    </span>
+  
+  </div>
 
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
       
       
-      <div style="white-space: nowrap"><a href="/bak/performance/" >性能分析</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        cpu相关 uptime 查看系统平均负载状态，以 cpu 个数为标准，通过 cat /proc/cpuinfo | 
-      </div>
+      
+        <span class="post-nav-item">
+          <span class="meta-nav">下一篇</span>&nbsp;
+          <a style="color: rgb(80,150,255)" href="/post/google-translate/" rel="next">谷歌翻译 API 调用</a>
+        </span>
+      
     </div>
-  
-    
-    
-    
+  </div>
+</div>
 
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
+</div>
 
 
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/multi-thread/" >上下文切换</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        发生上下文切换的原因有很多，比如 时间片耗尽 任务抢占 主动挂起 硬 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/cap-base/" >CAP定理和BASE理论</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        单机环境下有著名的 ACID理论，但是对于现代互联网下的分布式 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/service-safety/" >服务器安全</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        服务器开放端口限制，可增加端口转发，防止ip暴露。例如只开放 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/linux-cpu/" >linux资源查看</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        cpu top 是基本的系统监控命令，可以查看到当前系统的总cpu，内存 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/lua/" >Lua学习笔记</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        注释 两个减号是单行注释: -- 注释内容 多行注释: --[[ 注释内容 注释内 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/database-design/" >数据库设计</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/scala/" >scala学习笔记</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        数据类型 数据类型 描述 Byte 8位有符号补码整数 Short 16位有符号补码整 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/collection/" >收藏</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        博客 计算机书籍控 开源文档 程序猿DD - Spring Boot教程与Spri 
-      </div>
-    </div>
-  
 
   
+  
+  <div class="article-widget content-widget-hr">
+    <h3>相关</h3>
+    <ul>
+      
+      <li><a href="/post/feign-eureka-without-springboot/">在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</a></li>
+      
+      <li><a href="/post/spring-configure/">Spring 自定义配置加载</a></li>
+      
+      <li><a href="/post/cros/">通过 CROS 协议解决跨域问题</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+	
+
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: '21a1c2de86a732503284',
+    clientSecret: 'c37ae7968228d3959c617563b57ed69972d025d7',
+    repo: 'moyada.github.io',
+    owner: 'moyada',
+    admin: ['moyada'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+  });
+  
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+      return;
+    }
+    gitalk.render('gitalk-container');
+  })();
+</script>
 
 </div>
 

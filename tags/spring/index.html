@@ -31,7 +31,7 @@
   <meta name="description" content="moyada">
 
   
-  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/bak/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/tags/spring/">
 
   
 
@@ -210,14 +210,14 @@
 
 
   
-  <link rel="alternate" href="/bak/index.xml" type="application/rss+xml" title="不睡觉的猫头鹰">
+  <link rel="alternate" href="/tags/spring/index.xml" type="application/rss+xml" title="不睡觉的猫头鹰">
   
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="https://moyada.github.io/bak/">
+  <link rel="canonical" href="https://moyada.github.io/tags/spring/">
 
   
   
@@ -231,12 +231,12 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="不睡觉的猫头鹰">
-  <meta property="og:url" content="https://moyada.github.io/bak/">
-  <meta property="og:title" content="Baks | 不睡觉的猫头鹰">
+  <meta property="og:url" content="https://moyada.github.io/tags/spring/">
+  <meta property="og:title" content="Spring | 不睡觉的猫头鹰">
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2018-11-16T11:33:50&#43;00:00">
+    <meta property="og:updated_time" content="2020-03-28T14:19:35&#43;08:00">
   
 
   
@@ -253,7 +253,7 @@
 
 
 
-  <title>Baks | 不睡觉的猫头鹰</title>
+  <title>Spring | 不睡觉的猫头鹰</title>
 </head>
 
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -417,7 +417,7 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/tags"><span>标签</span></a>
+          <a class="nav-link  active" href="/tags"><span>标签</span></a>
         </li>
 
         
@@ -495,6 +495,10 @@
 
 <div class="universal-wrapper pt-3">
   
+    
+      <div style="text-align: center; margin-bottom: 30px"><h2>Spring</h2></div>
+    
+  
   
   
 
@@ -510,7 +514,7 @@
 
 
 
-  <div class="row universal-wrapper">
+  <div class="universal-wrapper">
 
 
   
@@ -522,14 +526,12 @@
     
 
     
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
+      <div class="card-simple" style="margin-bottom: 30px">
     
 
 
     
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/docker/" >初识 Docker</a></div>
+      <h2><a href="/post/spring-bean/" >Spring Bean 的生命周期解析</a></h2>
     
 
       <div class="article-style">
@@ -543,7 +545,7 @@
 
         
 
-        随着 Paas 技术和 Serverless 架构的发展，Docker 这一虚拟化技术也随之兴 
+        容器是 Spring 设计中一个核心组件，它负责管理 Bean 实例，并提供了接口 BeanFactory 
       </div>
     </div>
   
@@ -552,14 +554,12 @@
     
 
     
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
+      <div class="card-simple" style="margin-bottom: 30px">
     
 
 
     
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/performance/" >性能分析</a></div>
+      <h2><a href="/post/feign-eureka-without-springboot/" >在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</a></h2>
     
 
       <div class="article-style">
@@ -573,7 +573,7 @@
 
         
 
-        cpu相关 uptime 查看系统平均负载状态，以 cpu 个数为标准，通过 cat /proc/cpuinfo | 
+        背景 最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 
       </div>
     </div>
   
@@ -582,14 +582,12 @@
     
 
     
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
+      <div class="card-simple" style="margin-bottom: 30px">
     
 
 
     
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/multi-thread/" >上下文切换</a></div>
+      <h2><a href="/post/spring-configure/" >Spring 自定义配置加载</a></h2>
     
 
       <div class="article-style">
@@ -602,8 +600,11 @@
         
 
         
+          
+          
+        
 
-        发生上下文切换的原因有很多，比如 时间片耗尽 任务抢占 主动挂起 硬 
+        Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支  ...
       </div>
     </div>
   
@@ -612,44 +613,12 @@
     
 
     
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
+      <div class="card-simple" style="margin-bottom: 30px">
     
 
 
     
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/cap-base/" >CAP定理和BASE理论</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        单机环境下有著名的 ACID理论，但是对于现代互联网下的分布式 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/service-safety/" >服务器安全</a></div>
+      <h2><a href="/post/cros/" >通过 CROS 协议解决跨域问题</a></h2>
     
 
       <div class="article-style">
@@ -663,157 +632,7 @@
 
         
 
-        服务器开放端口限制，可增加端口转发，防止ip暴露。例如只开放 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/linux-cpu/" >linux资源查看</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        cpu top 是基本的系统监控命令，可以查看到当前系统的总cpu，内存 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/lua/" >Lua学习笔记</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        注释 两个减号是单行注释: -- 注释内容 多行注释: --[[ 注释内容 注释内 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/database-design/" >数据库设计</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        分表方法 在数据库表使用过程中，为了减小数据库服务器的负担、缩 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/scala/" >scala学习笔记</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        数据类型 数据类型 描述 Byte 8位有符号补码整数 Short 16位有符号补码整 
-      </div>
-    </div>
-  
-    
-    
-    
-
-    
-      <div class="card-simple" style="margin-right: 30px; margin-top: 20px">
-    
-
-
-    
-      
-      
-      <div style="white-space: nowrap"><a href="/bak/collection/" >收藏</a></div>
-    
-
-      <div class="article-style">
-        
-        
-
-
-        
-          
-        
-
-        
-
-        博客 计算机书籍控 开源文档 程序猿DD - Spring Boot教程与Spri 
+        在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请 
       </div>
     </div>
   

@@ -21,7 +21,7 @@
   
   
 
-  <meta name="author" content="薛毅康">
+  
 
   
   
@@ -210,12 +210,12 @@
 
 
   
-  <link rel="alternate" href="/categories/java/index.xml" type="application/rss+xml" title="疯狂的厨子">
+  <link rel="alternate" href="/categories/java/index.xml" type="application/rss+xml" title="不睡觉的猫头鹰">
   
 
   <link rel="manifest" href="/index.webmanifest">
-  <link rel="icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_32x32_fill_lanczos_center_2.png">
-  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hubb2ddbed01c34eeed2716a93f6f67b7f_4614_192x192_fill_lanczos_center_2.png">
+  <link rel="icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png">
 
   <link rel="canonical" href="https://moyada.github.io/categories/java/">
 
@@ -230,13 +230,13 @@
   
   <meta property="twitter:card" content="summary">
   
-  <meta property="og:site_name" content="疯狂的厨子">
+  <meta property="og:site_name" content="不睡觉的猫头鹰">
   <meta property="og:url" content="https://moyada.github.io/categories/java/">
-  <meta property="og:title" content="Java | 疯狂的厨子">
+  <meta property="og:title" content="Java | 不睡觉的猫头鹰">
   <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2019-05-18T08:47:26&#43;00:00">
+    <meta property="og:updated_time" content="2020-03-28T14:19:35&#43;08:00">
   
 
   
@@ -253,8 +253,7 @@
 
 
 
-  <title>Java | 疯狂的厨子</title>
-
+  <title>Java | 不睡觉的猫头鹰</title>
 </head>
 
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -304,7 +303,7 @@
 
     
     <div class="d-none d-lg-inline-flex">
-      <a class="navbar-brand" href="/">疯狂的厨子</a>
+      <a class="navbar-brand" href="/">不睡觉的猫头鹰</a>
     </div>
     
 
@@ -317,7 +316,7 @@
 
     
     <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
-      <a class="navbar-brand" href="/">疯狂的厨子</a>
+      <a class="navbar-brand" href="/">不睡觉的猫头鹰</a>
     </div>
     
 
@@ -396,7 +395,7 @@
         
 
         <li class="nav-item">
-          <a class="nav-link " href="/projects"><span>项目</span></a>
+          <a class="nav-link  active" href="/categories"><span>分类</span></a>
         </li>
 
         
@@ -418,7 +417,29 @@
         
 
         <li class="nav-item">
-          <a class="nav-link  active" href="/categories"><span>分类</span></a>
+          <a class="nav-link " href="/tags"><span>标签</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/projects"><span>项目</span></a>
         </li>
 
         
@@ -460,16 +481,25 @@
 
 
 
-  
+
+
+
+
+
 
   
   
+
+
+
+
+<div class="universal-wrapper pt-3">
   
     
+      <div style="text-align: center; margin-bottom: 30px"><h2>Java</h2></div>
+    
   
-<div class="universal-wrapper pt-3">
-  <h1>Java</h1>
-
+  
   
 
   
@@ -477,7 +507,16 @@
 
 
 
-<div class="universal-wrapper">
+<style type="text/css">
+  a:hover{text-decoration: none}
+</style>
+
+
+
+
+  <div class="universal-wrapper">
+
+
   
 
   
@@ -485,17 +524,84 @@
     
     
     
-    <div>
-      <h2><a href="/post/mat/" >使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</a></h2>
+
+    
+      <div class="card-simple" style="margin-bottom: 30px">
+    
+
+
+    
+      <h2><a href="/post/java-lock/" >Java 锁机制</a></h2>
+    
+
       <div class="article-style">
         
-          使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。
-通过jmap -dump:format=b,file=[file_name]] [pid] 生成hprof文件
-在Eclipse Marketplace安装 Memory Analyzer，打开dump文件
- 注意: dump 导出后的内存跟实际监控看到的内存大小不一致的时候, 有可能是使用了堆外内存  Overview 面板 Remainder(剩余) 应用 Heap 可分配的内存, 如果可分配内存很小, 则可以考虑加大或者进行优化
-Histogram 面板 (类 的角度) 可以查看内存中实例的数量以及占用内存的大小
-Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的顺序列举了对象列表情况
         
+
+
+        
+          
+        
+
+        
+
+        synchronized 在 jdk1.6 之后,synchronized 原语通过引入偏向锁、轻量 
+      </div>
+    </div>
+  
+    
+    
+    
+
+    
+      <div class="card-simple" style="margin-bottom: 30px">
+    
+
+
+    
+      <h2><a href="/post/lombok-java9/" >在 jdk9 下使用 Lombok</a></h2>
+    
+
+      <div class="article-style">
+        
+        
+
+
+        
+          
+        
+
+        
+
+        由于jdk9中对lombok所依赖的类进行了迁移，所以使用l 
+      </div>
+    </div>
+  
+    
+    
+    
+
+    
+      <div class="card-simple" style="margin-bottom: 30px">
+    
+
+
+    
+      <h2><a href="/post/mat/" >使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</a></h2>
+    
+
+      <div class="article-style">
+        
+        
+
+
+        
+          
+        
+
+        
+
+        使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。 通过 
       </div>
     </div>
   
@@ -630,7 +736,7 @@ Dominator Tree 面板 (对象实例 的角度) 按照占用内存由大到小的
   
 
   <p class="powered-by">
-    © 2020 moyada &middot; 
+    © 2017 - 2020 moyada &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

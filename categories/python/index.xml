@@ -28,7 +28,7 @@
 &lt;p&gt;但是在调试发现，接口中带了个签名参数 &lt;code&gt;tk&lt;/code&gt;，通过查找 js 源文件，在 
 &lt;a href=&#34;https://translate.google.com/translate/releases/twsfe_w_20200420_RC00/r/js/translate_m_zh-CN.js&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;translate_m_zh-CN.js&lt;/a&gt; 这里发现了相关痕迹，但是解析起来太费劲了。。。&lt;/p&gt;
 &lt;h2 id=&#34;调用模块&#34;&gt;调用模块&lt;/h2&gt;
-&lt;p&gt;这个时候检索的能力就体验出来了，通过在 Google 里的一顿操作，得知 &lt;code&gt;Node&lt;/code&gt; 里有相关使用库。&lt;/p&gt;
+&lt;p&gt;这个时候检索的能力就体验出来了，通过在 Google 里的一顿操作，得知 &lt;code&gt;Node&lt;/code&gt; 里有相关使用库，它将 tk 的获取函数提取出来了。&lt;/p&gt;
 &lt;p&gt;通过 &lt;code&gt;npm install --save google-translate-api&lt;/code&gt; 安装模块到本地，修改源代码。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;

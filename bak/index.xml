@@ -5,20 +5,12 @@
     <link>https://moyada.github.io/bak/</link>
       <atom:link href="https://moyada.github.io/bak/index.xml" rel="self" type="application/rss+xml" />
     <description>Baks</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sat, 28 Mar 2020 14:19:35 +0800</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Fri, 16 Nov 2018 11:33:50 +0000</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title>Baks</title>
       <link>https://moyada.github.io/bak/</link>
     </image>
-    
-    <item>
-      <title>Spring Bean 的生命周期解析</title>
-      <link>https://moyada.github.io/bak/spring-bean/</link>
-      <pubDate>Sat, 28 Mar 2020 14:19:35 +0800</pubDate>
-      <guid>https://moyada.github.io/bak/spring-bean/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>初识 Docker</title>

@@ -5,12 +5,132 @@
     <link>https://moyada.github.io/categories/java/</link>
       <atom:link href="https://moyada.github.io/categories/java/index.xml" rel="self" type="application/rss+xml" />
     <description>Java</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sun, 05 May 2019 20:23:32 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sat, 28 Mar 2020 14:19:35 +0800</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title>Java</title>
       <link>https://moyada.github.io/categories/java/</link>
     </image>
+    
+    <item>
+      <title>Spring Bean 的生命周期解析</title>
+      <link>https://moyada.github.io/post/spring-bean/</link>
+      <pubDate>Sat, 28 Mar 2020 14:19:35 +0800</pubDate>
+      <guid>https://moyada.github.io/post/spring-bean/</guid>
+      <description>&lt;p&gt;容器是 Spring 设计中一个核心组件，它负责管理 Bean 实例，并提供了接口 &lt;code&gt;BeanFactory&lt;/code&gt; 使用。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Spring 研究版本为 5.1.4&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;创建&#34;&gt;创建&lt;/h2&gt;
+&lt;p&gt;对 &lt;code&gt;getBean&lt;/code&gt; 方法跟踪，进入到了 &lt;code&gt;AbstractBeanFactory&lt;/code&gt; 的 &lt;code&gt;doGetBean&lt;/code&gt; 方法，该方法的内容就是构造 Bean 的主要流程了。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</title>
+      <link>https://moyada.github.io/post/feign-eureka-without-springboot/</link>
+      <pubDate>Sat, 18 May 2019 08:47:26 +0000</pubDate>
+      <guid>https://moyada.github.io/post/feign-eureka-without-springboot/</guid>
+      <description>&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
+&lt;p&gt;最近有个需求需要嵌入至其他业务中，其中有个数据需要通过 Eureka 获取，正常情况下使用 &lt;code&gt;@EnableDiscoveryClient&lt;/code&gt; 和 &lt;code&gt;@EnableFeignClients&lt;/code&gt; 即可获取服务接口实例。可是由于我使用了 BeanPostProcessor 对注解进行了切片代理，并且目标项目也存在非 SpringCloud 项目，那么便只能通过底层 API 构建服务方实例了。&lt;/p&gt;
+&lt;h2 id=&#34;方案&#34;&gt;方案&lt;/h2&gt;
+&lt;p&gt;EurekaClient 提供了服务发现注册功能，但是在 Feign 所接收的属性中并没有用于负载均衡的，其中最有可能的就是 Client 属性了，这是用于负责服务请求的模块，那么就需要调研下是否能够通过 EurekaClient 构建出一个带有负载均衡功能的客户端。&lt;/p&gt;
+&lt;h3 id=&#34;创建-lbclientfactory&#34;&gt;创建 LBClientFactory&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Feign&lt;/strong&gt; 的官方 Wiki 提供了构建服务实例的
+&lt;a href=&#34;https://github.com/OpenFeign/feign#integrations&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;方法&lt;/a&gt;，但 Feign 并不提供构建所需属性的实现，而是由其他框架适配 Feign 所提供的接口来实现每个功能。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在分析 &lt;strong&gt;Ribbon&lt;/strong&gt; 的 Client 实现 &lt;code&gt;RibbonClient&lt;/code&gt;，其构造器接收一个 &lt;code&gt;LBClientFactory&lt;/code&gt; 参数，负载均衡的功能就是由它提供。&lt;/p&gt;
+&lt;p&gt;通过搜索引擎发现了打通 Robbion 与 EurekaClient 的实现方式，需要引入依赖 &lt;code&gt;&amp;lt;artifactId&amp;gt;ribbon-eureka&amp;lt;/artifactId&amp;gt;&lt;/code&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;private Client newClient(String vipAddress, Provider&amp;lt;EurekaClient&amp;gt; provider) {
+    ServerList&amp;lt;DiscoveryEnabledServer&amp;gt; list = new DiscoveryEnabledNIWSServerList(vipAddress, provider);
+    ServerListFilter&amp;lt;DiscoveryEnabledServer&amp;gt; filter = new ZoneAffinityServerListFilter&amp;lt;DiscoveryEnabledServer&amp;gt;();
+
+    ZoneAwareLoadBalancer&amp;lt;DiscoveryEnabledServer&amp;gt; lb = LoadBalancerBuilder.&amp;lt;DiscoveryEnabledServer&amp;gt;newBuilder()
+            .withDynamicServerList(list)
+            .withRule(new AvailabilityFilteringRule())
+            .withServerListFilter(filter)
+            .buildDynamicServerListLoadBalancer();
+
+    return RibbonClient.builder().lbClientFactory(new LBClientFactory() {
+        @Override
+        public LBClient create(String clientName) {
+            return LBClient.create(lb, ClientFactory.getNamedConfig(clientName));
+        }
+    }).build();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其中需要使用 &lt;code&gt;DiscoveryEnabledNIWSServerList&lt;/code&gt; 用于发现服务集合，它接收两个提供两个参数，一个是项目的 vipAddress，一个是 Provider&lt;EurekaClient&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;创建-eurekaclient&#34;&gt;创建 EurekaClient&lt;/h3&gt;
+&lt;p&gt;在 &lt;strong&gt;Eureka&lt;/strong&gt; 的官方 Wiki 中提供了 EurekaClient 的
+&lt;a href=&#34;https://github.com/Netflix/eureka/tree/master/eureka-examples/src/main/java/com/netflix/eureka&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;构造方式&lt;/a&gt;，需要传入 &lt;code&gt;EurekaClientConfig&lt;/code&gt; 和 &lt;code&gt;EurekaInstanceConfig&lt;/code&gt; 用来提供模块的配置信息。&lt;/p&gt;
+&lt;p&gt;在 netflix 提供的 eureka-client 模块下，提供了 &lt;code&gt;DefaultEurekaClientConfig&lt;/code&gt; 和 &lt;code&gt;MyDataCenterInstanceConfig&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;这两个类默认将会读取 eureka-client.properties 下的配置，可以通过设置 &lt;code&gt;eureka.client.props&lt;/code&gt; 参数更改读取的配置文件，也可以使用 &lt;code&gt;ConfigurationManager&lt;/code&gt; 的静态方法来指定读取配置文件。&lt;/p&gt;
+&lt;p&gt;除此之外，spring-cloud 也提供了相应的实现类 &lt;code&gt;EurekaClientConfigBean&lt;/code&gt; 和 &lt;code&gt;EurekaInstanceConfigBean&lt;/code&gt;，通过 spring 的配置资源解析器将属性装配成对象使用。&lt;/p&gt;
+&lt;p&gt;入参已经拿到了，但是还未结束，在跟进 &lt;code&gt;DiscoveryClient&lt;/code&gt; 代码实现中，发现他在构造方法中会对属性进行静态保存。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// This is a bit of hack to allow for existing code using DiscoveryManager.getInstance()
+// to work with DI&#39;d DiscoveryClient
+DiscoveryManager.getInstance().setDiscoveryClient(this);
+DiscoveryManager.getInstance().setEurekaClientConfig(config);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在这个项目中，有可能存在业务项目内部与嵌入模块使用了不同的 Eureka 服务，为了保持与业务项目的隔离，这里需要对官方提供的代码模版进行点改造。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;private static volatile EurekaClient eurekaClient = null;
+
+public EurekaClient initEurekaClient(EurekaInstanceConfig instanceConfig, EurekaClientConfig clientConfig) {
+    if (null != eurekaClient) {
+        return eurekaClient;
+    }
+
+    synchronized (DiscoveryManager.class) {
+        if (null == eurekaClient) {
+            DiscoveryClient discoveryClient = DiscoveryManager.getInstance().getDiscoveryClient();
+            EurekaClientConfig eurekaClientConfig = DiscoveryManager.getInstance().getEurekaClientConfig();
+            EurekaInstanceConfig eurekaInstanceConfig = DiscoveryManager.getInstance().getEurekaInstanceConfig();
+
+            // create the client
+            InstanceInfo instanceInfo = new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();
+            ApplicationInfoManager infoManager = new ApplicationInfoManager(instanceConfig, instanceInfo);
+            infoManager.setInstanceStatus(InstanceInfo.InstanceStatus.STARTING);
+
+            EurekaClient client = new DiscoveryClient(infoManager, clientConfig);
+            infoManager.setInstanceStatus(InstanceInfo.InstanceStatus.UP);
+
+            eurekaClient = client;
+
+            DiscoveryManager.getInstance().setDiscoveryClient(discoveryClient);
+            DiscoveryManager.getInstance().setEurekaClientConfig(eurekaClientConfig);
+            DiscoveryManager.getInstance().setEurekaInstanceConfig(eurekaInstanceConfig);
+        }
+    }
+    return eurekaClient;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在实际开发中可通过 DiscoveryManager 的静态属性对其进行管理的，避免重复构建。但是在这个场景下需要保证与业务之间的隔离，则以这种方式构建。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;创建-providereurekaclient&#34;&gt;创建 Provider&lt;EurekaClient&gt;&lt;/h3&gt;
+&lt;p&gt;在创建 LBClientFactory 的过程中，我们需要构建 DiscoveryEnabledNIWSServerList 用于服务的发现，由于构造方法接收的参数为 &lt;code&gt;Provider&amp;lt;EurekaClient&amp;gt;&lt;/code&gt;，这里还需要对 EurekaClient 再经过包装后使用。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;new Provider&amp;lt;EurekaClient&amp;gt;() {
+    @Override
+    public EurekaClient get() {
+        return eurekaClient;
+    }
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;构造服务实例&#34;&gt;构造服务实例&lt;/h3&gt;
+&lt;p&gt;通过上述步骤基本完成了一个 EurekaClient 到 RobbionClient 的各个过程，最后代入 Feign 的创建方法中便可构造使用 Eureka 进行服务发现的实例。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public &amp;lt;T&amp;gt; T getInstance(Class&amp;lt;T&amp;gt; target, String namespace, Provider&amp;lt;EurekaClient&amp;gt; provider) {
+    return Feign.builder()
+        .client(newClient(namespace, provider))
+        .encoder(new JacksonEncoder())
+        .decoder(new JacksonDecoder())
+        .options(new Request.Options(1000, 3000))
+        .logLevel(Logger.Level.FULL)
+        .target(target, &amp;quot;http://&amp;quot; + namespace);
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>instanceOf、isInstance、isAssignableFrom 的区别</title>
@@ -498,6 +618,37 @@ JNI_END
 &lt;p&gt;&lt;code&gt;Avro&lt;/code&gt; 在反序列化时耗时比较严重，怀疑是否因为多线程而导致的，并且在反序列化后 map 数据还发生了顺序变化。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;Protostuff&lt;/code&gt; 在各方面都优于其他框架，但是需要预先定义类，不过比起 &lt;code&gt;Protobuf&lt;/code&gt;、&lt;code&gt;Thrift&lt;/code&gt; 等预先定义数据格式已经方便很多了。&lt;/p&gt;
 &lt;p&gt;如果传输量不是很大，但是对数据的可视化有要求的，那么 &lt;code&gt;Fastjson&lt;/code&gt; 和 &lt;code&gt;Jackson&lt;/code&gt; 是不错的选择，而且 &lt;code&gt;json&lt;/code&gt; 格式在跨语言上也天然有优势。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spring 自定义配置加载</title>
+      <link>https://moyada.github.io/post/spring-configure/</link>
+      <pubDate>Sat, 23 Feb 2019 20:31:04 +0000</pubDate>
+      <guid>https://moyada.github.io/post/spring-configure/</guid>
+      <description>&lt;p&gt;Spring 工程中一般以 xml (spring-framework) 和 yml (spring-boot) 做为配置文件，配置除了框架提供的也支持增加其他配置，它们是以同样的形式注册到 Spring 中的。&lt;/p&gt;
+&lt;h2 id=&#34;1-xml-配置&#34;&gt;1. xml 配置&lt;/h2&gt;
+&lt;p&gt;这是早期 Spring 提供的配置方式，需要与 &lt;code&gt;xsd&lt;/code&gt; 文件配合使用。&lt;/p&gt;
+&lt;p&gt;文件的解析是需要通过实现 &lt;code&gt;org.springframework.beans.factory.xml.NamespaceHandlerSupport&lt;/code&gt; 提供解析器，在 &lt;code&gt;init&lt;/code&gt; 方法中调用 &lt;code&gt;registerBeanDefinitionParser&lt;/code&gt; 将 xsd元素名称 与 元素解析器 进行绑定。&lt;/p&gt;
+&lt;p&gt;对于 xsd元素 所绑定的解析器是 &lt;code&gt;org.springframework.beans.factory.xml.BeanDefinitionParser&lt;/code&gt;，实现元素到 &lt;code&gt;BeanDefinition&lt;/code&gt; 的转换，并交由 Spring 容器进行实例注册。&lt;/p&gt;
+&lt;p&gt;最后需要将完成的解析器与 xsd文件 通过 &lt;code&gt;META-INF/spring.handlers&lt;/code&gt; 和 &lt;code&gt;META-INF/spring.schemas&lt;/code&gt; 进行映射，在 spring.schemas 中以 &lt;code&gt;命名空间地址 = xsd文件路径&lt;/code&gt; 的形式配置，在 spring.handlers 中以 &lt;code&gt;命名空间地址 = 解析器类全路径&lt;/code&gt; 的形式配置。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由于 yml 配置的便捷性导致了 xml 配置方式在开发中逐渐被替换。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;2-yml-配置&#34;&gt;2. yml 配置&lt;/h2&gt;
+&lt;p&gt;跟随 spring-boot 一起出现的配置模式，相较于 xml 显得尤其简便。同时也舍弃了 xml 的解析器，使用等同于 &lt;code&gt;@Conditional&lt;/code&gt; 的注册 Configuration 在 Spring 的生命周期进行容器管理。&lt;/p&gt;
+&lt;h3 id=&#34;enable-注解&#34;&gt;Enable 注解&lt;/h3&gt;
+&lt;p&gt;这种方式主要是提供注解使用，并在注解内配置 &lt;code&gt;@Import&lt;/code&gt; 显式的注册 Configuration。&lt;/p&gt;
+&lt;p&gt;例如 &lt;code&gt;@EnableAspectJAutoProxy&lt;/code&gt;, &lt;code&gt;@EnableScheduling&lt;/code&gt;, &lt;code&gt;@EnableMBeanExport&lt;/code&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;自动装配&#34;&gt;自动装配&lt;/h3&gt;
+&lt;p&gt;通过创建 &lt;code&gt;META-INF/spring.factories&lt;/code&gt; 文件，配置需要装配的 Configuration 即可。其原理是使用了 &lt;code&gt;@EnableAutoConfiguration&lt;/code&gt; 注解，通过注册的 &lt;code&gt;AutoConfigurationImportSelector&lt;/code&gt; 扫描所有依赖 jar 包内的 &lt;code&gt;META-INF/spring.factories&lt;/code&gt;，将配置的 Configuration 进行注册。与显式注解形式配置有所不同，这种方式配置的 Configuration 还可以使用 &lt;code&gt;@AutoConfigureAfter&lt;/code&gt; 和 &lt;code&gt;@AutoConfigureBefore&lt;/code&gt; 控制执行顺序。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这种是最为常见的使用方式，一般还需构建 &lt;code&gt;spring-boot-starter&lt;/code&gt; 提供使用，具体使用见
+&lt;a href=&#34;https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;官方文档&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;动态注册配置&#34;&gt;动态注册配置&lt;/h3&gt;
+&lt;p&gt;结合了 &lt;code&gt;Enable 注解&lt;/code&gt; 和 &lt;code&gt;自动装配&lt;/code&gt; 的方式，能够更加灵活的配置 Configuration。实现方式为提供 Enable注解，并且在注解内配置 @Import &lt;code&gt;ImportSelector&lt;/code&gt;，通过 ImportSelector 返回 Configuration 列表提供给 Spring 注册，可以根据条件控制返回的 Configuration，又或是提供类似 自动装配 的功能。&lt;/p&gt;
+&lt;p&gt;例如 &lt;code&gt;@EnableAutoConfiguration&lt;/code&gt;, &lt;code&gt;@EnableAsync&lt;/code&gt;, &lt;code&gt;@EnableCaching&lt;/code&gt;。&lt;/p&gt;
 </description>
     </item>
     
