@@ -62,16 +62,158 @@ print(p.readlines()[0])
     </item>
     
     <item>
-      <title>Spring Bean 的生命周期解析</title>
+      <title>Spring Bean 生命周期简单分析</title>
       <link>https://moyada.github.io/post/spring-bean/</link>
       <pubDate>Sat, 28 Mar 2020 14:19:35 +0800</pubDate>
       <guid>https://moyada.github.io/post/spring-bean/</guid>
       <description>&lt;p&gt;容器是 Spring 设计中一个核心组件，它负责管理 Bean 实例，并提供了接口 &lt;code&gt;BeanFactory&lt;/code&gt; 使用。&lt;/p&gt;
+&lt;p&gt;网上对这个有太多分析的文章了，但大多繁琐不堪，不易新手理解，这里就只对关键步骤做个简单分析。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Spring 研究版本为 5.1.4&lt;/p&gt;
+&lt;p&gt;文章中所研究的 Spring 版本为 5.1.4&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;创建&#34;&gt;创建&lt;/h2&gt;
-&lt;p&gt;对 &lt;code&gt;getBean&lt;/code&gt; 方法跟踪，进入到了 &lt;code&gt;AbstractBeanFactory&lt;/code&gt; 的 &lt;code&gt;doGetBean&lt;/code&gt; 方法，该方法的内容就是构造 Bean 的主要流程了。&lt;/p&gt;
+&lt;p&gt;Bean 的创建是其生命周期中最复杂的一步，这边对 &lt;code&gt;getBean&lt;/code&gt; 方法跟踪，进入到了 &lt;code&gt;AbstractBeanFactory&lt;/code&gt; 的 &lt;code&gt;doGetBean&lt;/code&gt; 方法，该方法的内容就是构造 Bean 的主要流程，这里只将关键的步骤提取出来。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;protected &amp;lt;T&amp;gt; T doGetBean(final String name, @Nullable final Class&amp;lt;T&amp;gt; requiredType,
+        @Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
+
+    final String beanName = transformedBeanName(name); // 解析 Bean 名称
+    
+    Object bean;
+
+    Object sharedInstance = getSingleton(beanName); // 1. 获取 Bean 实例或构造工厂
+    if (sharedInstance != null &amp;amp;&amp;amp; args == null) {
+        // 这里主要是对构造工厂进行创建实例
+        bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
+    } else {
+        BeanFactory parentBeanFactory = getParentBeanFactory();
+        // 检查父级构造工厂是否包含实例，是则交由父级工厂创建返回
+        ...
+
+        final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
+        // 初始化当前 Bean 所依赖的 Bean
+        ...
+
+
+        // 2. 根据 Bean 的类型选择构造方式，这里分析单例模式
+        sharedInstance = getSingleton(beanName, () -&amp;gt; {
+            try {
+                return createBean(beanName, mbd, args); // 具体构造实例的逻辑
+            }
+            catch (BeansException ex) {
+                destroySingleton(beanName);
+                throw ex;
+            }
+        });
+        bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
+    }
+
+    // 类型检查和转换
+    ...
+    return (T) bean;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;获取单例&#34;&gt;获取单例&lt;/h3&gt;
+&lt;p&gt;其实整个流程十分复杂，这里也能够看出 Spring 的严谨性。首先跟进 &lt;code&gt;1. getSingleton()&lt;/code&gt;，它的逻辑虽然简单，但其实是对解决循环依赖问题非常关键的一步。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+    Object singletonObject = this.singletonObjects.get(beanName);
+    if (singletonObject == null &amp;amp;&amp;amp; isSingletonCurrentlyInCreation(beanName)) {
+        synchronized (this.singletonObjects) {
+            singletonObject = this.earlySingletonObjects.get(beanName);
+            if (singletonObject == null &amp;amp;&amp;amp; allowEarlyReference) {
+                ObjectFactory&amp;lt;?&amp;gt; singletonFactory = this.singletonFactories.get(beanName);
+                if (singletonFactory != null) {
+                    singletonObject = singletonFactory.getObject();
+                    this.earlySingletonObjects.put(beanName, singletonObject);
+                    this.singletonFactories.remove(beanName);
+                }
+            }
+        }
+    }
+    return singletonObject;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这里有两个解决循环引用的要点，这里先知道就行。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;一是 &lt;code&gt;isSingletonCurrentlyInCreation(beanName)&lt;/code&gt;，这是标记了一个 Bean 正处于构造阶段中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;还有一个是 &lt;code&gt;this.singletonFactories.get(beanName)&lt;/code&gt;，这里返回的是 Bean 实例的构造工厂，需要在其他位置通过调用 &lt;code&gt;addSingletonFactory&lt;/code&gt; 加入进来。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;创建-bean-实例&#34;&gt;创建 Bean 实例&lt;/h3&gt;
+&lt;p&gt;创建实例调用的内容非常多，这边主要讲下构造、注入、处理器的过程。&lt;/p&gt;
+&lt;p&gt;首先看到 &lt;code&gt;2. getSingleton()&lt;/code&gt;，这里需要关注的只有这几步，&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;beforeSingletonCreation&lt;/code&gt; 和 &lt;code&gt;afterSingletonCreation&lt;/code&gt; 分别为标记 Bean 在创建中和移除标记&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用前面的 &lt;code&gt;createBean&lt;/code&gt; 创建实例。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;addSingleton&lt;/code&gt; 则是将创建的实例加入到容器中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;public Object getSingleton(String beanName, ObjectFactory&amp;lt;?&amp;gt; singletonFactory) {
+    beforeSingletonCreation(beanName);
+    try {
+        singletonObject = singletonFactory.getObject();
+        newSingleton = true;
+    }
+    finally {
+        afterSingletonCreation(beanName);
+    }
+    if (newSingleton) {
+        addSingleton(beanName, singletonObject);
+    }
+    return singletonObject;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;继续分析 &lt;code&gt;createBean&lt;/code&gt;，其实里面主要是委托了 &lt;code&gt;doCreateBean&lt;/code&gt; 方法来创建实例，解决循环引用的关键点就是这里的 &lt;code&gt;addSingletonFactory&lt;/code&gt;，使得 Bean 在创建阶段就提供依赖引用。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final @Nullable Object[] args)
+        throws BeanCreationException {
+
+    // 创建实例，会涉及构造器注入
+    BeanWrapper instanceWrapper = createBeanInstance(beanName, mbd, args);
+    final Object bean = instanceWrapper.getWrappedInstance();
+
+    // 缓存实例引用
+    boolean earlySingletonExposure = (mbd.isSingleton() &amp;amp;&amp;amp; this.allowCircularReferences &amp;amp;&amp;amp;
+            isSingletonCurrentlyInCreation(beanName));
+    if (earlySingletonExposure) {
+        addSingletonFactory(beanName, () -&amp;gt; getEarlyBeanReference(beanName, mbd, bean));
+    }
+
+    Object exposedObject = bean;
+
+    // 初始化实例
+    populateBean(beanName, mbd, instanceWrapper);
+    exposedObject = initializeBean(beanName, exposedObject, mbd);
+
+    return exposedObject;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;初始化&#34;&gt;初始化&lt;/h2&gt;
+&lt;p&gt;当 Bean 在 &lt;code&gt;doCreateBean&lt;/code&gt; 中完成了实例的创建，接着就会对实例进行&lt;code&gt;属性注入&lt;/code&gt;、&lt;code&gt;调用初始化方法&lt;/code&gt;、&lt;code&gt;执行前置/后置处理器&lt;/code&gt;，而后将实例加入到 Spring 容器中，就完成了一个 Bean 的创建阶段。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这个过程也可以通过 &lt;code&gt;AutowireCapableBeanFactory#initializeBean&lt;/code&gt; 来完成。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;销毁&#34;&gt;销毁&lt;/h2&gt;
+&lt;p&gt;一个 Bean 实例的销毁可以随着 Spring 生命周期结束而触发，也可以通过调用 &lt;code&gt;AutowireCapableBeanFactory&lt;/code&gt; 中的 &lt;code&gt;destroyBean&lt;/code&gt; 来进行。&lt;/p&gt;
+&lt;p&gt;他将构造一个 &lt;code&gt;DisposableBeanAdapter&lt;/code&gt; 来执行不同实例的销毁流程，这里的代码流程清晰明了。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public void destroy() {
+    for (DestructionAwareBeanPostProcessor processor : this.beanPostProcessors) {
+        processor.postProcessBeforeDestruction(this.bean, this.beanName); // 执行前置销毁处理器
+    }
+
+    // 执行实现 DisposableBean 的销毁方法
+    ((DisposableBean) this.bean).destroy();
+
+    // 执行自定义销毁方法
+    invokeCustomDestroyMethod(this.destroyMethod);
+}
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
