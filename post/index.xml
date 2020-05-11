@@ -5,12 +5,90 @@
     <link>https://moyada.github.io/post/</link>
       <atom:link href="https://moyada.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <description> </description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Wed, 29 Apr 2020 22:10:40 +0800</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Mon, 11 May 2020 23:24:27 +0800</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title> </title>
       <link>https://moyada.github.io/post/</link>
     </image>
+    
+    <item>
+      <title>探究 currentTimeMillis 与 nanoTime 的不同</title>
+      <link>https://moyada.github.io/post/currenttimemillis-vs-nanotime/</link>
+      <pubDate>Mon, 11 May 2020 23:24:27 +0800</pubDate>
+      <guid>https://moyada.github.io/post/currenttimemillis-vs-nanotime/</guid>
+      <description>&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;
+&lt;p&gt;在 Java 中有两种获取时间的方式，分别是在 java.lang.System 中的 &lt;code&gt;public static native long currentTimeMillis()&lt;/code&gt; 和 &lt;code&gt;public static native long nanoTime()&lt;/code&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;currentTimeMillis() 是返回当前的时间戳，这个时间戳的增长幅度可能由于不同的操作系统而变化。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;nanoTime() 返回系统当前的纳秒时间，这个时间与系统的时钟并没有关系，是由系统的计时器计算返回。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但是由于这两个方法都是 &lt;code&gt;native&lt;/code&gt; 修饰的，为了研究其底层逻辑，那就需要进入 &lt;code&gt;openJdk&lt;/code&gt; 中一探究竟。&lt;/p&gt;
+&lt;h2 id=&#34;实现&#34;&gt;实现&lt;/h2&gt;
+&lt;p&gt;在 &lt;code&gt;System.c&lt;/code&gt; 的 &lt;code&gt;Java_java_lang_System_registerNatives&lt;/code&gt; 方法中发现，currentTimeMillis 注册的函数为 &lt;code&gt;JVM_CurrentTimeMillis&lt;/code&gt;，nanoTime 注册的函数为 &lt;code&gt;JVM_NanoTime&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;接着跟踪进入 &lt;code&gt;jvm.cpp&lt;/code&gt;，得知这个函数是根据不同的操作系统底层选择调用的实现，这里使用 os_linux.cpp 中的实现作为研究。&lt;/p&gt;
+&lt;h3 id=&#34;currenttimemillis&#34;&gt;currentTimeMillis&lt;/h3&gt;
+&lt;p&gt;javaTimeMillis 的实现是直接调用操作系统的 &lt;code&gt;gettimeofday&lt;/code&gt; 函数实现的。这个函数的作用是获取当前的墙上时钟时间，并保存在参数 timeval。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;jlong os::javaTimeMillis() {
+  timeval time;
+  int status = gettimeofday(&amp;amp;time, NULL);
+  assert(status != -1, &amp;quot;linux error&amp;quot;);
+  return jlong(time.tv_sec) * 1000  +  jlong(time.tv_usec / 1000);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;http://man7.org/linux/man-pages/man2/gettimeofday.2.html&#34;&gt;http://man7.org/linux/man-pages/man2/gettimeofday.2.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;nanotime&#34;&gt;nanoTime&lt;/h3&gt;
+&lt;p&gt;而 javaTimeNanos 是根据操作系统是否支持 &lt;code&gt;clock_gettime&lt;/code&gt; 函数选择调用 &lt;code&gt;clock_gettime&lt;/code&gt;，否则调用 &lt;code&gt;gettimeofday&lt;/code&gt;。openJdk 这里调用 &lt;code&gt;clock_gettime&lt;/code&gt; 时传递的参数为 &lt;code&gt;CLOCK_MONOTONIC&lt;/code&gt;，他的功能是获取从系统启动时单调变化的时间。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;jlong os::javaTimeNanos() {
+  if (os::supports_monotonic_clock()) {
+    struct timespec tp;
+    int status = os::Posix::clock_gettime(CLOCK_MONOTONIC, &amp;amp;tp);
+    assert(status == 0, &amp;quot;gettime error&amp;quot;);
+    jlong result = jlong(tp.tv_sec) * (1000 * 1000 * 1000) + jlong(tp.tv_nsec);
+    return result;
+  } else {
+    timeval time;
+    int status = gettimeofday(&amp;amp;time, NULL);
+    assert(status != -1, &amp;quot;linux error&amp;quot;);
+    jlong usecs = jlong(time.tv_sec) * (1000 * 1000) + jlong(time.tv_usec);
+    return 1000 * usecs;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;http://man7.org/linux/man-pages/man2/clock_gettime.2.htmlxs&#34;&gt;http://man7.org/linux/man-pages/man2/clock_gettime.2.htmlxs&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;应用&#34;&gt;应用&lt;/h2&gt;
+&lt;p&gt;在实际应用中，&lt;code&gt;currentTimeMillis()&lt;/code&gt; 会比 &lt;code&gt;nanoTime()&lt;/code&gt; 有更好的作用，例如 &lt;code&gt;new Data()&lt;/code&gt; 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 由于底层是依赖于计数器，更多的应用则是计算耗时。&lt;/p&gt;
+&lt;p&gt;在
+&lt;a href=&#34;https://developer.twitter.com/en/docs/basics/twitter-ids&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;雪花算法&lt;/a&gt;中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现时钟回拨现象，那么单调递增的 nanoTime 是否更适合呢？&lt;/p&gt;
+&lt;p&gt;其实这个问题的解法有很多种，选择适用的即可。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;最原始的方式，记录上一次的时间戳，但新产生的时间戳先于这个时间戳时，那就进行 sleep 重新获取时间戳&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用 &lt;code&gt;nanoTime&lt;/code&gt;，由于 nanoTime 是单调递增的，所以也不会出现时钟回拨的现场。但是 nanoTime 有可能会产生溢出，导致返回负值。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用 &lt;code&gt;currentTimeMillis&lt;/code&gt;，并且调用 &lt;code&gt;adjtime&lt;/code&gt; 增量调整时间同步策略。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;http://man7.org/linux/man-pages/man3/adjtime.3.html&#34;&gt;http://man7.org/linux/man-pages/man3/adjtime.3.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这里讲讲第三种，&lt;code&gt;adjtime()&lt;/code&gt; 是Unix提供的函数，她的作用是设置系统时间变化的增量。如果出现了时钟回拨，那系统将会使用一个缓慢的速率，慢慢的修复时间。这样的时间戳就是相对的递增的了，在 Snowflake 中也就必须担心使用到历史的时间戳做编号。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof&#34;&gt;https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
     
     <item>
       <title>谷歌翻译 API 调用</title>
@@ -797,9 +875,9 @@ public EurekaClient initEurekaClient(EurekaInstanceConfig instanceConfig, Eureka
     
     <item>
       <title>instanceOf、isInstance、isAssignableFrom 的区别</title>
-      <link>https://moyada.github.io/post/diff-instanceof-isassignablefrom/</link>
+      <link>https://moyada.github.io/post/instanceof-vs-isassignablefrom/</link>
       <pubDate>Sun, 05 May 2019 20:23:32 +0000</pubDate>
-      <guid>https://moyada.github.io/post/diff-instanceof-isassignablefrom/</guid>
+      <guid>https://moyada.github.io/post/instanceof-vs-isassignablefrom/</guid>
       <description>&lt;p&gt;在 Java 中，对一个类的子类判断有三种方式，分别是 &lt;code&gt;obj instanceof [TypeName]&lt;/code&gt;、&lt;code&gt;class.isInstance(obj)&lt;/code&gt;、&lt;code&gt;class.isAssignableFrom(class)&lt;/code&gt;，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;

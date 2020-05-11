@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeN">
+  <meta name="description" content="简介 在 Java 中有两种获取时间的方式，分别是在 java.lang.System 中的 public static native long currentTimeMillis() 和 public">
 
   
-  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/diff-instanceof-isassignablefrom/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/currenttimemillis-vs-nanotime/">
 
   
 
@@ -215,7 +215,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="https://moyada.github.io/post/diff-instanceof-isassignablefrom/">
+  <link rel="canonical" href="https://moyada.github.io/post/currenttimemillis-vs-nanotime/">
 
   
   
@@ -229,15 +229,15 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="不睡觉的猫头鹰">
-  <meta property="og:url" content="https://moyada.github.io/post/diff-instanceof-isassignablefrom/">
-  <meta property="og:title" content="instanceOf、isInstance、isAssignableFrom 的区别 | 不睡觉的猫头鹰">
-  <meta property="og:description" content="在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeN"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="https://moyada.github.io/post/currenttimemillis-vs-nanotime/">
+  <meta property="og:title" content="探究 currentTimeMillis 与 nanoTime 的不同 | 不睡觉的猫头鹰">
+  <meta property="og:description" content="简介 在 Java 中有两种获取时间的方式，分别是在 java.lang.System 中的 public static native long currentTimeMillis() 和 public"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
     
-      <meta property="article:published_time" content="2019-05-05T20:23:32&#43;00:00">
+      <meta property="article:published_time" content="2020-05-11T23:24:27&#43;08:00">
     
-    <meta property="article:modified_time" content="2019-05-05T20:23:32&#43;00:00">
+    <meta property="article:modified_time" content="2020-05-11T23:24:27&#43;08:00">
   
 
   
@@ -261,12 +261,12 @@
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://moyada.github.io/post/diff-instanceof-isassignablefrom/"
+    "@id": "https://moyada.github.io/post/currenttimemillis-vs-nanotime/"
   },
-  "headline": "instanceOf、isInstance、isAssignableFrom 的区别",
+  "headline": "探究 currentTimeMillis 与 nanoTime 的不同",
   
-  "datePublished": "2019-05-05T20:23:32Z",
-  "dateModified": "2019-05-05T20:23:32Z",
+  "datePublished": "2020-05-11T23:24:27+08:00",
+  "dateModified": "2020-05-11T23:24:27+08:00",
   
   "publisher": {
     "@type": "Organization",
@@ -276,7 +276,7 @@
       "url": "https://moyada.github.io/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png"
     }
   },
-  "description": "在 Java 中，对一个类的子类判断有三种方式，分别是 obj instanceof [TypeN"
+  "description": "简介 在 Java 中有两种获取时间的方式，分别是在 java.lang.System 中的 public static native long currentTimeMillis() 和 public"
 }
 </script>
 
@@ -294,7 +294,7 @@
 
 
 
-  <title>instanceOf、isInstance、isAssignableFrom 的区别 | 不睡觉的猫头鹰</title>
+  <title>探究 currentTimeMillis 与 nanoTime 的不同 | 不睡觉的猫头鹰</title>
 </head>
 
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -551,10 +551,21 @@
 <div class="row flex-xl-nowrap">
     <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
-        <li><a href="#" id="back_to_top" class="docs-toc-title">instanceOf、isInstance、isAssignableFrom 的区别</a></li>
+        <li><a href="#" id="back_to_top" class="docs-toc-title">探究 currentTimeMillis 与 nanoTime 的不同</a></li>
       </ul>
 
-      <nav id="TableOfContents"></nav>
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#实现">实现</a>
+      <ul>
+        <li><a href="#currenttimemillis">currentTimeMillis</a></li>
+        <li><a href="#nanotime">nanoTime</a></li>
+      </ul>
+    </li>
+    <li><a href="#应用">应用</a></li>
+  </ul>
+</nav>
       
     </div>
 
@@ -588,7 +599,7 @@
 <div class=" pt-3">
   
     
-      <h1>instanceOf、isInstance、isAssignableFrom 的区别</h1>
+      <h1>探究 currentTimeMillis 与 nanoTime 的不同</h1>
     
   
   
@@ -609,7 +620,7 @@
     
       
     
-    2019-05-05
+    2020-05-11
   </span>
   
 
@@ -618,10 +629,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    3 分钟阅读时长 
+    2 分钟阅读时长 
   </span>
   <span>&nbsp;</span>
-  1026 字 
+  975 字 
   
 
   
@@ -663,107 +674,75 @@
 		  
 
 		    <div class="article-style">
-		      <p>在 Java 中，对一个类的子类判断有三种方式，分别是 <code>obj instanceof [TypeName]</code>、<code>class.isInstance(obj)</code>、<code>class.isAssignableFrom(class)</code>，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。</p>
+		      <h2 id="简介">简介</h2>
+<p>在 Java 中有两种获取时间的方式，分别是在 java.lang.System 中的 <code>public static native long currentTimeMillis()</code> 和 <code>public static native long nanoTime()</code>。</p>
+<ul>
+<li>
+<p>currentTimeMillis() 是返回当前的时间戳，这个时间戳的增长幅度可能由于不同的操作系统而变化。</p>
+</li>
+<li>
+<p>nanoTime() 返回系统当前的纳秒时间，这个时间与系统的时钟并没有关系，是由系统的计时器计算返回。</p>
+</li>
+</ul>
+<p>但是由于这两个方法都是 <code>native</code> 修饰的，为了研究其底层逻辑，那就需要进入 <code>openJdk</code> 中一探究竟。</p>
+<h2 id="实现">实现</h2>
+<p>在 <code>System.c</code> 的 <code>Java_java_lang_System_registerNatives</code> 方法中发现，currentTimeMillis 注册的函数为 <code>JVM_CurrentTimeMillis</code>，nanoTime 注册的函数为 <code>JVM_NanoTime</code>。</p>
+<p>接着跟踪进入 <code>jvm.cpp</code>，得知这个函数是根据不同的操作系统底层选择调用的实现，这里使用 os_linux.cpp 中的实现作为研究。</p>
+<h3 id="currenttimemillis">currentTimeMillis</h3>
+<p>javaTimeMillis 的实现是直接调用操作系统的 <code>gettimeofday</code> 函数实现的。这个函数的作用是获取当前的墙上时钟时间，并保存在参数 timeval。</p>
+<pre><code>jlong os::javaTimeMillis() {
+  timeval time;
+  int status = gettimeofday(&amp;time, NULL);
+  assert(status != -1, &quot;linux error&quot;);
+  return jlong(time.tv_sec) * 1000  +  jlong(time.tv_usec / 1000);
+}
+</code></pre>
+<blockquote>
+<p><a href="http://man7.org/linux/man-pages/man2/gettimeofday.2.html">http://man7.org/linux/man-pages/man2/gettimeofday.2.html</a></p>
+</blockquote>
+<h3 id="nanotime">nanoTime</h3>
+<p>而 javaTimeNanos 是根据操作系统是否支持 <code>clock_gettime</code> 函数选择调用 <code>clock_gettime</code>，否则调用 <code>gettimeofday</code>。openJdk 这里调用 <code>clock_gettime</code> 时传递的参数为 <code>CLOCK_MONOTONIC</code>，他的功能是获取从系统启动时单调变化的时间。</p>
+<pre><code>jlong os::javaTimeNanos() {
+  if (os::supports_monotonic_clock()) {
+    struct timespec tp;
+    int status = os::Posix::clock_gettime(CLOCK_MONOTONIC, &amp;tp);
+    assert(status == 0, &quot;gettime error&quot;);
+    jlong result = jlong(tp.tv_sec) * (1000 * 1000 * 1000) + jlong(tp.tv_nsec);
+    return result;
+  } else {
+    timeval time;
+    int status = gettimeofday(&amp;time, NULL);
+    assert(status != -1, &quot;linux error&quot;);
+    jlong usecs = jlong(time.tv_sec) * (1000 * 1000) + jlong(time.tv_usec);
+    return 1000 * usecs;
+  }
+}
+</code></pre>
+<blockquote>
+<p><a href="http://man7.org/linux/man-pages/man2/clock_gettime.2.htmlxs">http://man7.org/linux/man-pages/man2/clock_gettime.2.htmlxs</a></p>
+</blockquote>
+<h2 id="应用">应用</h2>
+<p>在实际应用中，<code>currentTimeMillis()</code> 会比 <code>nanoTime()</code> 有更好的作用，例如 <code>new Data()</code> 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 由于底层是依赖于计数器，更多的应用则是计算耗时。</p>
+<p>在
+<a href="https://developer.twitter.com/en/docs/basics/twitter-ids" target="_blank" rel="noopener">雪花算法</a>中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现时钟回拨现象，那么单调递增的 nanoTime 是否更适合呢？</p>
+<p>其实这个问题的解法有很多种，选择适用的即可。</p>
 <ol>
 <li>
-<p>其中 <code>instanceof</code> 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 <code>templateTable.hpp</code> 中发现了 instanceof 方法的定义，从其中 <code>templateTable_x86.cpp</code>、<code>templateTable_arm.cpp</code> 的 <code>instanceof</code> 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。</p>
+<p>最原始的方式，记录上一次的时间戳，但新产生的时间戳先于这个时间戳时，那就进行 sleep 重新获取时间戳</p>
 </li>
 <li>
-<p><code>isInstance</code> 是 Class 类下的 native 方法，接收参数为对象。分析了在 <code>jni.cpp</code> 中的大体流程，程序先通过 class 获取到 Klass，调用 object 内 klass 的 <code>is_subtype_of</code> 方法，传入方才获取的 Klass，判断二者地址是否相同，是则判定为同一类型，否则再调用 <code>search_secondary_supers</code>，判断父级类型是否存在与传入的 Klass 相匹配。</p>
+<p>使用 <code>nanoTime</code>，由于 nanoTime 是单调递增的，所以也不会出现时钟回拨的现场。但是 nanoTime 有可能会产生溢出，导致返回负值。</p>
+</li>
+<li>
+<p>使用 <code>currentTimeMillis</code>，并且调用 <code>adjtime</code> 增量调整时间同步策略。</p>
 </li>
 </ol>
-<pre><code>JNI_QUICK_ENTRY(jboolean, jni_IsInstanceOf(JNIEnv *env, jobject obj, jclass clazz))
-  JNIWrapper(&quot;IsInstanceOf&quot;);
-
-  HOTSPOT_JNI_ISINSTANCEOF_ENTRY(env, obj, clazz);
-
-  jboolean ret = JNI_TRUE;
-  if (obj != NULL) {
-    ret = JNI_FALSE;
-    Klass* k = java_lang_Class::as_Klass(
-      JNIHandles::resolve_non_null(clazz));
-    if (k != NULL) {
-      ret = JNIHandles::resolve_non_null(obj)-&gt;is_a(k) ? JNI_TRUE : JNI_FALSE;
-    }
-  }
-
-  HOTSPOT_JNI_ISINSTANCEOF_RETURN(ret);
-  return ret;
-JNI_END
-
-</code></pre>
-<pre><code>// hotspot/share/oops/oop.inline.hpp
-
-bool oopDesc::is_a(Klass* k) const {
-  return klass()-&gt;is_subtype_of(k);
-}
-</code></pre>
-<pre><code>// hotspot/share/oops/klass.hpp
-
-// subtype check: true if is_subclass_of, or if k is interface and receiver implements it
-bool is_subtype_of(Klass* k) const {
-  juint    off = k-&gt;super_check_offset();
-  Klass* sup = *(Klass**)( (address)this + off );
-  const juint secondary_offset = in_bytes(secondary_super_cache_offset());
-  if (sup == k) {
-    return true;
-  } else if (off != secondary_offset) {
-    return false;
-  } else {
-    return search_secondary_supers(k);
-  }
-}
-
-bool Klass::search_secondary_supers(Klass* k) const {
-  // Put some extra logic here out-of-line, before the search proper.
-  // This cuts down the size of the inline method.
-
-  // This is necessary, since I am never in my own secondary_super list.
-  if (this == k)
-    return true;
-  // Scan the array-of-objects for a match
-  int cnt = secondary_supers()-&gt;length();
-  for (int i = 0; i &lt; cnt; i++) {
-    if (secondary_supers()-&gt;at(i) == k) {
-      ((Klass*)this)-&gt;set_secondary_super_cache(k);
-      return true;
-    }
-  }
-  return false;
-}
-</code></pre>
-<ol start="3">
-<li><code>isAssignableFrom</code> 也是 Class 类下的 native 方法，接收参数为 Class 类。主要逻辑与 <code>isInstance</code> 相同，区别在于当 主体 Class 与 参数 Class 其中一个为原生类型时，则选择使用对象头判断类型是否相等。</li>
-</ol>
-<p><code>isInstance</code> 和 <code>isAssignableFrom</code> 对入参校验上也有区别，isInstance 当对象为空时将会返回 <code>false</code> isAssignableFrom 则会对参数进行非空校验。</p>
-<p><code>isInstance</code> 和 <code>isAssignableFrom</code> 在方法标记上都有 <code>@HotSpotIntrinsicCandidate</code>，会被 JVM 使用更高效的字节码替换，节省了 JNI 调用的开销。</p>
-<pre><code>JNI_QUICK_ENTRY(jboolean, jni_IsAssignableFrom(JNIEnv *env, jclass sub, jclass super))
-  JNIWrapper(&quot;IsSubclassOf&quot;);
-
-  HOTSPOT_JNI_ISASSIGNABLEFROM_ENTRY(env, sub, super);
-
-  oop sub_mirror   = JNIHandles::resolve_non_null(sub);
-  oop super_mirror = JNIHandles::resolve_non_null(super);
-  if (java_lang_Class::is_primitive(sub_mirror) ||
-      java_lang_Class::is_primitive(super_mirror)) {
-    jboolean ret = oopDesc::equals(sub_mirror, super_mirror);
-
-    HOTSPOT_JNI_ISASSIGNABLEFROM_RETURN(ret);
-    return ret;
-  }
-  Klass* sub_klass   = java_lang_Class::as_Klass(sub_mirror);
-  Klass* super_klass = java_lang_Class::as_Klass(super_mirror);
-  assert(sub_klass != NULL &amp;&amp; super_klass != NULL, &quot;invalid arguments to jni_IsAssignableFrom&quot;);
-  jboolean ret = sub_klass-&gt;is_subtype_of(super_klass) ?
-                   JNI_TRUE : JNI_FALSE;
-
-  HOTSPOT_JNI_ISASSIGNABLEFROM_RETURN(ret);
-  return ret;
-JNI_END
-</code></pre>
-<p>总结一下，<code>instanceof</code>、<code>isInstance</code>、<code>isAssignableFrom</code> 其实无太大区别，instanceof 和 isInstance 适用于主体是对象，并且 instanceof 需要在编译期就指定类型，灵活性不如 isInstance。而 isAssignableFrom 是针对两个类的关系校验，在泛型对比上比较适合。</p>
 <blockquote>
-<p>参考: <a href="https://stackoverflow.com/questions/496928/what-is-the-difference-between-instanceof-and-class-isassignablefrom">https://stackoverflow.com/questions/496928/what-is-the-difference-between-instanceof-and-class-isassignablefrom</a></p>
+<p><a href="http://man7.org/linux/man-pages/man3/adjtime.3.html">http://man7.org/linux/man-pages/man3/adjtime.3.html</a></p>
+</blockquote>
+<p>这里讲讲第三种，<code>adjtime()</code> 是Unix提供的函数，她的作用是设置系统时间变化的增量。如果出现了时钟回拨，那系统将会使用一个缓慢的速率，慢慢的修复时间。这样的时间戳就是相对的递增的了，在 Snowflake 中也就必须担心使用到历史的时间戳做编号。</p>
+<blockquote>
+<p>参考: <a href="https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof">https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof</a></p>
 </blockquote>
 
 		    </div>
@@ -873,20 +852,13 @@ JNI_END
     
     <span class="post-nav-item">
       <span class="meta-nav">上一篇</span>&nbsp;
-      <a style="color: rgb(80,150,255)" href="/post/java-serializer/" rel="prev">序列化框架对比</a>
+      <a style="color: rgb(80,150,255)" href="/post/google-translate/" rel="prev">谷歌翻译 API 调用</a>
     </span>
   
   </div>
 
   <div class="col-12 col-md-6 col-xl-6">
     <div style="float: right;">
-      
-      
-      
-        <span class="post-nav-item">
-          <span class="meta-nav">下一篇</span>&nbsp;
-          <a style="color: rgb(80,150,255)" href="/post/feign-eureka-without-springboot/" rel="next">在非 SpringBoot 工程中实现 Eureka 构建 Feign 服务</a>
-        </span>
       
     </div>
   </div>
