@@ -50,9 +50,9 @@
   
   
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+    <link rel="stylesheet" href="local/academicons-1.8.6.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="local/font-awesome-5.12.0-1-css-all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="local/jquery.fancybox-3.5.7.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
     
     
@@ -63,14 +63,14 @@
       
       
         
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+          <link rel="stylesheet" href="local/highlight.js-9.18.1-styles-github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="local/highlight.js-9.18.1-styles-dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
         
       
     
 
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    <link rel="stylesheet" href="local/leaflet-1.5.1.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
     
 
     
@@ -153,7 +153,7 @@
       
 
       
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+        <script src="local/lazysizes-5.1.2.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
       
     
       
@@ -632,7 +632,7 @@
     3 分钟阅读时长 
   </span>
   <span>&nbsp;</span>
-  1063 字 
+  1205 字 
   
 
   
@@ -684,13 +684,38 @@
 <p>nanoTime() 返回系统当前的纳秒时间，这个时间与系统的时钟并没有关系，是由系统的计时器计算返回。</p>
 </li>
 </ul>
-<p>但是由于这两个方法都是 <code>native</code> 修饰的，为了研究其底层逻辑，那就需要进入 <code>openJdk</code> 中一探究竟。</p>
+<p>但是由于这两个方法都是 <code>native</code> 修饰的，为了知其然知其所以然，就需要进入 <code>OpenJdk</code> 的源码中一探究竟。</p>
 <h2 id="实现">实现</h2>
 <p>通过在 <code>System.c</code> 的 <code>Java_java_lang_System_registerNatives</code> 方法中发现，currentTimeMillis 注册的函数为 <code>JVM_CurrentTimeMillis</code>，nanoTime 注册的函数为 <code>JVM_NanoTime</code>。</p>
+<pre><code class="language-c++">static JNINativeMethod methods[] = {
+    {&quot;currentTimeMillis&quot;, &quot;()J&quot;,              (void *)&amp;JVM_CurrentTimeMillis},
+    {&quot;nanoTime&quot;,          &quot;()J&quot;,              (void *)&amp;JVM_NanoTime},
+    {&quot;arraycopy&quot;,     &quot;(&quot; OBJ &quot;I&quot; OBJ &quot;II)V&quot;, (void *)&amp;JVM_ArrayCopy},
+};
+
+#undef OBJ
+
+JNIEXPORT void JNICALL
+Java_java_lang_System_registerNatives(JNIEnv *env, jclass cls)
+{
+    (*env)-&gt;RegisterNatives(env, cls,
+                            methods, sizeof(methods)/sizeof(methods[0]));
+}
+</code></pre>
 <p>接着跟踪进入 <code>jvm.cpp</code>，得知这个函数是根据不同的操作系统底层选择调用的实现，这里使用 os_linux.cpp 中的实现作为研究对象。</p>
+<pre><code>JVM_LEAF(jlong, JVM_CurrentTimeMillis(JNIEnv *env, jclass ignored))
+  JVMWrapper(&quot;JVM_CurrentTimeMillis&quot;);
+  return os::javaTimeMillis();
+JVM_END
+
+JVM_LEAF(jlong, JVM_NanoTime(JNIEnv *env, jclass ignored))
+  JVMWrapper(&quot;JVM_NanoTime&quot;);
+  return os::javaTimeNanos();
+JVM_END
+</code></pre>
 <h3 id="currenttimemillis">currentTimeMillis</h3>
-<p>javaTimeMillis 的实现是直接调用操作系统的 <code>gettimeofday</code> 函数实现的。这个函数的作用是获取当前的墙上时钟时间，并用参数 timeval 保存。</p>
-<pre><code>jlong os::javaTimeMillis() {
+<p>在 Linux 中 javaTimeMillis 的实现是直接调用操作系统的 <code>gettimeofday</code> 函数实现的。这个函数的作用是获取当前系统的时钟时间，并用参数 timeval 保存。</p>
+<pre><code class="language-c++">jlong os::javaTimeMillis() {
   timeval time;
   int status = gettimeofday(&amp;time, NULL);
   assert(status != -1, &quot;linux error&quot;);
@@ -702,7 +727,7 @@
 </blockquote>
 <h3 id="nanotime">nanoTime</h3>
 <p>而 javaTimeNanos 是根据操作系统是否支持 <code>clock_gettime</code> 函数选择调用 <code>clock_gettime</code>，否则调用 <code>gettimeofday</code>。OpenJdk 在调用 <code>clock_gettime</code> 时传递的参数为 <code>CLOCK_MONOTONIC</code>，他的功能是获取从系统启动时单调变化的时间。</p>
-<pre><code>jlong os::javaTimeNanos() {
+<pre><code class="language-c++">jlong os::javaTimeNanos() {
   if (os::supports_monotonic_clock()) {
     struct timespec tp;
     int status = os::Posix::clock_gettime(CLOCK_MONOTONIC, &amp;tp);
@@ -722,8 +747,8 @@
 <p><a href="http://man7.org/linux/man-pages/man2/clock_gettime.2.html">http://man7.org/linux/man-pages/man2/clock_gettime.2.html</a></p>
 </blockquote>
 <h2 id="应用">应用</h2>
-<p>那么这两种时钟的获取又有什么区别呢？首先，根据文档可知，<code>gettimeofday</code> 返回的是系统的绝对时间，这个时间会受 Linux 的时钟同步机制影响 
-<a href="https://tools.ietf.org/html/rfc5905" target="_blank" rel="noopener">RFC 5905</a>。<code>clock_gettime</code> 则是返回经由系统启动后的相对时间，时间的跳动会受到系统和计时器的影响。</p>
+<p>那么这两种时钟的获取又有什么区别呢？首先，根据文档可知，<code>gettimeofday</code> 返回的是系统的绝对时间，这个时间会受 Linux 的时钟同步机制影响 (
+<a href="https://tools.ietf.org/html/rfc5905" target="_blank" rel="noopener">RFC 5905</a>)。<code>clock_gettime</code> 则是返回经由系统启动后的相对时间，时间的跳动会受到操作系统和所使用计时器的影响，并且是单调递增的。</p>
 <p>实际应用中，<code>currentTimeMillis()</code> 会比 <code>nanoTime()</code> 有更好的作用，例如 <code>new Data()</code> 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 是意义更多是相对偏移时间，所以在计算耗时这上面会更显突出。</p>
 <p>在常见的分布式全局编号 &ndash; 
 <a href="https://developer.twitter.com/en/docs/basics/twitter-ids" target="_blank" rel="noopener">雪花算法</a>中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现 <code>时钟回拨</code> 现象，那么单调递增的 nanoTime 是否更适合呢？</p>
@@ -733,13 +758,22 @@
 <p>最常见的解决方法就是记录上一次的时间戳，在新产生的时间戳先于这个时间戳时，那就进行 sleep 后重新获取。</p>
 </li>
 <li>
+<p>使用 <code>AtomicLong</code> 代替时间戳来规避时钟回拨。</p>
+</li>
+<li>
 <p>使用 <code>nanoTime</code>，由于 nanoTime 是单调递增的，所以也不会出现时钟回拨的现场。但是 nanoTime 是会有产生溢出的可能，导致返回负值。</p>
 </li>
 <li>
 <p>使用 
-<a href="http://man7.org/linux/man-pages/man3/adjtime.3.html" target="_blank" rel="noopener">adjtime()</a> 设置时钟调节策略。<code>adjtime()</code> 是Unix提供的函数，他的作用是设置系统时间变化的增量。如果出现了时钟回拨，那系统将会使用一个缓慢的速率，慢慢的修复时间。这样就能够优雅的使时间戳并且是相对的递增。</p>
+<a href="http://man7.org/linux/man-pages/man3/adjtime.3.html" target="_blank" rel="noopener">adjtime()</a> 或 
+<a href="http://man7.org/linux/man-pages/man2/adjtimex.2.html" target="_blank" rel="noopener">adjtimex()</a> 设置时钟调节策略，调节系统时钟变化的速率。当同步时间落后当前系统时钟，那系统将会使用一个缓慢的速率，等到时间一致，这样就能够优雅的使用时间戳并防止时钟回拨。但是如果系统时钟落后太多，那么同步则需要过多的耗时。</p>
 </li>
 </ol>
+<blockquote>
+<p>
+<a href="https://www.freebsd.org/cgi/man.cgi?query=ntpd" target="_blank" rel="noopener">ntpd</a> 和 
+<a href="https://chrony.tuxfamily.org/" target="_blank" rel="noopener">chrony</a> 通过设置都能做到避免一定程度的时钟回拨，<code>ntpdata -B</code> 也能强制使用 <code>adjtime</code> 调节时钟。</p>
+</blockquote>
 <blockquote>
 <p>参考: <a href="https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof">https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof</a></p>
 </blockquote>
@@ -903,18 +937,18 @@
     
     
     
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="local/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="local/imagesloaded-4.1.4.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="local/isotope-3.0.6.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="local/jquery.fancybox-3.5.7.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
 
       
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+        <script src="local/mermaid-8.4.8.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
       
 
       
         
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        <script src="local/highlight-9.18.1.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
         
@@ -924,7 +958,7 @@
 
     
     
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+      <script src="local/leaflet-1.5.1.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
     
 
     
@@ -975,8 +1009,8 @@
 
     
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    <script src="local/fuse-3.2.1.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="local/jquery.mark-8.11.1.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
     
 
     

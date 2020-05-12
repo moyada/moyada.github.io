@@ -27,13 +27,38 @@
 &lt;p&gt;nanoTime() 返回系统当前的纳秒时间，这个时间与系统的时钟并没有关系，是由系统的计时器计算返回。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;但是由于这两个方法都是 &lt;code&gt;native&lt;/code&gt; 修饰的，为了研究其底层逻辑，那就需要进入 &lt;code&gt;openJdk&lt;/code&gt; 中一探究竟。&lt;/p&gt;
+&lt;p&gt;但是由于这两个方法都是 &lt;code&gt;native&lt;/code&gt; 修饰的，为了知其然知其所以然，就需要进入 &lt;code&gt;OpenJdk&lt;/code&gt; 的源码中一探究竟。&lt;/p&gt;
 &lt;h2 id=&#34;实现&#34;&gt;实现&lt;/h2&gt;
 &lt;p&gt;通过在 &lt;code&gt;System.c&lt;/code&gt; 的 &lt;code&gt;Java_java_lang_System_registerNatives&lt;/code&gt; 方法中发现，currentTimeMillis 注册的函数为 &lt;code&gt;JVM_CurrentTimeMillis&lt;/code&gt;，nanoTime 注册的函数为 &lt;code&gt;JVM_NanoTime&lt;/code&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-c++&#34;&gt;static JNINativeMethod methods[] = {
+    {&amp;quot;currentTimeMillis&amp;quot;, &amp;quot;()J&amp;quot;,              (void *)&amp;amp;JVM_CurrentTimeMillis},
+    {&amp;quot;nanoTime&amp;quot;,          &amp;quot;()J&amp;quot;,              (void *)&amp;amp;JVM_NanoTime},
+    {&amp;quot;arraycopy&amp;quot;,     &amp;quot;(&amp;quot; OBJ &amp;quot;I&amp;quot; OBJ &amp;quot;II)V&amp;quot;, (void *)&amp;amp;JVM_ArrayCopy},
+};
+
+#undef OBJ
+
+JNIEXPORT void JNICALL
+Java_java_lang_System_registerNatives(JNIEnv *env, jclass cls)
+{
+    (*env)-&amp;gt;RegisterNatives(env, cls,
+                            methods, sizeof(methods)/sizeof(methods[0]));
+}
+&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;接着跟踪进入 &lt;code&gt;jvm.cpp&lt;/code&gt;，得知这个函数是根据不同的操作系统底层选择调用的实现，这里使用 os_linux.cpp 中的实现作为研究对象。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;JVM_LEAF(jlong, JVM_CurrentTimeMillis(JNIEnv *env, jclass ignored))
+  JVMWrapper(&amp;quot;JVM_CurrentTimeMillis&amp;quot;);
+  return os::javaTimeMillis();
+JVM_END
+
+JVM_LEAF(jlong, JVM_NanoTime(JNIEnv *env, jclass ignored))
+  JVMWrapper(&amp;quot;JVM_NanoTime&amp;quot;);
+  return os::javaTimeNanos();
+JVM_END
+&lt;/code&gt;&lt;/pre&gt;
 &lt;h3 id=&#34;currenttimemillis&#34;&gt;currentTimeMillis&lt;/h3&gt;
-&lt;p&gt;javaTimeMillis 的实现是直接调用操作系统的 &lt;code&gt;gettimeofday&lt;/code&gt; 函数实现的。这个函数的作用是获取当前的墙上时钟时间，并用参数 timeval 保存。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;jlong os::javaTimeMillis() {
+&lt;p&gt;在 Linux 中 javaTimeMillis 的实现是直接调用操作系统的 &lt;code&gt;gettimeofday&lt;/code&gt; 函数实现的。这个函数的作用是获取当前系统的时钟时间，并用参数 timeval 保存。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-c++&#34;&gt;jlong os::javaTimeMillis() {
   timeval time;
   int status = gettimeofday(&amp;amp;time, NULL);
   assert(status != -1, &amp;quot;linux error&amp;quot;);
@@ -45,7 +70,7 @@
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;nanotime&#34;&gt;nanoTime&lt;/h3&gt;
 &lt;p&gt;而 javaTimeNanos 是根据操作系统是否支持 &lt;code&gt;clock_gettime&lt;/code&gt; 函数选择调用 &lt;code&gt;clock_gettime&lt;/code&gt;，否则调用 &lt;code&gt;gettimeofday&lt;/code&gt;。OpenJdk 在调用 &lt;code&gt;clock_gettime&lt;/code&gt; 时传递的参数为 &lt;code&gt;CLOCK_MONOTONIC&lt;/code&gt;，他的功能是获取从系统启动时单调变化的时间。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;jlong os::javaTimeNanos() {
+&lt;pre&gt;&lt;code class=&#34;language-c++&#34;&gt;jlong os::javaTimeNanos() {
   if (os::supports_monotonic_clock()) {
     struct timespec tp;
     int status = os::Posix::clock_gettime(CLOCK_MONOTONIC, &amp;amp;tp);
@@ -65,8 +90,8 @@
 &lt;p&gt;&lt;a href=&#34;http://man7.org/linux/man-pages/man2/clock_gettime.2.html&#34;&gt;http://man7.org/linux/man-pages/man2/clock_gettime.2.html&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;应用&#34;&gt;应用&lt;/h2&gt;
-&lt;p&gt;那么这两种时钟的获取又有什么区别呢？首先，根据文档可知，&lt;code&gt;gettimeofday&lt;/code&gt; 返回的是系统的绝对时间，这个时间会受 Linux 的时钟同步机制影响 
-&lt;a href=&#34;https://tools.ietf.org/html/rfc5905&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RFC 5905&lt;/a&gt;。&lt;code&gt;clock_gettime&lt;/code&gt; 则是返回经由系统启动后的相对时间，时间的跳动会受到系统和计时器的影响。&lt;/p&gt;
+&lt;p&gt;那么这两种时钟的获取又有什么区别呢？首先，根据文档可知，&lt;code&gt;gettimeofday&lt;/code&gt; 返回的是系统的绝对时间，这个时间会受 Linux 的时钟同步机制影响 (
+&lt;a href=&#34;https://tools.ietf.org/html/rfc5905&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RFC 5905&lt;/a&gt;)。&lt;code&gt;clock_gettime&lt;/code&gt; 则是返回经由系统启动后的相对时间，时间的跳动会受到操作系统和所使用计时器的影响，并且是单调递增的。&lt;/p&gt;
 &lt;p&gt;实际应用中，&lt;code&gt;currentTimeMillis()&lt;/code&gt; 会比 &lt;code&gt;nanoTime()&lt;/code&gt; 有更好的作用，例如 &lt;code&gt;new Data()&lt;/code&gt; 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 是意义更多是相对偏移时间，所以在计算耗时这上面会更显突出。&lt;/p&gt;
 &lt;p&gt;在常见的分布式全局编号 &amp;ndash; 
 &lt;a href=&#34;https://developer.twitter.com/en/docs/basics/twitter-ids&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;雪花算法&lt;/a&gt;中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现 &lt;code&gt;时钟回拨&lt;/code&gt; 现象，那么单调递增的 nanoTime 是否更适合呢？&lt;/p&gt;
@@ -76,13 +101,22 @@
 &lt;p&gt;最常见的解决方法就是记录上一次的时间戳，在新产生的时间戳先于这个时间戳时，那就进行 sleep 后重新获取。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
+&lt;p&gt;使用 &lt;code&gt;AtomicLong&lt;/code&gt; 代替时间戳来规避时钟回拨。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
 &lt;p&gt;使用 &lt;code&gt;nanoTime&lt;/code&gt;，由于 nanoTime 是单调递增的，所以也不会出现时钟回拨的现场。但是 nanoTime 是会有产生溢出的可能，导致返回负值。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;使用 
-&lt;a href=&#34;http://man7.org/linux/man-pages/man3/adjtime.3.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;adjtime()&lt;/a&gt; 设置时钟调节策略。&lt;code&gt;adjtime()&lt;/code&gt; 是Unix提供的函数，他的作用是设置系统时间变化的增量。如果出现了时钟回拨，那系统将会使用一个缓慢的速率，慢慢的修复时间。这样就能够优雅的使时间戳并且是相对的递增。&lt;/p&gt;
+&lt;a href=&#34;http://man7.org/linux/man-pages/man3/adjtime.3.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;adjtime()&lt;/a&gt; 或 
+&lt;a href=&#34;http://man7.org/linux/man-pages/man2/adjtimex.2.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;adjtimex()&lt;/a&gt; 设置时钟调节策略，调节系统时钟变化的速率。当同步时间落后当前系统时钟，那系统将会使用一个缓慢的速率，等到时间一致，这样就能够优雅的使用时间戳并防止时钟回拨。但是如果系统时钟落后太多，那么同步则需要过多的耗时。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://www.freebsd.org/cgi/man.cgi?query=ntpd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ntpd&lt;/a&gt; 和 
+&lt;a href=&#34;https://chrony.tuxfamily.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;chrony&lt;/a&gt; 通过设置都能做到避免一定程度的时钟回拨，&lt;code&gt;ntpdata -B&lt;/code&gt; 也能强制使用 &lt;code&gt;adjtime&lt;/code&gt; 调节时钟。&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;blockquote&gt;
 &lt;p&gt;参考: &lt;a href=&#34;https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof&#34;&gt;https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
