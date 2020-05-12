@@ -230,7 +230,7 @@
   
   <meta property="og:site_name" content="不睡觉的猫头鹰">
   <meta property="og:url" content="https://moyada.github.io/post/currenttimemillis-vs-nanotime/">
-  <meta property="og:title" content="探究 currentTimeMillis 与 nanoTime 的不同 | 不睡觉的猫头鹰">
+  <meta property="og:title" content="对比 currentTimeMillis 与 nanoTime | 不睡觉的猫头鹰">
   <meta property="og:description" content="简介 在 Java 中有两种获取时间的方式，分别是在 java.lang.System 中的 public static native long currentTimeMillis() 和 public"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
@@ -263,7 +263,7 @@
     "@type": "WebPage",
     "@id": "https://moyada.github.io/post/currenttimemillis-vs-nanotime/"
   },
-  "headline": "探究 currentTimeMillis 与 nanoTime 的不同",
+  "headline": "对比 currentTimeMillis 与 nanoTime",
   
   "datePublished": "2020-05-11T23:24:27+08:00",
   "dateModified": "2020-05-11T23:24:27+08:00",
@@ -294,7 +294,7 @@
 
 
 
-  <title>探究 currentTimeMillis 与 nanoTime 的不同 | 不睡觉的猫头鹰</title>
+  <title>对比 currentTimeMillis 与 nanoTime | 不睡觉的猫头鹰</title>
 </head>
 
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -551,7 +551,7 @@
 <div class="row flex-xl-nowrap">
     <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
       <ul class="nav toc-top">
-        <li><a href="#" id="back_to_top" class="docs-toc-title">探究 currentTimeMillis 与 nanoTime 的不同</a></li>
+        <li><a href="#" id="back_to_top" class="docs-toc-title">对比 currentTimeMillis 与 nanoTime</a></li>
       </ul>
 
       <nav id="TableOfContents">
@@ -599,7 +599,7 @@
 <div class=" pt-3">
   
     
-      <h1>探究 currentTimeMillis 与 nanoTime 的不同</h1>
+      <h1>对比 currentTimeMillis 与 nanoTime</h1>
     
   
   
@@ -629,10 +629,10 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    2 分钟阅读时长 
+    3 分钟阅读时长 
   </span>
   <span>&nbsp;</span>
-  975 字 
+  1063 字 
   
 
   
@@ -686,10 +686,10 @@
 </ul>
 <p>但是由于这两个方法都是 <code>native</code> 修饰的，为了研究其底层逻辑，那就需要进入 <code>openJdk</code> 中一探究竟。</p>
 <h2 id="实现">实现</h2>
-<p>在 <code>System.c</code> 的 <code>Java_java_lang_System_registerNatives</code> 方法中发现，currentTimeMillis 注册的函数为 <code>JVM_CurrentTimeMillis</code>，nanoTime 注册的函数为 <code>JVM_NanoTime</code>。</p>
-<p>接着跟踪进入 <code>jvm.cpp</code>，得知这个函数是根据不同的操作系统底层选择调用的实现，这里使用 os_linux.cpp 中的实现作为研究。</p>
+<p>通过在 <code>System.c</code> 的 <code>Java_java_lang_System_registerNatives</code> 方法中发现，currentTimeMillis 注册的函数为 <code>JVM_CurrentTimeMillis</code>，nanoTime 注册的函数为 <code>JVM_NanoTime</code>。</p>
+<p>接着跟踪进入 <code>jvm.cpp</code>，得知这个函数是根据不同的操作系统底层选择调用的实现，这里使用 os_linux.cpp 中的实现作为研究对象。</p>
 <h3 id="currenttimemillis">currentTimeMillis</h3>
-<p>javaTimeMillis 的实现是直接调用操作系统的 <code>gettimeofday</code> 函数实现的。这个函数的作用是获取当前的墙上时钟时间，并保存在参数 timeval。</p>
+<p>javaTimeMillis 的实现是直接调用操作系统的 <code>gettimeofday</code> 函数实现的。这个函数的作用是获取当前的墙上时钟时间，并用参数 timeval 保存。</p>
 <pre><code>jlong os::javaTimeMillis() {
   timeval time;
   int status = gettimeofday(&amp;time, NULL);
@@ -701,7 +701,7 @@
 <p><a href="http://man7.org/linux/man-pages/man2/gettimeofday.2.html">http://man7.org/linux/man-pages/man2/gettimeofday.2.html</a></p>
 </blockquote>
 <h3 id="nanotime">nanoTime</h3>
-<p>而 javaTimeNanos 是根据操作系统是否支持 <code>clock_gettime</code> 函数选择调用 <code>clock_gettime</code>，否则调用 <code>gettimeofday</code>。openJdk 这里调用 <code>clock_gettime</code> 时传递的参数为 <code>CLOCK_MONOTONIC</code>，他的功能是获取从系统启动时单调变化的时间。</p>
+<p>而 javaTimeNanos 是根据操作系统是否支持 <code>clock_gettime</code> 函数选择调用 <code>clock_gettime</code>，否则调用 <code>gettimeofday</code>。OpenJdk 在调用 <code>clock_gettime</code> 时传递的参数为 <code>CLOCK_MONOTONIC</code>，他的功能是获取从系统启动时单调变化的时间。</p>
 <pre><code>jlong os::javaTimeNanos() {
   if (os::supports_monotonic_clock()) {
     struct timespec tp;
@@ -719,28 +719,27 @@
 }
 </code></pre>
 <blockquote>
-<p><a href="http://man7.org/linux/man-pages/man2/clock_gettime.2.htmlxs">http://man7.org/linux/man-pages/man2/clock_gettime.2.htmlxs</a></p>
+<p><a href="http://man7.org/linux/man-pages/man2/clock_gettime.2.html">http://man7.org/linux/man-pages/man2/clock_gettime.2.html</a></p>
 </blockquote>
 <h2 id="应用">应用</h2>
-<p>在实际应用中，<code>currentTimeMillis()</code> 会比 <code>nanoTime()</code> 有更好的作用，例如 <code>new Data()</code> 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 由于底层是依赖于计数器，更多的应用则是计算耗时。</p>
-<p>在
-<a href="https://developer.twitter.com/en/docs/basics/twitter-ids" target="_blank" rel="noopener">雪花算法</a>中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现时钟回拨现象，那么单调递增的 nanoTime 是否更适合呢？</p>
+<p>那么这两种时钟的获取又有什么区别呢？首先，根据文档可知，<code>gettimeofday</code> 返回的是系统的绝对时间，这个时间会受 Linux 的时钟同步机制影响 
+<a href="https://tools.ietf.org/html/rfc5905" target="_blank" rel="noopener">RFC 5905</a>。<code>clock_gettime</code> 则是返回经由系统启动后的相对时间，时间的跳动会受到系统和计时器的影响。</p>
+<p>实际应用中，<code>currentTimeMillis()</code> 会比 <code>nanoTime()</code> 有更好的作用，例如 <code>new Data()</code> 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 是意义更多是相对偏移时间，所以在计算耗时这上面会更显突出。</p>
+<p>在常见的分布式全局编号 &ndash; 
+<a href="https://developer.twitter.com/en/docs/basics/twitter-ids" target="_blank" rel="noopener">雪花算法</a>中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现 <code>时钟回拨</code> 现象，那么单调递增的 nanoTime 是否更适合呢？</p>
 <p>其实这个问题的解法有很多种，选择适用的即可。</p>
 <ol>
 <li>
-<p>最原始的方式，记录上一次的时间戳，但新产生的时间戳先于这个时间戳时，那就进行 sleep 重新获取时间戳</p>
+<p>最常见的解决方法就是记录上一次的时间戳，在新产生的时间戳先于这个时间戳时，那就进行 sleep 后重新获取。</p>
 </li>
 <li>
-<p>使用 <code>nanoTime</code>，由于 nanoTime 是单调递增的，所以也不会出现时钟回拨的现场。但是 nanoTime 有可能会产生溢出，导致返回负值。</p>
+<p>使用 <code>nanoTime</code>，由于 nanoTime 是单调递增的，所以也不会出现时钟回拨的现场。但是 nanoTime 是会有产生溢出的可能，导致返回负值。</p>
 </li>
 <li>
-<p>使用 <code>currentTimeMillis</code>，并且调用 <code>adjtime</code> 增量调整时间同步策略。</p>
+<p>使用 
+<a href="http://man7.org/linux/man-pages/man3/adjtime.3.html" target="_blank" rel="noopener">adjtime()</a> 设置时钟调节策略。<code>adjtime()</code> 是Unix提供的函数，他的作用是设置系统时间变化的增量。如果出现了时钟回拨，那系统将会使用一个缓慢的速率，慢慢的修复时间。这样就能够优雅的使时间戳并且是相对的递增。</p>
 </li>
 </ol>
-<blockquote>
-<p><a href="http://man7.org/linux/man-pages/man3/adjtime.3.html">http://man7.org/linux/man-pages/man3/adjtime.3.html</a></p>
-</blockquote>
-<p>这里讲讲第三种，<code>adjtime()</code> 是Unix提供的函数，她的作用是设置系统时间变化的增量。如果出现了时钟回拨，那系统将会使用一个缓慢的速率，慢慢的修复时间。这样的时间戳就是相对的递增的了，在 Snowflake 中也就必须担心使用到历史的时间戳做编号。</p>
 <blockquote>
 <p>参考: <a href="https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof">https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof</a></p>
 </blockquote>
