@@ -166,7 +166,7 @@
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&#34;时序图&#34;&gt;时序图&lt;/h2&gt;
-&lt;p&gt;将 &lt;code&gt;创建初始化&lt;/code&gt; 的流程用时序图来表示以便更好的理解。&lt;/p&gt;
+&lt;p&gt;用时序图展示 &lt;code&gt;创建初始化&lt;/code&gt; 的流程以便更好的理解。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/spring-beanfactory.jpg&#34; alt=&#34;spring-beanfactory&#34;&gt;&lt;/p&gt;
 </description>
     </item>
