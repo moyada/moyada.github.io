@@ -89,10 +89,10 @@ JVM_END
 &lt;blockquote&gt;
 &lt;p&gt;&lt;a href=&#34;http://man7.org/linux/man-pages/man2/clock_gettime.2.html&#34;&gt;http://man7.org/linux/man-pages/man2/clock_gettime.2.html&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;h2 id=&#34;应用&#34;&gt;应用&lt;/h2&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
 &lt;p&gt;那么这两种时钟的获取又有什么区别呢？首先，根据文档可知，&lt;code&gt;gettimeofday&lt;/code&gt; 返回的是系统的绝对时间，这个时间会受 Linux 的时钟同步机制影响 (
 &lt;a href=&#34;https://tools.ietf.org/html/rfc5905&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RFC 5905&lt;/a&gt;)。&lt;code&gt;clock_gettime&lt;/code&gt; 则是返回经由系统启动后的相对时间，时间的跳动会受到操作系统和所使用计时器的影响，并且是单调递增的。&lt;/p&gt;
-&lt;p&gt;实际应用中，&lt;code&gt;currentTimeMillis()&lt;/code&gt; 会比 &lt;code&gt;nanoTime()&lt;/code&gt; 有更好的作用，例如 &lt;code&gt;new Data()&lt;/code&gt; 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 是意义更多是相对偏移时间，所以在计算耗时这上面会更显突出。&lt;/p&gt;
+&lt;p&gt;在实际应用中，&lt;code&gt;currentTimeMillis()&lt;/code&gt; 会比 &lt;code&gt;nanoTime()&lt;/code&gt; 有更好的作用，例如 &lt;code&gt;new Data()&lt;/code&gt; 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 是意义更多是相对偏移时间，所以在计算耗时这上面会更显突出。&lt;/p&gt;
 &lt;p&gt;在常见的分布式全局编号 &amp;ndash; 
 &lt;a href=&#34;https://developer.twitter.com/en/docs/basics/twitter-ids&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;雪花算法&lt;/a&gt;中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现 &lt;code&gt;时钟回拨&lt;/code&gt; 现象，那么单调递增的 nanoTime 是否更适合呢？&lt;/p&gt;
 &lt;p&gt;其实这个问题的解法有很多种，选择适用的即可。&lt;/p&gt;
@@ -325,6 +325,9 @@ print(p.readlines()[0])
     invokeCustomDestroyMethod(this.destroyMethod);
 }
 &lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;时序图&#34;&gt;时序图&lt;/h2&gt;
+&lt;p&gt;将 &lt;code&gt;创建初始化&lt;/code&gt; 的流程用时序图来表示以便更好的理解。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/spring-beanfactory.jpg&#34; alt=&#34;spring-beanfactory&#34;&gt;&lt;/p&gt;
 </description>
     </item>
     

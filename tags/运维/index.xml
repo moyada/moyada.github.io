@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>运维 | 不睡觉的猫头鹰</title>
+    <link>https://moyada.github.io/tags/%E8%BF%90%E7%BB%B4/</link>
+      <atom:link href="https://moyada.github.io/tags/%E8%BF%90%E7%BB%B4/index.xml" rel="self" type="application/rss+xml" />
+    <description>运维</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sat, 23 Mar 2019 15:18:30 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
+      <title>运维</title>
+      <link>https://moyada.github.io/tags/%E8%BF%90%E7%BB%B4/</link>
+    </image>
+    
+    <item>
+      <title>使用 Prometheus &#43; Grafana 搭建监控系统</title>
+      <link>https://moyada.github.io/post/prometheus-grafana/</link>
+      <pubDate>Sat, 23 Mar 2019 15:18:30 +0000</pubDate>
+      <guid>https://moyada.github.io/post/prometheus-grafana/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;系统监控是中大型企业中必不可少的组件，在线上服务器遇到负载问题时通过监控便能够查看系统状态快照，还能够通过监控系统开发其他效能组件，进一步提高系统的可用性。&lt;/p&gt;
+&lt;h2 id=&#34;监控应用程序&#34;&gt;监控应用程序&lt;/h2&gt;
+&lt;p&gt;通常情况下，要想获得应用的负载情况就需要改造原有工程，提供 pull 或 push 的方式将应用状况进行上报。&lt;/p&gt;
+&lt;p&gt;Prometheus 使用的是 pull 模式，在应用中开放端口提供系统状态信息，监控系统可以定时从应用中拉取记录。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在 SpringBoot 应用中引入依赖&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!-- prometheus --&amp;gt;
+&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;io.micrometer&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;micrometer-registry-prometheus&amp;lt;/artifactId&amp;gt;
+&amp;lt;/dependency&amp;gt;
+
+&amp;lt;!-- endpoint --&amp;gt;
+&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;spring-boot-starter-actuator&amp;lt;/artifactId&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;配置暴露的 endpoint 及系统标识&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;management.metrics.tags.application=${spring.application.name}
+# 开放全部监控，或选择配置，如 prometheus, health
+management.endpoints.web.exposure.include=*
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;启动完成后通过 &lt;code&gt;{host}:{port}/actuator/prometheus&lt;/code&gt; 可以查看暴露的度量指标&lt;/p&gt;
+&lt;h2 id=&#34;监控中心&#34;&gt;监控中心&lt;/h2&gt;
+&lt;p&gt;通过 &lt;a href=&#34;https://prometheus.io/docs/prometheus/latest/getting_started/&#34;&gt;https://prometheus.io/docs/prometheus/latest/getting_started/&lt;/a&gt; 下载合适的 Prometheus 版本&lt;/p&gt;
+&lt;p&gt;解压后修改 &lt;code&gt;prometheus.yml&lt;/code&gt; 配置，增加目标应用的监控配置&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;...
+
+scrape_configs:
+  - job_name: &#39;targetProject&#39;
+    scrape_interval: 5s
+    metrics_path: &#39;/actuator/prometheus&#39;
+    static_configs:
+    - targets: [&#39;127.0.0.1:8080&#39;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;修改后通过命令 &lt;code&gt;./prometheus -config.file=prometheus.yml&lt;/code&gt; 启动 Prometheus，并进入管理页面 http://127.0.0.1:9090 检查 Endpoint 状态。&lt;/p&gt;
+&lt;h2 id=&#34;grafana-数据可视化&#34;&gt;Grafana 数据可视化&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;通过 &lt;a href=&#34;http://docs.grafana.org/installation/&#34;&gt;http://docs.grafana.org/installation/&lt;/a&gt; 选择合适的版本安装&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;访问 http://127.0.0.1:3000 ，默认账号 admin/admin&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;添加 Prometheus 数据源，进入 &lt;code&gt;Configuration/DataSources&lt;/code&gt; 配置监控中心地址。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;导入 Dashboard，对数据的采集展示配置可通过 &lt;a href=&#34;https://grafana.com/dashboards&#34;&gt;https://grafana.com/dashboards&lt;/a&gt; 获取已有配置，填写 dashboardId 导入 (如 8919/4701)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;也可通过 &lt;code&gt;Add panel&lt;/code&gt; 增加监控面板，再选择 &lt;code&gt;Add Query&lt;/code&gt; 设置监控主体，监控语句可通过 http://127.0.0.1:9090/graph 获取。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

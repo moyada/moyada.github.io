@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>jdk | 不睡觉的猫头鹰</title>
+    <link>https://moyada.github.io/authors/jdk/</link>
+      <atom:link href="https://moyada.github.io/authors/jdk/index.xml" rel="self" type="application/rss+xml" />
+    <description>jdk</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Tue, 12 Jun 2018 10:20:44 +0000</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
+      <title>jdk</title>
+      <link>https://moyada.github.io/authors/jdk/</link>
+    </image>
+    
+    <item>
+      <title>Java 锁机制</title>
+      <link>https://moyada.github.io/post/java-lock/</link>
+      <pubDate>Tue, 12 Jun 2018 10:20:44 +0000</pubDate>
+      <guid>https://moyada.github.io/post/java-lock/</guid>
+      <description>&lt;h2 id=&#34;synchronized&#34;&gt;synchronized&lt;/h2&gt;
+&lt;p&gt;在 jdk1.6 之后,&lt;code&gt;synchronized&lt;/code&gt; 原语通过引入偏向锁、轻量锁进行了优化。&lt;/p&gt;
+&lt;p&gt;synchronized 是通过 &lt;code&gt;monitor_enter&lt;/code&gt; 和 &lt;code&gt;monitor_exit&lt;/code&gt; 来控制的，通过 javap 反编译能观察到。&lt;/p&gt;
+&lt;p&gt;线程在进入 synchronized 代码块时，将通过获取对象头内 &lt;code&gt;Mark Work&lt;/code&gt; 的锁标记来决定是否进入 临界区。&lt;/p&gt;
+&lt;h2 id=&#34;偏向锁&#34;&gt;偏向锁&lt;/h2&gt;
+&lt;p&gt;没有多线程竞争环境，如果没有设置 &lt;code&gt;-XX:-UseBiasedLocking&lt;/code&gt; 关闭偏向锁的话将会通过 CAS 获取锁，并设置持有锁的线程 id，当该线程再次尝试获取锁时，如果锁内线程为当前线程则直接判断获取锁标记。&lt;/p&gt;
+&lt;h2 id=&#34;轻量锁&#34;&gt;轻量锁&lt;/h2&gt;
+&lt;p&gt;在多个线程尝试获取偏向锁时，当线程获取偏向锁失败时将会膨胀为轻量锁，通过CAS操作来获取锁标记进入临界区。&lt;/p&gt;
+&lt;h2 id=&#34;重量锁&#34;&gt;重量锁&lt;/h2&gt;
+&lt;p&gt;如果轻量锁的 CAS 操作失败时，将会升级为重量级锁。&lt;/p&gt;
+&lt;p&gt;重量锁依赖底层的 &lt;code&gt;Mutex Lock&lt;/code&gt; 总线锁，需要将用户态切换为内核态，成本较大。&lt;/p&gt;
+&lt;h2 id=&#34;重入锁&#34;&gt;重入锁&lt;/h2&gt;
+&lt;p&gt;在 &lt;code&gt;synchronized&lt;/code&gt; 偏向锁和 &lt;code&gt;ReentrantLock&lt;/code&gt; 中都设计了重入锁，&lt;/p&gt;
+&lt;h2 id=&#34;自旋锁&#34;&gt;自旋锁&lt;/h2&gt;
+&lt;p&gt;当多线程环境下，线程获取锁标记或立马释放时，自旋锁就有其意义。&lt;/p&gt;
+&lt;p&gt;在 Java 源码的&lt;code&gt;AbstractQueuedSynchronizer&lt;/code&gt; 中，线程的出现竞争时就是先是尝试进行自旋锁，之后再进行锁升级。&lt;/p&gt;
+&lt;p&gt;自旋锁消除了用户态切换至内核态的上下文切换，但是也增加cpu的消耗。&lt;/p&gt;
+&lt;h2 id=&#34;锁降级&#34;&gt;锁降级&lt;/h2&gt;
+&lt;p&gt;在jvm进入安全点时，会检测空闲的 &lt;code&gt;monitor&lt;/code&gt; 并对其进行锁降级以提高下次获取锁时的效率。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

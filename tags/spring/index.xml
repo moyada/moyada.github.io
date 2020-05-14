@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Spring | 不睡觉的猫头鹰</title>
+    <title>spring | 不睡觉的猫头鹰</title>
     <link>https://moyada.github.io/tags/spring/</link>
       <atom:link href="https://moyada.github.io/tags/spring/index.xml" rel="self" type="application/rss+xml" />
-    <description>Spring</description>
+    <description>spring</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sat, 28 Mar 2020 14:19:35 +0800</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
-      <title>Spring</title>
+      <title>spring</title>
       <link>https://moyada.github.io/tags/spring/</link>
     </image>
     
@@ -165,6 +165,9 @@
     invokeCustomDestroyMethod(this.destroyMethod);
 }
 &lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;时序图&#34;&gt;时序图&lt;/h2&gt;
+&lt;p&gt;将 &lt;code&gt;创建初始化&lt;/code&gt; 的流程用时序图来表示以便更好的理解。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/spring-beanfactory.jpg&#34; alt=&#34;spring-beanfactory&#34;&gt;&lt;/p&gt;
 </description>
     </item>
     

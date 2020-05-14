@@ -563,7 +563,7 @@
         <li><a href="#nanotime">nanoTime</a></li>
       </ul>
     </li>
-    <li><a href="#应用">应用</a></li>
+    <li><a href="#总结">总结</a></li>
   </ul>
 </nav>
       
@@ -632,7 +632,7 @@
     3 分钟阅读时长 
   </span>
   <span>&nbsp;</span>
-  1205 字 
+  1206 字 
   
 
   
@@ -668,6 +668,12 @@
 
 
 		  
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/jdk/">jdk</a>
+  
+</div>
 
 
 
@@ -746,10 +752,10 @@ JVM_END
 <blockquote>
 <p><a href="http://man7.org/linux/man-pages/man2/clock_gettime.2.html">http://man7.org/linux/man-pages/man2/clock_gettime.2.html</a></p>
 </blockquote>
-<h2 id="应用">应用</h2>
+<h2 id="总结">总结</h2>
 <p>那么这两种时钟的获取又有什么区别呢？首先，根据文档可知，<code>gettimeofday</code> 返回的是系统的绝对时间，这个时间会受 Linux 的时钟同步机制影响 (
 <a href="https://tools.ietf.org/html/rfc5905" target="_blank" rel="noopener">RFC 5905</a>)。<code>clock_gettime</code> 则是返回经由系统启动后的相对时间，时间的跳动会受到操作系统和所使用计时器的影响，并且是单调递增的。</p>
-<p>实际应用中，<code>currentTimeMillis()</code> 会比 <code>nanoTime()</code> 有更好的作用，例如 <code>new Data()</code> 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 是意义更多是相对偏移时间，所以在计算耗时这上面会更显突出。</p>
+<p>在实际应用中，<code>currentTimeMillis()</code> 会比 <code>nanoTime()</code> 有更好的作用，例如 <code>new Data()</code> 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 是意义更多是相对偏移时间，所以在计算耗时这上面会更显突出。</p>
 <p>在常见的分布式全局编号 &ndash; 
 <a href="https://developer.twitter.com/en/docs/basics/twitter-ids" target="_blank" rel="noopener">雪花算法</a>中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现 <code>时钟回拨</code> 现象，那么单调递增的 nanoTime 是否更适合呢？</p>
 <p>其实这个问题的解法有很多种，选择适用的即可。</p>
@@ -902,6 +908,23 @@ JVM_END
 
 
   
+  
+  <div class="article-widget content-widget-hr">
+    <h3>相关</h3>
+    <ul>
+      
+      <li><a href="/post/instanceof-vs-isassignablefrom/">instanceOf、isInstance、isAssignableFrom 的区别</a></li>
+      
+      <li><a href="/post/java-annotation-processor/">Java 注解处理器</a></li>
+      
+      <li><a href="/post/java-security/">Java安全机制</a></li>
+      
+      <li><a href="/post/hashmap-problem/">HashMap 在并发环境下的死循环问题</a></li>
+      
+      <li><a href="/post/default-method/">java8 default method 的使用见解</a></li>
+      
+    </ul>
+  </div>
   
 
 

@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>jdk | 不睡觉的猫头鹰</title>
+    <link>https://moyada.github.io/tags/jdk/</link>
+      <atom:link href="https://moyada.github.io/tags/jdk/index.xml" rel="self" type="application/rss+xml" />
+    <description>jdk</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Mon, 11 May 2020 23:24:27 +0800</lastBuildDate>
+    <image>
+      <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
+      <title>jdk</title>
+      <link>https://moyada.github.io/tags/jdk/</link>
+    </image>
+    
+    <item>
+      <title>对比 currentTimeMillis 与 nanoTime</title>
+      <link>https://moyada.github.io/post/currenttimemillis-vs-nanotime/</link>
+      <pubDate>Mon, 11 May 2020 23:24:27 +0800</pubDate>
+      <guid>https://moyada.github.io/post/currenttimemillis-vs-nanotime/</guid>
+      <description>&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;
+&lt;p&gt;在 Java 中有两种获取时间的方式，分别是在 java.lang.System 中的 &lt;code&gt;public static native long currentTimeMillis()&lt;/code&gt; 和 &lt;code&gt;public static native long nanoTime()&lt;/code&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;currentTimeMillis() 是返回当前的时间戳，这个时间戳的增长幅度可能由于不同的操作系统而变化。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;nanoTime() 返回系统当前的纳秒时间，这个时间与系统的时钟并没有关系，是由系统的计时器计算返回。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但是由于这两个方法都是 &lt;code&gt;native&lt;/code&gt; 修饰的，为了知其然知其所以然，就需要进入 &lt;code&gt;OpenJdk&lt;/code&gt; 的源码中一探究竟。&lt;/p&gt;
+&lt;h2 id=&#34;实现&#34;&gt;实现&lt;/h2&gt;
+&lt;p&gt;通过在 &lt;code&gt;System.c&lt;/code&gt; 的 &lt;code&gt;Java_java_lang_System_registerNatives&lt;/code&gt; 方法中发现，currentTimeMillis 注册的函数为 &lt;code&gt;JVM_CurrentTimeMillis&lt;/code&gt;，nanoTime 注册的函数为 &lt;code&gt;JVM_NanoTime&lt;/code&gt;。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-c++&#34;&gt;static JNINativeMethod methods[] = {
+    {&amp;quot;currentTimeMillis&amp;quot;, &amp;quot;()J&amp;quot;,              (void *)&amp;amp;JVM_CurrentTimeMillis},
+    {&amp;quot;nanoTime&amp;quot;,          &amp;quot;()J&amp;quot;,              (void *)&amp;amp;JVM_NanoTime},
+    {&amp;quot;arraycopy&amp;quot;,     &amp;quot;(&amp;quot; OBJ &amp;quot;I&amp;quot; OBJ &amp;quot;II)V&amp;quot;, (void *)&amp;amp;JVM_ArrayCopy},
+};
+
+#undef OBJ
+
+JNIEXPORT void JNICALL
+Java_java_lang_System_registerNatives(JNIEnv *env, jclass cls)
+{
+    (*env)-&amp;gt;RegisterNatives(env, cls,
+                            methods, sizeof(methods)/sizeof(methods[0]));
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;接着跟踪进入 &lt;code&gt;jvm.cpp&lt;/code&gt;，得知这个函数是根据不同的操作系统底层选择调用的实现，这里使用 os_linux.cpp 中的实现作为研究对象。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;JVM_LEAF(jlong, JVM_CurrentTimeMillis(JNIEnv *env, jclass ignored))
+  JVMWrapper(&amp;quot;JVM_CurrentTimeMillis&amp;quot;);
+  return os::javaTimeMillis();
+JVM_END
+
+JVM_LEAF(jlong, JVM_NanoTime(JNIEnv *env, jclass ignored))
+  JVMWrapper(&amp;quot;JVM_NanoTime&amp;quot;);
+  return os::javaTimeNanos();
+JVM_END
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;currenttimemillis&#34;&gt;currentTimeMillis&lt;/h3&gt;
+&lt;p&gt;在 Linux 中 javaTimeMillis 的实现是直接调用操作系统的 &lt;code&gt;gettimeofday&lt;/code&gt; 函数实现的。这个函数的作用是获取当前系统的时钟时间，并用参数 timeval 保存。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-c++&#34;&gt;jlong os::javaTimeMillis() {
+  timeval time;
+  int status = gettimeofday(&amp;amp;time, NULL);
+  assert(status != -1, &amp;quot;linux error&amp;quot;);
+  return jlong(time.tv_sec) * 1000  +  jlong(time.tv_usec / 1000);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;http://man7.org/linux/man-pages/man2/gettimeofday.2.html&#34;&gt;http://man7.org/linux/man-pages/man2/gettimeofday.2.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;nanotime&#34;&gt;nanoTime&lt;/h3&gt;
+&lt;p&gt;而 javaTimeNanos 是根据操作系统是否支持 &lt;code&gt;clock_gettime&lt;/code&gt; 函数选择调用 &lt;code&gt;clock_gettime&lt;/code&gt;，否则调用 &lt;code&gt;gettimeofday&lt;/code&gt;。OpenJdk 在调用 &lt;code&gt;clock_gettime&lt;/code&gt; 时传递的参数为 &lt;code&gt;CLOCK_MONOTONIC&lt;/code&gt;，他的功能是获取从系统启动时单调变化的时间。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-c++&#34;&gt;jlong os::javaTimeNanos() {
+  if (os::supports_monotonic_clock()) {
+    struct timespec tp;
+    int status = os::Posix::clock_gettime(CLOCK_MONOTONIC, &amp;amp;tp);
+    assert(status == 0, &amp;quot;gettime error&amp;quot;);
+    jlong result = jlong(tp.tv_sec) * (1000 * 1000 * 1000) + jlong(tp.tv_nsec);
+    return result;
+  } else {
+    timeval time;
+    int status = gettimeofday(&amp;amp;time, NULL);
+    assert(status != -1, &amp;quot;linux error&amp;quot;);
+    jlong usecs = jlong(time.tv_sec) * (1000 * 1000) + jlong(time.tv_usec);
+    return 1000 * usecs;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;http://man7.org/linux/man-pages/man2/clock_gettime.2.html&#34;&gt;http://man7.org/linux/man-pages/man2/clock_gettime.2.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;那么这两种时钟的获取又有什么区别呢？首先，根据文档可知，&lt;code&gt;gettimeofday&lt;/code&gt; 返回的是系统的绝对时间，这个时间会受 Linux 的时钟同步机制影响 (
+&lt;a href=&#34;https://tools.ietf.org/html/rfc5905&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RFC 5905&lt;/a&gt;)。&lt;code&gt;clock_gettime&lt;/code&gt; 则是返回经由系统启动后的相对时间，时间的跳动会受到操作系统和所使用计时器的影响，并且是单调递增的。&lt;/p&gt;
+&lt;p&gt;在实际应用中，&lt;code&gt;currentTimeMillis()&lt;/code&gt; 会比 &lt;code&gt;nanoTime()&lt;/code&gt; 有更好的作用，例如 &lt;code&gt;new Data()&lt;/code&gt; 的底层就是调用了 currentTimeMillis 作为时间参数，而 nanoTime 是意义更多是相对偏移时间，所以在计算耗时这上面会更显突出。&lt;/p&gt;
+&lt;p&gt;在常见的分布式全局编号 &amp;ndash; 
+&lt;a href=&#34;https://developer.twitter.com/en/docs/basics/twitter-ids&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;雪花算法&lt;/a&gt;中，时间戳是保证全局编号递增的关键，然而现实场景下是有可能出现 &lt;code&gt;时钟回拨&lt;/code&gt; 现象，那么单调递增的 nanoTime 是否更适合呢？&lt;/p&gt;
+&lt;p&gt;其实这个问题的解法有很多种，选择适用的即可。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;最常见的解决方法就是记录上一次的时间戳，在新产生的时间戳先于这个时间戳时，那就进行 sleep 后重新获取。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用 &lt;code&gt;AtomicLong&lt;/code&gt; 代替时间戳来规避时钟回拨。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用 &lt;code&gt;nanoTime&lt;/code&gt;，由于 nanoTime 是单调递增的，所以也不会出现时钟回拨的现场。但是 nanoTime 是会有产生溢出的可能，导致返回负值。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用 
+&lt;a href=&#34;http://man7.org/linux/man-pages/man3/adjtime.3.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;adjtime()&lt;/a&gt; 或 
+&lt;a href=&#34;http://man7.org/linux/man-pages/man2/adjtimex.2.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;adjtimex()&lt;/a&gt; 设置时钟调节策略，调节系统时钟变化的速率。当同步时间落后当前系统时钟，那系统将会使用一个缓慢的速率，等到时间一致，这样就能够优雅的使用时间戳并防止时钟回拨。但是如果系统时钟落后太多，那么同步则需要过多的耗时。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://www.freebsd.org/cgi/man.cgi?query=ntpd&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ntpd&lt;/a&gt; 和 
+&lt;a href=&#34;https://chrony.tuxfamily.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;chrony&lt;/a&gt; 通过设置都能做到避免一定程度的时钟回拨，&lt;code&gt;ntpdata -B&lt;/code&gt; 也能强制使用 &lt;code&gt;adjtime&lt;/code&gt; 调节时钟。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof&#34;&gt;https://stackoverflow.com/questions/12392278/measure-time-in-linux-time-vs-clock-vs-getrusage-vs-clock-gettime-vs-gettimeof&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>instanceOf、isInstance、isAssignableFrom 的区别</title>
+      <link>https://moyada.github.io/post/instanceof-vs-isassignablefrom/</link>
+      <pubDate>Sun, 05 May 2019 20:23:32 +0000</pubDate>
+      <guid>https://moyada.github.io/post/instanceof-vs-isassignablefrom/</guid>
+      <description>&lt;p&gt;在 Java 中，对一个类的子类判断有三种方式，分别是 &lt;code&gt;obj instanceof [TypeName]&lt;/code&gt;、&lt;code&gt;class.isInstance(obj)&lt;/code&gt;、&lt;code&gt;class.isAssignableFrom(class)&lt;/code&gt;，他们的作用都是进行父子类型判断，然而他们的区别又在什么地方。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;其中 &lt;code&gt;instanceof&lt;/code&gt; 是一个 Java 原语，通过对象与类型签名进行判断，需要在编译期就进行解析成字节码。跟进 JVM 源码里，在 &lt;code&gt;templateTable.hpp&lt;/code&gt; 中发现了 instanceof 方法的定义，从其中 &lt;code&gt;templateTable_x86.cpp&lt;/code&gt;、&lt;code&gt;templateTable_arm.cpp&lt;/code&gt; 的 &lt;code&gt;instanceof&lt;/code&gt; 方法可得，其实现方式主要是通过汇编指令从 klass 中获取标记进行判断，逻辑比较长也就不一一分析了。对于这段冗长的汇编代码，JVM 也进行了优化，当触发 JIT 编译时，会把这段逻辑编译成机器码写入 C1 层。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;isInstance&lt;/code&gt; 是 Class 类下的 native 方法，接收参数为对象。分析了在 &lt;code&gt;jni.cpp&lt;/code&gt; 中的大体流程，程序先通过 class 获取到 Klass，调用 object 内 klass 的 &lt;code&gt;is_subtype_of&lt;/code&gt; 方法，传入方才获取的 Klass，判断二者地址是否相同，是则判定为同一类型，否则再调用 &lt;code&gt;search_secondary_supers&lt;/code&gt;，判断父级类型是否存在与传入的 Klass 相匹配。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;JNI_QUICK_ENTRY(jboolean, jni_IsInstanceOf(JNIEnv *env, jobject obj, jclass clazz))
+  JNIWrapper(&amp;quot;IsInstanceOf&amp;quot;);
+
+  HOTSPOT_JNI_ISINSTANCEOF_ENTRY(env, obj, clazz);
+
+  jboolean ret = JNI_TRUE;
+  if (obj != NULL) {
+    ret = JNI_FALSE;
+    Klass* k = java_lang_Class::as_Klass(
+      JNIHandles::resolve_non_null(clazz));
+    if (k != NULL) {
+      ret = JNIHandles::resolve_non_null(obj)-&amp;gt;is_a(k) ? JNI_TRUE : JNI_FALSE;
+    }
+  }
+
+  HOTSPOT_JNI_ISINSTANCEOF_RETURN(ret);
+  return ret;
+JNI_END
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;// hotspot/share/oops/oop.inline.hpp
+
+bool oopDesc::is_a(Klass* k) const {
+  return klass()-&amp;gt;is_subtype_of(k);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;// hotspot/share/oops/klass.hpp
+
+// subtype check: true if is_subclass_of, or if k is interface and receiver implements it
+bool is_subtype_of(Klass* k) const {
+  juint    off = k-&amp;gt;super_check_offset();
+  Klass* sup = *(Klass**)( (address)this + off );
+  const juint secondary_offset = in_bytes(secondary_super_cache_offset());
+  if (sup == k) {
+    return true;
+  } else if (off != secondary_offset) {
+    return false;
+  } else {
+    return search_secondary_supers(k);
+  }
+}
+
+bool Klass::search_secondary_supers(Klass* k) const {
+  // Put some extra logic here out-of-line, before the search proper.
+  // This cuts down the size of the inline method.
+
+  // This is necessary, since I am never in my own secondary_super list.
+  if (this == k)
+    return true;
+  // Scan the array-of-objects for a match
+  int cnt = secondary_supers()-&amp;gt;length();
+  for (int i = 0; i &amp;lt; cnt; i++) {
+    if (secondary_supers()-&amp;gt;at(i) == k) {
+      ((Klass*)this)-&amp;gt;set_secondary_super_cache(k);
+      return true;
+    }
+  }
+  return false;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;code&gt;isAssignableFrom&lt;/code&gt; 也是 Class 类下的 native 方法，接收参数为 Class 类。主要逻辑与 &lt;code&gt;isInstance&lt;/code&gt; 相同，区别在于当 主体 Class 与 参数 Class 其中一个为原生类型时，则选择使用对象头判断类型是否相等。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;isInstance&lt;/code&gt; 和 &lt;code&gt;isAssignableFrom&lt;/code&gt; 对入参校验上也有区别，isInstance 当对象为空时将会返回 &lt;code&gt;false&lt;/code&gt; isAssignableFrom 则会对参数进行非空校验。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;isInstance&lt;/code&gt; 和 &lt;code&gt;isAssignableFrom&lt;/code&gt; 在方法标记上都有 &lt;code&gt;@HotSpotIntrinsicCandidate&lt;/code&gt;，会被 JVM 使用更高效的字节码替换，节省了 JNI 调用的开销。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;JNI_QUICK_ENTRY(jboolean, jni_IsAssignableFrom(JNIEnv *env, jclass sub, jclass super))
+  JNIWrapper(&amp;quot;IsSubclassOf&amp;quot;);
+
+  HOTSPOT_JNI_ISASSIGNABLEFROM_ENTRY(env, sub, super);
+
+  oop sub_mirror   = JNIHandles::resolve_non_null(sub);
+  oop super_mirror = JNIHandles::resolve_non_null(super);
+  if (java_lang_Class::is_primitive(sub_mirror) ||
+      java_lang_Class::is_primitive(super_mirror)) {
+    jboolean ret = oopDesc::equals(sub_mirror, super_mirror);
+
+    HOTSPOT_JNI_ISASSIGNABLEFROM_RETURN(ret);
+    return ret;
+  }
+  Klass* sub_klass   = java_lang_Class::as_Klass(sub_mirror);
+  Klass* super_klass = java_lang_Class::as_Klass(super_mirror);
+  assert(sub_klass != NULL &amp;amp;&amp;amp; super_klass != NULL, &amp;quot;invalid arguments to jni_IsAssignableFrom&amp;quot;);
+  jboolean ret = sub_klass-&amp;gt;is_subtype_of(super_klass) ?
+                   JNI_TRUE : JNI_FALSE;
+
+  HOTSPOT_JNI_ISASSIGNABLEFROM_RETURN(ret);
+  return ret;
+JNI_END
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;总结一下，&lt;code&gt;instanceof&lt;/code&gt;、&lt;code&gt;isInstance&lt;/code&gt;、&lt;code&gt;isAssignableFrom&lt;/code&gt; 其实无太大区别，instanceof 和 isInstance 适用于主体是对象，并且 instanceof 需要在编译期就指定类型，灵活性不如 isInstance。而 isAssignableFrom 是针对两个类的关系校验，在泛型对比上比较适合。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://stackoverflow.com/questions/496928/what-is-the-difference-between-instanceof-and-class-isassignablefrom&#34;&gt;https://stackoverflow.com/questions/496928/what-is-the-difference-between-instanceof-and-class-isassignablefrom&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Java 注解处理器</title>
+      <link>https://moyada.github.io/post/java-annotation-processor/</link>
+      <pubDate>Tue, 15 Jan 2019 19:40:15 +0000</pubDate>
+      <guid>https://moyada.github.io/post/java-annotation-processor/</guid>
+      <description>&lt;h2 id=&#34;工作流程&#34;&gt;工作流程&lt;/h2&gt;
+&lt;p&gt;注解处理器是一种应用于编译期间的模块，在编译完源文件后，编译器会解析类信息，转换成抽象语法树，接着执行注册的注解处理器，解析语法树是否发生了变化并重新生成源文件，接着调用下一个注解处理器。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;编译器具体处理过程可查看 OpenJDK 官方文档: &lt;a href=&#34;https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html&#34;&gt;https://openjdk.java.net/groups/compiler/doc/compilation-overview/index.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;定义注解
+创建注解处理器的第一步就是需要定义相关注解，并且在注解上定义 &lt;code&gt;@Retention&lt;/code&gt;，当指定为 &lt;code&gt;RetentionPolicy.SOURCE&lt;/code&gt; 时，该注解即在编译结束后会被擦除。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;创建处理器
+接着就需要创建处理器了，一般可通过继承 &lt;code&gt;javax.annotation.processing.AbstractProcessor&lt;/code&gt; 定义处理器，由于注解处理器是通过反射获取的，所以需要提供无参构造函数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;设置解析注解
+重写 &lt;code&gt;getSupportedAnnotationTypes&lt;/code&gt; 或定义 &lt;code&gt;@SupportedAnnotationTypes&lt;/code&gt; 将先前定义的注解类名加入解析目标，也可以使用 &lt;code&gt;*&lt;/code&gt; 通配符。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;指定支持版本
+对于存在源文件版本需求的处理器，则可以通过重写 &lt;code&gt;SupportedSourceVersion&lt;/code&gt; 或定义 &lt;code&gt;@SupportedSourceVersion&lt;/code&gt; 来指定版本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;初始化处理器
+注解处理器拥有许多可供使用的工具类，但是这些工具类需要通过 &lt;code&gt;init&lt;/code&gt; 方法的 &lt;code&gt;ProcessingEnvironment&lt;/code&gt; 才可获取，一般做法也是重写此方法，提取所需工具对象保存至处理器中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;实现处理流程
+注解处理器的核心流程为 &lt;code&gt;process&lt;/code&gt; 方法，可通过参数 &lt;code&gt;RoundEnvironment&lt;/code&gt; 获取被注解标记的元素，实现想提供的功能，一般为 &lt;code&gt;动态创建源文件&lt;/code&gt; 或 &lt;code&gt;修改语法树&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;注册处理器
+注册注解处理器的方式可以在编译时通过 &lt;code&gt;javac -processor&lt;/code&gt; 指定。
+也可以配置自动加载，依照 &lt;code&gt;ServiceLoader&lt;/code&gt; 形式，在 &lt;code&gt;META-INF/services&lt;/code&gt; 下创建名为 &lt;code&gt;javax.annotation.processing.Processor&lt;/code&gt; 的文件，将创建的注解处理器全类名填入，由于注解处理器是作用于编译期的，在编译时需要增加参数 &lt;code&gt;-proc:none&lt;/code&gt; 以不使用注解处理器。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;创建文件&#34;&gt;创建文件&lt;/h2&gt;
+&lt;p&gt;文件的创建需要通过 &lt;code&gt;javax.annotation.processing.Filer&lt;/code&gt; 来实现，可通过 &lt;code&gt;init&lt;/code&gt; 方法获取。
+通过 Filer 可以新建源文件并获取 &lt;code&gt;JavaFileObject&lt;/code&gt;，以 Java 代码的方法将内容写入源文件。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;MapStruct&lt;/code&gt; 和 &lt;code&gt;JavaPoet&lt;/code&gt; 就是利用这个功能开发的工具。&lt;/p&gt;
+&lt;h2 id=&#34;修改语法树&#34;&gt;修改语法树&lt;/h2&gt;
+&lt;p&gt;对比创建文件，修改语法树则是十分复杂且麻烦的工作，同样要通过 &lt;code&gt;init&lt;/code&gt; 获取语法树构造器 &lt;code&gt;com.sun.source.util.Trees&lt;/code&gt;。
+通过 Trees 可以将元素转换为语法树，并接受 &lt;code&gt;Visitor&lt;/code&gt; 以进行语法树节点扫描和修改，一般监视器的实现可以通过继承 &lt;code&gt;TreeTranslator&lt;/code&gt; 或 &lt;code&gt;TreeScanner&lt;/code&gt;，对需要的方法进行重写。&lt;/p&gt;
+&lt;p&gt;而语法树操作的难点在于其他方面:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;文档的缺少，这是无疑是对开发人员不友好的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;不稳定 api，有可能这个版本还能用的，在下一个版本就无效了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;未知的异常，可能由于操作失误而引发的，而且通过异常信息无法准确定位问题。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;无法很好的控制注解处理器之间的顺序。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;Lombok&lt;/code&gt; 就是一种修改语法树的工具。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这是我开发的一款通过修改语法树增加方法校验功能的工具: &lt;a href=&#34;https://moyada.github.io/medivh/&#34;&gt;https://moyada.github.io/medivh/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Java安全机制</title>
+      <link>https://moyada.github.io/post/java-security/</link>
+      <pubDate>Tue, 11 Dec 2018 14:20:10 +0000</pubDate>
+      <guid>https://moyada.github.io/post/java-security/</guid>
+      <description>&lt;p&gt;Java 安全机制是针对程序在操作本地资源时的权限限制，避免在执行有害代码时 (例如网络上下载的 jar 包)导致不可预估的损失。&lt;/p&gt;
+&lt;p&gt;这里简单介绍下使用方法。&lt;/p&gt;
+&lt;h2 id=&#34;配置安全策略&#34;&gt;配置安全策略&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;创建以 &lt;code&gt;.policy&lt;/code&gt; 结尾的文件&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;配置授权规则，可以参考 Java 默认的策略文件 &lt;code&gt;${java.home}/jre/lib/security/java.policy&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以下面配置文件的语法为例&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;grant codebase &amp;quot;file:${user.dir}/-&amp;quot; {
+    permission java.io.FilePermission &amp;quot;${user.home}/*&amp;quot;, &amp;quot;write&amp;quot;;
+};
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其中定义了一条对 &lt;code&gt;${user.dir}/permission/&lt;/code&gt; 路径下所有文件的权限，规定对 &lt;code&gt;${user.home}&lt;/code&gt; 路径下一层级的文件拥有写入权限。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;codebase &amp;quot;url&amp;quot;&lt;/code&gt; 为可选项，表示权限规则的授予目标，不设置则对所有文件生效。也可使用 
+&lt;a href=&#34;https://docs.oracle.com/javase/7/docs/technotes/guides/security/PolicyFiles.html##FileSyntax&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;其他目标语法&lt;/a&gt;，或者自定义语法。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;permission&lt;/code&gt; 表示一条权限规则，后面需跟随 继承 &lt;code&gt;Permission&lt;/code&gt; 类的全路径类名、构造方法参数，以 &lt;code&gt;;&lt;/code&gt; 结尾，可设置多条规则。&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;设置策略文件&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;追加策略文件 -Djava.security.policy=my.policy&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;替换策略文件 -Djava.security.policy==my.policy&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;开启安全机制&#34;&gt;开启安全机制&lt;/h2&gt;
+&lt;p&gt;一般开启安全机制的方式有两种，设置 JVM 参数，或者通过代码配置。&lt;/p&gt;
+&lt;h3 id=&#34;配置-jvm-options&#34;&gt;配置 JVM Options&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;-Djava.security.manager 
+-Djava.security.policy=my.policy
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;代码设置&#34;&gt;代码设置&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;static {
+    String dir = System.getProperty(&amp;quot;user.dir&amp;quot;);
+    System.setProperty(&amp;quot;java.security.policy&amp;quot;, dir + &amp;quot;/my.policy&amp;quot;);
+    if (System.getSecurityManager() == null) {
+        System.setSecurityManager(new SecurityManager());
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;注意在使用代码时会与 &lt;code&gt;JVM Options&lt;/code&gt; 方式冲突，抛出 &lt;code&gt;java.security.AccessControlException: access denied&lt;/code&gt; 异常信息，需要配置权限规则解决，可以选择追加在 Java 策略文件里。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;grant {
+	permission java.lang.RuntimePermission &amp;quot;setSecurityManager&amp;quot;;
+	permission java.util.PropertyPermission &amp;quot;java.security.policy&amp;quot;, &amp;quot;write&amp;quot;;
+	permission java.util.PropertyPermission &amp;quot;os.name&amp;quot;, &amp;quot;read&amp;quot;;
+	permission java.util.PropertyPermission &amp;quot;user.home&amp;quot;, &amp;quot;read&amp;quot;;
+	permission java.util.PropertyPermission &amp;quot;user.dir&amp;quot;, &amp;quot;read&amp;quot;;
+};
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;跳过权限检查&#34;&gt;跳过权限检查&lt;/h2&gt;
+&lt;p&gt;对于开启了安全策略后又不想定义权限规则时，则可以使用 &lt;code&gt;AccessController&lt;/code&gt; 类的 &lt;code&gt;doPrivileged&lt;/code&gt; 方法，跳过 &lt;code&gt;checkPermission&lt;/code&gt; 步骤，直接调用方法体。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;AccessController.doPrivileged(new PrivilegedAction&amp;lt;Object&amp;gt;() {
+    @Override
+    public Object run() {
+        ...
+        return null;
+    }
+});
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;那么你可能会想，这样在其他依赖中也调用此方法不是绕过了安全机制。其实并不会，Java 在打包时会对实现了 &lt;code&gt;PrivilegedAction&lt;/code&gt; 接口的元类信息进行清除，强制调用则会抛出 &lt;code&gt;java.lang.NoClassDefFoundError&lt;/code&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;第三方工具&#34;&gt;第三方工具&lt;/h2&gt;
+&lt;p&gt;如果觉得默认的策略规则配置太繁琐了，那么可以使用 &lt;code&gt;pro-grade&lt;/code&gt; 这个第三方依赖，他通过自定义语法简化了规则的配置，具体步骤可以参考
+&lt;a href=&#34;http://pro-grade.sourceforge.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;官网&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependency&amp;gt;
+    &amp;lt;groupId&amp;gt;net.sourceforge.pro-grade&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;pro-grade&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.1.3&amp;lt;/version&amp;gt;
+    &amp;lt;scope&amp;gt;compile&amp;lt;/scope&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>HashMap 在并发环境下的死循环问题</title>
+      <link>https://moyada.github.io/post/hashmap-problem/</link>
+      <pubDate>Thu, 16 Aug 2018 12:58:33 +0000</pubDate>
+      <guid>https://moyada.github.io/post/hashmap-problem/</guid>
+      <description>&lt;p&gt;因为 HashMap 是非线程安全的，在并发环境下应避免使用，改为 ConcurrentHashMap。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;虽然在 jdk8 修复了该问题，但仍然还存在其他并发问题。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;其产生的主要原因是扩容时元素的&lt;code&gt;循环引用&lt;/code&gt;，在这里简单描述下。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// jdk7 中造成问题的核心代码
+void transfer(Entry[] newTable, boolean rehash) {
+        int newCapacity = newTable.length;
+        for (Entry&amp;lt;K,V&amp;gt; e : table) {
+            while(null != e) {
+                Entry&amp;lt;K,V&amp;gt; next = e.next; // 1
+                if (rehash) {
+                    e.hash = null == e.key ? 0 : hash(e.key);
+                }
+                int i = indexFor(e.hash, newCapacity);
+                e.next = newTable[i]; // 2
+                newTable[i] = e;
+                e = next;
+            }
+        }
+    }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;例如 HashMap 中有A, B两个元素，并且哈希值都相等，同处于下标为 &lt;code&gt;0&lt;/code&gt; 的链表中，顺序为 A -&amp;gt; B -&amp;gt; null。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;此时添加元素C将触发扩容操作，但由于有两个线程同时添加了元素，所以将同时触发两次扩容操作。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;假设 &lt;code&gt;线程1&lt;/code&gt; 先进行了扩容操作，但是由于某种原因，在 &lt;code&gt;代码 1&lt;/code&gt; 位置处代码执行完被阻塞了，此时 e = A，next = B。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;接着 &lt;code&gt;线程2&lt;/code&gt; 顺利的进行了扩容操作，由于重组方式采用的是&lt;code&gt;头插法 (代码 2)&lt;/code&gt;，所以新的链表顺序为 B -&amp;gt; A -&amp;gt; null，将B的next设置为A。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;当线程2结束后 &lt;code&gt;线程1&lt;/code&gt; 也恢复了扩容操作，由于当时现场的e = A，next = B，并且 线程2 将 B 的next 设置为了A，所以相比&lt;code&gt;线程2&lt;/code&gt;的扩容将多进行一次 A -&amp;gt; B的操作，这样就造成了 &lt;code&gt;A -&amp;gt; B -&amp;gt; A -&amp;gt; ...&lt;/code&gt; 的环路。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;当获取一个下标相同但不存在的key时，将发生死循环现象。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;用大白话来说，就是你在一堆抽完又放回的扑克牌中取一张不存在的牌。&lt;/p&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://tech.meituan.com/java_hashmap.html&#34;&gt;https://tech.meituan.com/java_hashmap.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>java8 default method 的使用见解</title>
+      <link>https://moyada.github.io/post/default-method/</link>
+      <pubDate>Thu, 09 Aug 2018 23:58:11 +0000</pubDate>
+      <guid>https://moyada.github.io/post/default-method/</guid>
+      <description>&lt;p&gt;oracle 在 jdk8 中引入了接口的默认方法，用 &lt;code&gt;default&lt;/code&gt; 关键字标识。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;public inteface Listener {
+	default void start() {
+		...
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;该原语特性能将接口的 &lt;code&gt;default&lt;/code&gt; 方法以 &lt;code&gt;public&lt;/code&gt; 可见范围赋予所有实现类，同时允许重写。&lt;/p&gt;
+&lt;p&gt;由于默认方法是定义在接口上的方法，只能使用接收参数和接口方法，并且是 public 可见范围，导致了使用的局限性。&lt;/p&gt;
+&lt;p&gt;在实际开发中的常见场景为，一个功能的主流程固定，并且需由数个方法组成，而方法根据场景可能会有多种实现 (可以对照 &lt;code&gt;Map&lt;/code&gt; 接口理解)。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考: &lt;a href=&#34;https://stackoverflow.com/questions/19998454/interface-with-default-methods-vs-abstract-class-in-java-8&#34;&gt;https://stackoverflow.com/questions/19998454/interface-with-default-methods-vs-abstract-class-in-java-8&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>volatile 浅析</title>
+      <link>https://moyada.github.io/post/volatile/</link>
+      <pubDate>Sat, 14 Jul 2018 18:01:17 +0000</pubDate>
+      <guid>https://moyada.github.io/post/volatile/</guid>
+      <description>&lt;h2 id=&#34;概念&#34;&gt;概念&lt;/h2&gt;
+&lt;p&gt;volatile原语保障了多线程下变量的原子性、可见性、有序性。&lt;/p&gt;
+&lt;h2 id=&#34;原子性&#34;&gt;原子性&lt;/h2&gt;
+&lt;p&gt;在32位虚拟机下对&lt;code&gt;long&lt;/code&gt;、&lt;code&gt;double&lt;/code&gt;类型的赋值操作会拆分位高位、低位两步完成修改，而volatile可使用内存屏障来达到原子性，保证不存在中间值，但是由于读取的一刻其他线程也有可能改变值，所以复合操作无法达到原子性。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;64位下不存在该问题，并且近代jdk中普通操作也能达到原子性&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;可见性&#34;&gt;可见性&lt;/h2&gt;
+&lt;p&gt;其目的是使多线程环境下对共享变量的修改能被其他线程立即查看到。&lt;/p&gt;
+&lt;p&gt;由于线程对变量的读取是先从线程的工作内存(cpu缓存)中获取，不存在才从主内存中获取。&lt;/p&gt;
+&lt;p&gt;那么在多线程环境下多普通共享变量的修改操作就会由于cpu缓存中已存在而导致的数据不一致。&lt;/p&gt;
+&lt;p&gt;为了解决这个问题，处理器会对编译后指令增加lock指令前缀，大部分处理器架构采用了&lt;code&gt;RingBus&lt;/code&gt; + &lt;code&gt;MESI协议&lt;/code&gt;的方式来解决，部分老版本cpu架构则采用锁总线来达到效果。&lt;/p&gt;
+&lt;p&gt;原理是在修改数据时候更新cpu缓存之后立即写回主存、并且通知到使用相同变量线程，将该变量设置为无效，当读取变量时再从主存或者寄存器中获取。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;由于volatile的可见性，也可用来完成轻量锁的实现，例如线程的终止判断&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;有序性&#34;&gt;有序性&lt;/h2&gt;
+&lt;p&gt;操作系统为了使cpu流水线的各个阶段不存在空闲内核，往往会多当前编译好的指令进行重排序，但是只会保证单条线程的程序正确性，并不保障并发环境下的正确性。&lt;/p&gt;
+&lt;p&gt;JVM为了保证volatile域的可见性(happens-before)，会在编译时对指令前后都加入内存屏障指令lock前缀，使得不会将后面的指令重排序到内存屏障之前的位置。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。&lt;/li&gt;
+&lt;li&gt;当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。&lt;/li&gt;
+&lt;li&gt;当第一个操作是volatile写，第二个操作是volatile读时，不能重排序。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;最经典的场景有double check单例，由于重排序，可能出现对象尚未创建成功，但是对象引用缺被赋值使用，造成空指针异常。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ConcurrentHashMap 原理分析</title>
+      <link>https://moyada.github.io/post/concurrenthashmap/</link>
+      <pubDate>Sat, 26 May 2018 14:32:42 +0000</pubDate>
+      <guid>https://moyada.github.io/post/concurrenthashmap/</guid>
+      <description>&lt;p&gt;&lt;code&gt;ConcurrentHashMap&lt;/code&gt; 是 jdk 提供的针对并发环境下的集合类容器，是为了解决 &lt;code&gt;HashMap&lt;/code&gt; 在并发环境下的线程安全问题。&lt;/p&gt;
+&lt;h2 id=&#34;jdk7&#34;&gt;JDK7&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;利用分段锁(Segment)和 &lt;code&gt;ReentrantLock&lt;/code&gt; 类实现并发控制的，类中维护了一组 Segment，通过对 key 进行 hash 获取相应的 Segment，Segment 内部维护了一组 HashEntry，类似 HashMap 结构，并且在并发修改阶段对管程进行加锁控制。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;size()&lt;/code&gt; 方法使用的是遍历 Segment 加锁获取，在获取大小的时候会影响数据的修改。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;jdk8&#34;&gt;JDK8&lt;/h2&gt;
+&lt;p&gt;而 jdk8 中 ConcurrentHashMap 具体的变化有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;不在使用分段锁，而是恢复成与 HashMap 相似的结构。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对 hash 算法进行改进，使用高位移到低位异或，避免哈希碰撞。原因是 jdk 的哈希寻址是使用低位，而有些数据的哈希值差异主要在高位。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用链表加红黑树的数据结构进行存储，哈希碰撞时使用链表，当链表长度大于 &lt;code&gt;8&lt;/code&gt; 时，将当前链表的数据结构变形为红黑树，这样做的目的是为了解决当链表长度过大而造成的查询开销。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对数据的修改使用了 CAS 和 &lt;code&gt;sychronized&lt;/code&gt; 进行并发控制，原因是 sychronized 在近代 JVM中 已经经过大量优化，性能与 ReentrantLock 差距不大，放弃使用 ReentrantLock 一方面能够节省的内存开销，另一方面能够降低开发成本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用了类似 &lt;code&gt;LongAdder&lt;/code&gt; 的数据结构存储大小，并使用了缓存行填充。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;避免初始开销，延迟加载数据结构。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
