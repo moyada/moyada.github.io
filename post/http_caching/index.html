@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="moyada">
+  <meta name="description" content="当只读请求 (GET/HEAD) 的数据在一段时间内是相同的，那么在客户端上对数据">
 
   
-  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://moyada.github.io/post/http_caching/">
 
   
 
@@ -210,14 +210,12 @@
 
 
   
-  <link rel="alternate" href="/post/index.xml" type="application/rss+xml" title="不睡觉的猫头鹰">
-  
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="https://moyada.github.io/post/">
+  <link rel="canonical" href="https://moyada.github.io/post/http_caching/">
 
   
   
@@ -231,18 +229,58 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="不睡觉的猫头鹰">
-  <meta property="og:url" content="https://moyada.github.io/post/">
-  <meta property="og:title" content="  | 不睡觉的猫头鹰">
-  <meta property="og:description" content="moyada"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="https://moyada.github.io/post/http_caching/">
+  <meta property="og:title" content="Http 缓存 | 不睡觉的猫头鹰">
+  <meta property="og:description" content="当只读请求 (GET/HEAD) 的数据在一段时间内是相同的，那么在客户端上对数据"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="zh-Hans">
   
-    <meta property="og:updated_time" content="2020-12-26T22:47:45&#43;08:00">
+    
+      <meta property="article:published_time" content="2020-12-26T22:47:45&#43;08:00">
+    
+    <meta property="article:modified_time" content="2020-12-26T22:47:45&#43;08:00">
   
 
   
 
 
+    
 
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://moyada.github.io/post/http_caching/"
+  },
+  "headline": "Http 缓存",
+  
+  "datePublished": "2020-12-26T22:47:45+08:00",
+  "dateModified": "2020-12-26T22:47:45+08:00",
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "不睡觉的猫头鹰",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://moyada.github.io/images/icon_hue257fc9265b3452e5de46b8a7fffc1af_7246_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "当只读请求 (GET/HEAD) 的数据在一段时间内是相同的，那么在客户端上对数据"
+}
+</script>
+
+  
 
   
 
@@ -250,10 +288,13 @@
   
 
 
+  
 
 
 
-  <title>  | 不睡觉的猫头鹰</title>
+
+
+  <title>Http 缓存 | 不睡觉的猫头鹰</title>
 </head>
 
 <body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
@@ -473,692 +514,374 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-<div class="universal-wrapper pt-3">
-  
-    
-      <h1> </h1>
-    
-  
-  
-  
-
-  
-</div>
-
-
-
-<div class="universal-wrapper">
-
-  
-
-  
-  
-    
-      
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-  
-  
-
-
-<div class="media stream-item">
-  <div class="media-body">
-
-    <h3 class="article-title mb-0 mt-0">
-      <a href="/post/mat/" >使用 Eclipse Memory Analyzer (MAT) 分析内存泄漏</a>
-    </h3>
-
-    
-    <div class="article-style">
-      
-使用MAT分析内存泄漏主要是检测对象是否可达，是否无用。
-
-通过jmap -dump:format=b,file=[file_name]] [pid] 生成`hprof`文件
-
-在Eclipse Marketplace安装 Memory   ...
-    </div>
-    
-
-    <div class="stream-meta article-metadata">
-
-      
-
-      
-        
-
-
-<div class="article-metadata">
-
-  
-  
-
-  
-  <span class="article-date">
-    
-    
-      
-    
-    2018-05-23
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    2 分钟阅读时长 
-  </span>
-  <span>&nbsp;</span>
-  510 字 
-  
-
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
-  
-
-</div>
-
-      
-    </div>
-
-    
-
-  </div>
-  <div class="ml-3">
-    
-    
-  </div>
-</div>
-
-    
-  
-    
-      
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-  
-  
-
-
-<div class="media stream-item">
-  <div class="media-body">
-
-    <h3 class="article-title mb-0 mt-0">
-      <a href="/post/jvm/" >Java 虚拟机总结</a>
-    </h3>
-
-    
-    <div class="article-style">
-      
-## JVM(Java虚拟机)
-JVM 是 JRE 包含的 Java 程序运行所需的程序，屏蔽各种硬件和操作系统的内存访问差异，通用一份 jar 包。
-另外，JVM还提供了内存管理的功能，使得开发人员无需关心底层内存如何管理。
-
-&gt; ht  ...
-    </div>
-    
-
-    <div class="stream-meta article-metadata">
-
-      
-
-      
-        
-
-
-<div class="article-metadata">
-
-  
-  
-
-  
-  <span class="article-date">
-    
-    
-      
-    
-    2018-05-19
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    8 分钟阅读时长 
-  </span>
-  <span>&nbsp;</span>
-  3896 字 
-  
-
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
-  
-
-</div>
-
-      
-    </div>
-
-    
-
-  </div>
-  <div class="ml-3">
-    
-    
-  </div>
-</div>
-
-    
-  
-    
-      
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-  
-  
-
-
-<div class="media stream-item">
-  <div class="media-body">
-
-    <h3 class="article-title mb-0 mt-0">
-      <a href="/post/jvm-param/" >JVM 参数</a>
-    </h3>
-
-    
-    <div class="article-style">
-      
-&lt;style&gt;
-table th:nth-of-type(1) {
-    width: 250px;
-}
-
-table th:nth-of-type(2) {
-    width: 30px;
-}
-
-table th:nth-of-ty  ...
-    </div>
-    
-
-    <div class="stream-meta article-metadata">
-
-      
-
-      
-        
-
-
-<div class="article-metadata">
-
-  
-  
-
-  
-  <span class="article-date">
-    
-    
-      
-    
-    2018-04-24
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    9 分钟阅读时长 
-  </span>
-  <span>&nbsp;</span>
-  4340 字 
-  
-
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
-  
-
-</div>
-
-      
-    </div>
-
-    
-
-  </div>
-  <div class="ml-3">
-    
-    
-  </div>
-</div>
-
-    
-  
-    
-      
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-  
-  
-
-
-<div class="media stream-item">
-  <div class="media-body">
-
-    <h3 class="article-title mb-0 mt-0">
-      <a href="/post/cros/" >通过 CROS 协议解决跨域问题</a>
-    </h3>
-
-    
-    <div class="article-style">
-      
-在前后端交互的开发中可能会遇到跨域的问题，如果只是简单的 GET 请求的话可以利用 Json 来解决。
-
-对于非 GET 请求的话就可以采用 `CORS` 协议来解决了。CORS 是一个W3C标准，全称是&#34;跨域资源共享&#34;（Cross-or  ...
-    </div>
-    
-
-    <div class="stream-meta article-metadata">
-
-      
-
-      
-        
-
-
-<div class="article-metadata">
-
-  
-  
-
-  
-  <span class="article-date">
-    
-    
-      
-    
-    2017-07-23
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    2 分钟阅读时长 
-  </span>
-  <span>&nbsp;</span>
-  646 字 
-  
-
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/java/">Java</a></span>
-  
-
-</div>
-
-      
-    </div>
-
-    
-
-  </div>
-  <div class="ml-3">
-    
-    
-  </div>
-</div>
-
-    
-  
-    
-      
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-  
-  
-
-
-<div class="media stream-item">
-  <div class="media-body">
-
-    <h3 class="article-title mb-0 mt-0">
-      <a href="/post/maven/" >Maven 基本操作</a>
-    </h3>
-
-    
-    <div class="article-style">
-      
-## pom配置文件
-
-### 命令
-* mvn clean: 清除target目录
-* mvn compile: 编译主程序
-* mvn test-compile: 编译测试程序
-* mvn test: 执行测试
-* mvn packa  ...
-    </div>
-    
-
-    <div class="stream-meta article-metadata">
-
-      
-
-      
-        
-
-
-<div class="article-metadata">
-
-  
-  
-
-  
-  <span class="article-date">
-    
-    
-      
-    
-    2017-03-31
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    3 分钟阅读时长 
-  </span>
-  <span>&nbsp;</span>
-  1372 字 
-  
-
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/maven/">Maven</a></span>
-  
-
-</div>
-
-      
-    </div>
-
-    
-
-  </div>
-  <div class="ml-3">
-    
-    
-  </div>
-</div>
-
-    
-  
-    
-      
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-  
-  
-
-
-<div class="media stream-item">
-  <div class="media-body">
-
-    <h3 class="article-title mb-0 mt-0">
-      <a href="/post/git/" >Git的基本操作</a>
-    </h3>
-
-    
-    <div class="article-style">
-      
-## 设置基本配置
-* 让Git显示颜色，会让命令输出看起来更醒目：
-```
-$ git config \-\-global color.ui true
-```
-
-* 设置全局用户信息
-```
-$ git config \-\-globa  ...
-    </div>
-    
-
-    <div class="stream-meta article-metadata">
-
-      
-
-      
-        
-
-
-<div class="article-metadata">
-
-  
-  
-
-  
-  <span class="article-date">
-    
-    
-      
-    
-    2017-02-25
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    8 分钟阅读时长 
-  </span>
-  <span>&nbsp;</span>
-  3841 字 
-  
-
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/git/">Git</a></span>
-  
-
-</div>
-
-      
-    </div>
-
-    
-
-  </div>
-  <div class="ml-3">
-    
-    
-  </div>
-</div>
-
-    
-  
-
-  
-<nav>
-  <ul class="pagination justify-content-center">
-    
-    <li class="page-item"><a class="page-link" href="/post/page/3/">&laquo;</a></li>
-    
-    
+	<head>
+  	  <meta http-equiv="charset" charset="utf-8" content="text/html; charset=utf-8">
+  	  
+
+	  <style type="text/css">
+	  	.top-scroll-bar {
+		    position: fixed;
+		    top: 520;
+		    left: 0;
+		    z-index: 9999;
+		    display: none;
+		    width: 0;
+		    height: 3px;
+		    background: #ef3982;
+		}
+	  </style>
+
+	  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+	  <script type="text/javascript">
+	 	$(document).ready(function () {
+		  $(window).scroll(function(){
+		    $(".top-scroll-bar").attr("style", "width: " + ($(this).scrollTop() / ($(document).height() - $(this).height()) * 100) + "%; display: block;");
+		  });
+		});
+	  </script>
+	  
+	  
+	</head>
+
+
+
+<div class="top-scroll-bar"></div>
+
+<div class="row flex-xl-nowrap">
+    <div class="d-none d-xl-block col-md-3 col-xl-3 docs-toc">
+      <ul class="nav toc-top">
+        <li><a href="#" id="back_to_top" class="docs-toc-title">Http 缓存</a></li>
+      </ul>
+
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#强缓存">强缓存</a>
+      <ul>
+        <li><a href="#expires">Expires</a></li>
+        <li><a href="#cache-control">Cache-Control</a></li>
+        <li><a href="#pragma">Pragma</a></li>
+      </ul>
+    </li>
+    <li><a href="#协商缓存">协商缓存</a>
+      <ul>
+        <li><a href="#last-modified">Last-Modified</a></li>
+        <li><a href="#etag">Etag</a></li>
+      </ul>
+    </li>
+    <li><a href="#vary">Vary</a></li>
   </ul>
 </nav>
+      
+    </div>
+
+    <div class="d-none d-xl-block col-md-2 col-xl-2"></div>
+
+    <main class="col-12 col-md-7 col-xl-7 py-md-6 pl-md-7 docs-content" role="main">
+		<article class="article">
+
+		  
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class=" pt-3">
+  
+    
+      <h1>Http 缓存</h1>
+    
+  
+  
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    2020-12-26
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    2 分钟阅读时长 
+  </span>
+  <span>&nbsp;</span>
+  619 字 
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+		  
+
+
+
+		  
+
+		    <div class="article-style">
+		      <p>当只读请求 <code>(GET/HEAD)</code> 的数据在一段时间内是相同的，那么在客户端上对数据进行存储复用将能够大大系统的响应速度，这就是 Http 缓存的由来。</p>
+<blockquote>
+<p><a href="https://httpwg.org/specs/rfc7234.html">https://httpwg.org/specs/rfc7234.html</a></p>
+</blockquote>
+<p>缓存从<strong>位置</strong>上可分为四种，各自有使用场景，并且各自有优先级。</p>
+<ul>
+<li>Service Worker</li>
+<li>Memory Cache</li>
+<li>Disk Cache</li>
+<li>Push Cache</li>
+</ul>
+<blockquote>
+<p>具体可参考：
+<a href="https://www.jianshu.com/p/54cc04190252">https://www.jianshu.com/p/54cc04190252</a></p>
+</blockquote>
+<p>缓存从<strong>类型</strong>上来区分，可分为 <code>强缓存</code> 和 <code>协商缓存</code>。强缓存是不需要发送 HTTP 请求的，而协商缓存需要请求服务端，强缓存优先于协商缓存。</p>
+<h2 id="强缓存">强缓存</h2>
+<p>当缓存可用时不需要发送 HTTP 请求的，浏览器将直接返回 200 响应，并标明数据来源。</p>
+<h3 id="expires">Expires</h3>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Expires">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Expires</a></p>
+<p>是 http/1.0 提出的规范，代表这个资源将于指定时间后过期。</p>
+<pre><code class="language-txt">Expires: Wed, Nov 30 2020 20:00:00 GMT
+</code></pre>
+<p>这个资源将在 2020年11月30日20点 过期，但是这个资源是否过期将受限于当前客户端的系统时间。</p>
+<h3 id="cache-control">Cache-Control</h3>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Cache-Control">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Cache-Control</a></p>
+<p>为了解决 <strong>Expires</strong> 所存在的问题，http/1.1 出现了 <strong>Cache-Control</strong>，使用相对时间作为缓存时间，它的优先级在 Expires 之上，</p>
+<h3 id="pragma">Pragma</h3>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Pragma">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Pragma</a></p>
+<p>http/1.0 遗留的缓存标准，现已废弃。</p>
+<h2 id="协商缓存">协商缓存</h2>
+<p>当强缓存失效后，浏览器携带缓存标识发送请求到服务端，当本地缓存有效时将返回 304 响应.</p>
+<h3 id="last-modified">Last-Modified</h3>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Last-Modified">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Last-Modified</a></p>
+<p>它是一个响应头，返回的是资源的修改时间，通常被用作一个验证器来判断接收到的或者存储的资源是否彼此一致，最低精度为秒。</p>
+<p>在 <code>GET</code> 或 <code>HEAD</code> 请求中，使用
+<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-Modified-Since" target="_blank" rel="noopener">If-Modified-Since</a>
+这个请求头进行验证。</p>
+<p>在 <code>POST</code> 或其他不安全请求方法中，使用
+<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-Unmodified-Since" target="_blank" rel="noopener">If-Unmodified-Since</a> 来进行验证。</p>
+<h3 id="etag">Etag</h3>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/ETag">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/ETag</a></p>
+<p>Etag 响应头返回的是资源在服务端的版本标识符，它能解决 <strong>Last-Modified</strong> 在精度上的不足。</p>
+<p>对于 <code>GET</code> 和 <code>HEAD</code> 方法来说，请求头中需包含 
+<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-None-Match" target="_blank" rel="noopener">If-None-Match</a> 来对内容进行比对。</p>
+<p><img src="/img/http/HTTP_Caching.png" alt="alt 缓存工作流程" title="缓存工作流程"></p>
+<h2 id="vary">Vary</h2>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Vary">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Vary</a></p>
+<p>对于一些区分客户端数据响应的场景，<strong>Vary</strong>就能够对不同的客户端进行区分缓存。</p>
+<blockquote>
+<p>参考: <br/>
+<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ</a>
+<a href="https://jakearchibald.com/2017/h2-push-tougher-than-i-thought/">https://jakearchibald.com/2017/h2-push-tougher-than-i-thought/</a></p>
+</blockquote>
+
+		    </div>
+		  
+		</article>
+	</main>
+</div>
+
+<div class="col-12 col-md-8 col-xl-8" style="margin: auto;">
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="avatar mr-3 avatar-circle" src="/authors/admin/avatar-1_hu26548cae460c5612c14a1e666ae3fbb7_175055_270x270_fill_q90_lanczos_center.jpg" alt="">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://moyada.github.io"></a></h5>
+      <h6 class="card-subtitle">求知若渴，虚怀若谷</h6>
+      
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/moyada" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:xykmoyada@gmail.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+<section id="comments">
+  
+</section>
+
+
+
+
+<div class="article-widget">
+  
+<div class="post-nav row" style="margin-left: -50px; margin-right: -50px">
+  <div class="col-12 col-md-6 col-xl-6">
+  
+    
+    <span class="post-nav-item">
+      <span class="meta-nav">上一篇</span>&nbsp;
+      <a style="color: rgb(80,150,255)" href="/post/currenttimemillis-vs-nanotime/" rel="prev">对比 currentTimeMillis 与 nanoTime</a>
+    </span>
+  
+  </div>
+
+  <div class="col-12 col-md-6 col-xl-6">
+    <div style="float: right;">
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+  
+  
+
+
+	
+
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: '21a1c2de86a732503284',
+    clientSecret: 'c37ae7968228d3959c617563b57ed69972d025d7',
+    repo: 'moyada.github.io',
+    owner: 'moyada',
+    admin: ['moyada'],
+    id: location.pathname, 
+    distractionFreeMode: false 
+  });
+  
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+      return;
+    }
+    gitalk.render('gitalk-container');
+  })();
+</script>
 
 </div>
 

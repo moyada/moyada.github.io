@@ -5,12 +5,74 @@
     <link>https://moyada.github.io/post/</link>
       <atom:link href="https://moyada.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <description> </description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Mon, 11 May 2020 23:24:27 +0800</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>zh-Hans</language><copyright>© 2017 - 2020 moyada</copyright><lastBuildDate>Sat, 26 Dec 2020 22:47:45 +0800</lastBuildDate>
     <image>
       <url>img/map[gravatar:%!s(bool=true) shape:circle]</url>
       <title> </title>
       <link>https://moyada.github.io/post/</link>
     </image>
+    
+    <item>
+      <title>Http 缓存</title>
+      <link>https://moyada.github.io/post/http_caching/</link>
+      <pubDate>Sat, 26 Dec 2020 22:47:45 +0800</pubDate>
+      <guid>https://moyada.github.io/post/http_caching/</guid>
+      <description>&lt;p&gt;当只读请求 &lt;code&gt;(GET/HEAD)&lt;/code&gt; 的数据在一段时间内是相同的，那么在客户端上对数据进行存储复用将能够大大系统的响应速度，这就是 Http 缓存的由来。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://httpwg.org/specs/rfc7234.html&#34;&gt;https://httpwg.org/specs/rfc7234.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;缓存从&lt;strong&gt;位置&lt;/strong&gt;上可分为四种，各自有使用场景，并且各自有优先级。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Service Worker&lt;/li&gt;
+&lt;li&gt;Memory Cache&lt;/li&gt;
+&lt;li&gt;Disk Cache&lt;/li&gt;
+&lt;li&gt;Push Cache&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;具体可参考：
+&lt;a href=&#34;https://www.jianshu.com/p/54cc04190252&#34;&gt;https://www.jianshu.com/p/54cc04190252&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;缓存从&lt;strong&gt;类型&lt;/strong&gt;上来区分，可分为 &lt;code&gt;强缓存&lt;/code&gt; 和 &lt;code&gt;协商缓存&lt;/code&gt;。强缓存是不需要发送 HTTP 请求的，而协商缓存需要请求服务端，强缓存优先于协商缓存。&lt;/p&gt;
+&lt;h2 id=&#34;强缓存&#34;&gt;强缓存&lt;/h2&gt;
+&lt;p&gt;当缓存可用时不需要发送 HTTP 请求的，浏览器将直接返回 200 响应，并标明数据来源。&lt;/p&gt;
+&lt;h3 id=&#34;expires&#34;&gt;Expires&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Expires&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Expires&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;是 http/1.0 提出的规范，代表这个资源将于指定时间后过期。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-txt&#34;&gt;Expires: Wed, Nov 30 2020 20:00:00 GMT
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;这个资源将在 2020年11月30日20点 过期，但是这个资源是否过期将受限于当前客户端的系统时间。&lt;/p&gt;
+&lt;h3 id=&#34;cache-control&#34;&gt;Cache-Control&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Cache-Control&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Cache-Control&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;为了解决 &lt;strong&gt;Expires&lt;/strong&gt; 所存在的问题，http/1.1 出现了 &lt;strong&gt;Cache-Control&lt;/strong&gt;，使用相对时间作为缓存时间，它的优先级在 Expires 之上，&lt;/p&gt;
+&lt;h3 id=&#34;pragma&#34;&gt;Pragma&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Pragma&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Pragma&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;http/1.0 遗留的缓存标准，现已废弃。&lt;/p&gt;
+&lt;h2 id=&#34;协商缓存&#34;&gt;协商缓存&lt;/h2&gt;
+&lt;p&gt;当强缓存失效后，浏览器携带缓存标识发送请求到服务端，当本地缓存有效时将返回 304 响应.&lt;/p&gt;
+&lt;h3 id=&#34;last-modified&#34;&gt;Last-Modified&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Last-Modified&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Last-Modified&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;它是一个响应头，返回的是资源的修改时间，通常被用作一个验证器来判断接收到的或者存储的资源是否彼此一致，最低精度为秒。&lt;/p&gt;
+&lt;p&gt;在 &lt;code&gt;GET&lt;/code&gt; 或 &lt;code&gt;HEAD&lt;/code&gt; 请求中，使用
+&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-Modified-Since&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;If-Modified-Since&lt;/a&gt;
+这个请求头进行验证。&lt;/p&gt;
+&lt;p&gt;在 &lt;code&gt;POST&lt;/code&gt; 或其他不安全请求方法中，使用
+&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-Unmodified-Since&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;If-Unmodified-Since&lt;/a&gt; 来进行验证。&lt;/p&gt;
+&lt;h3 id=&#34;etag&#34;&gt;Etag&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/ETag&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/ETag&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Etag 响应头返回的是资源在服务端的版本标识符，它能解决 &lt;strong&gt;Last-Modified&lt;/strong&gt; 在精度上的不足。&lt;/p&gt;
+&lt;p&gt;对于 &lt;code&gt;GET&lt;/code&gt; 和 &lt;code&gt;HEAD&lt;/code&gt; 方法来说，请求头中需包含 
+&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-None-Match&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;If-None-Match&lt;/a&gt; 来对内容进行比对。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/http/HTTP_Caching.png&#34; alt=&#34;alt 缓存工作流程&#34; title=&#34;缓存工作流程&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;vary&#34;&gt;Vary&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Vary&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Vary&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;对于一些区分客户端数据响应的场景，&lt;strong&gt;Vary&lt;/strong&gt;就能够对不同的客户端进行区分缓存。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;参考: &lt;br/&gt;
+&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Caching_FAQ&lt;/a&gt;
+&lt;a href=&#34;https://jakearchibald.com/2017/h2-push-tougher-than-i-thought/&#34;&gt;https://jakearchibald.com/2017/h2-push-tougher-than-i-thought/&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
     
     <item>
       <title>对比 currentTimeMillis 与 nanoTime</title>
