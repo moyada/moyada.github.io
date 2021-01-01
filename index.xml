@@ -42,6 +42,7 @@
 &lt;blockquote&gt;
 &lt;p&gt;&lt;a href=&#34;https://httpwg.org/specs/rfc7234.html&#34;&gt;https://httpwg.org/specs/rfc7234.html&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
+&lt;br/&gt;
 &lt;p&gt;缓存从&lt;strong&gt;位置&lt;/strong&gt;上可分为四种，各自有使用场景，并且各自有优先级。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Service Worker&lt;/li&gt;
@@ -53,7 +54,9 @@
 &lt;p&gt;具体可参考：
 &lt;a href=&#34;https://www.jianshu.com/p/54cc04190252&#34;&gt;https://www.jianshu.com/p/54cc04190252&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
+&lt;br/&gt;
 &lt;p&gt;缓存从&lt;strong&gt;类型&lt;/strong&gt;上来区分，可分为 &lt;code&gt;强缓存&lt;/code&gt; 和 &lt;code&gt;协商缓存&lt;/code&gt;。强缓存是不需要发送 HTTP 请求的，而协商缓存需要请求服务端，强缓存优先于协商缓存。&lt;/p&gt;
+&lt;br/&gt;
 &lt;h2 id=&#34;强缓存&#34;&gt;强缓存&lt;/h2&gt;
 &lt;p&gt;当缓存可用时不需要发送 HTTP 请求的，浏览器将直接返回 200 响应，并标明数据来源。&lt;/p&gt;
 &lt;h3 id=&#34;expires&#34;&gt;Expires&lt;/h3&gt;
@@ -80,9 +83,12 @@
 &lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-Unmodified-Since&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;If-Unmodified-Since&lt;/a&gt; 来进行验证。&lt;/p&gt;
 &lt;h3 id=&#34;etag&#34;&gt;Etag&lt;/h3&gt;
 &lt;p&gt;&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/ETag&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/ETag&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Etag 响应头返回的是资源在服务端的版本标识符，它能解决 &lt;strong&gt;Last-Modified&lt;/strong&gt; 在精度上的不足。&lt;/p&gt;
-&lt;p&gt;对于 &lt;code&gt;GET&lt;/code&gt; 和 &lt;code&gt;HEAD&lt;/code&gt; 方法来说，请求头中需包含 
+&lt;p&gt;Etag 响应头返回的是资源在服务端的版本标识符，它能解决 &lt;strong&gt;Last-Modified&lt;/strong&gt; 在精度上的不足，通过对响应内容进行编码得出版本号进行对比。&lt;/p&gt;
+&lt;p&gt;对 &lt;code&gt;GET&lt;/code&gt; 和 &lt;code&gt;HEAD&lt;/code&gt; 方法来说，请求头中需包含 
 &lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-None-Match&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;If-None-Match&lt;/a&gt; 来对内容进行比对。&lt;/p&gt;
+&lt;p&gt;Java 的 Spring 框架中提供的 &lt;code&gt;org.springframework.web.filter.ShallowEtagHeaderFilter&lt;/code&gt; 就是对这一流程进行了实现。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;工作流程&#34;&gt;工作流程&lt;/h2&gt;
 &lt;p&gt;&lt;img src=&#34;https://moyada.github.io/img/http/HTTP_Caching.png&#34; alt=&#34;alt 缓存工作流程&#34; title=&#34;缓存工作流程&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;vary&#34;&gt;Vary&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Vary&#34;&gt;https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Vary&lt;/a&gt;&lt;/p&gt;

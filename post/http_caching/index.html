@@ -569,6 +569,7 @@
         <li><a href="#etag">Etag</a></li>
       </ul>
     </li>
+    <li><a href="#工作流程">工作流程</a></li>
     <li><a href="#vary">Vary</a></li>
   </ul>
 </nav>
@@ -638,7 +639,7 @@
     2 分钟阅读时长 
   </span>
   <span>&nbsp;</span>
-  619 字 
+  666 字 
   
 
   
@@ -680,6 +681,7 @@
 <blockquote>
 <p><a href="https://httpwg.org/specs/rfc7234.html">https://httpwg.org/specs/rfc7234.html</a></p>
 </blockquote>
+<br/>
 <p>缓存从<strong>位置</strong>上可分为四种，各自有使用场景，并且各自有优先级。</p>
 <ul>
 <li>Service Worker</li>
@@ -691,7 +693,9 @@
 <p>具体可参考：
 <a href="https://www.jianshu.com/p/54cc04190252">https://www.jianshu.com/p/54cc04190252</a></p>
 </blockquote>
+<br/>
 <p>缓存从<strong>类型</strong>上来区分，可分为 <code>强缓存</code> 和 <code>协商缓存</code>。强缓存是不需要发送 HTTP 请求的，而协商缓存需要请求服务端，强缓存优先于协商缓存。</p>
+<br/>
 <h2 id="强缓存">强缓存</h2>
 <p>当缓存可用时不需要发送 HTTP 请求的，浏览器将直接返回 200 响应，并标明数据来源。</p>
 <h3 id="expires">Expires</h3>
@@ -718,9 +722,12 @@
 <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-Unmodified-Since" target="_blank" rel="noopener">If-Unmodified-Since</a> 来进行验证。</p>
 <h3 id="etag">Etag</h3>
 <p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/ETag">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/ETag</a></p>
-<p>Etag 响应头返回的是资源在服务端的版本标识符，它能解决 <strong>Last-Modified</strong> 在精度上的不足。</p>
-<p>对于 <code>GET</code> 和 <code>HEAD</code> 方法来说，请求头中需包含 
+<p>Etag 响应头返回的是资源在服务端的版本标识符，它能解决 <strong>Last-Modified</strong> 在精度上的不足，通过对响应内容进行编码得出版本号进行对比。</p>
+<p>对 <code>GET</code> 和 <code>HEAD</code> 方法来说，请求头中需包含 
 <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/If-None-Match" target="_blank" rel="noopener">If-None-Match</a> 来对内容进行比对。</p>
+<p>Java 的 Spring 框架中提供的 <code>org.springframework.web.filter.ShallowEtagHeaderFilter</code> 就是对这一流程进行了实现。</p>
+<hr>
+<h2 id="工作流程">工作流程</h2>
 <p><img src="/img/http/HTTP_Caching.png" alt="alt 缓存工作流程" title="缓存工作流程"></p>
 <h2 id="vary">Vary</h2>
 <p><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Vary">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Vary</a></p>
